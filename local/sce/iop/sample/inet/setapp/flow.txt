@@ -1,0 +1,412 @@
+[SCEI CONFIDENTIAL DOCUMENT]
+PlayStation 2 Programmer Tool Runtime Library Release 2.4.2
+   Copyright (C) 2001 by Sony Computer Entertainment Inc.
+                                      All Rights Reserved
+
+
+	Network Configuration Application Sample Program Flow
+
+
+The processing flow for the network configuration application sample program is shown below.
+
+<< Processing flow from startup through connection >>
+
+                  Startup
+                    |
+ +------------------------------------+
+ |    Network Connection screen       |-----------+
+ +------------------------------------+           |
+                    |                             |
+ +-------------------------------------+ +--------------------+
+ | Select hardware (network service    | | Select combination |
+ | provider) settings                  | |                    | 
+ +-------------------------------------+ +--------------------+
+                    |                             |
+ +-------------------------------------+          |
+ | Select network service provider     |          |
+ | (hardware) settings                 |          |
+ +-------------------------------------+          |
+                    |                             |
+        +======================+        +======================+        
+     +--| Is selected device   |<- yes -| Do two settings      |
+     |  | connected?           |        | files exist?         |
+     |  +======================+        +======================+
+     |              |                             |
+     no            yes                            no
+     |              |                             |
+     NG           Connect                         NG
+
+ (*) No operation is performed for NG.
+
+
+<< Flow from startup through registration or deletion of combinations >>
+
+                  Startup
+                    |
+ +------------------------------------+
+ |   Network Connection screen        |-----------+
+ +------------------------------------+           |
+                    |                             |
+ +-------------------------------------+ +--------------------+
+ | Select hardware (network service    | | Select combination |
+ | provider) settings                  | |                    | 
+ +-------------------------------------+ +--------------------+
+                    |                             |
+ +-------------------------------------+          |
+ | Select network service provider     |          |
+ | (hardware) settings                 |          |
+ +-------------------------------------+          |
+                    |                             |
+        +======================+        +=====================+        
+     +--| Is there one file    |     +--| Does a combination  |
+     |  | for both settings?   |     |  | exist?              |
+     |  +======================+     |  +=====================+
+     |              |                |            |
+     |             yes               no          yes
+     |              |                |            |
+     |  +======================+     |            |
+     +--| Is the device the    |     |            |
+     |  | same for the two     |     |            |
+     |  | settings?            |     |            |
+     |  +======================+     |            |
+     |              |                |            |
+     no            yes               |            |
+     |              |                |            |
+     NG  Register the combination    NG   Delete the combination
+
+ (*) No operation is performed for NG.
+
+
+<< Flow from startup through configuration >>
+
+                                Startup
+                                  |
+               +--------------------------------------+
+               |      Network Connection screen       |
+               +--------------------------------------+
+                                  |
+               +--------------------------------------+               
+               | Select network configuration (START) |
+               +--------------------------------------+               
+                                  |
+        +-------------------------+--------------------------+
+        |                         |                          |
+ +------------------+ +------------------------+ +--------------------------+
+ | Select new       | | Select hardware only   | | Select network service   |
+ | configuration    | |                        | | provider only            |
+ +------------------+ +------------------------+ +--------------------------+
+        |                |     |     |     |         |     |     |     |
+        |           +----++----++------++----+    +----++----++------++----+
+        |           |Add ||Edit||Delete||Dup |    |Add ||Edit||Delete||Dup |
+        |           +----++----++------++----+    +----++----++------++----+
+        |             |     |     |       |         |     |      |      |
+       (1)           (2)   (3)   (3)     (3)       (3)   (4)    (4)    (4)
+
+ +----------------+ +----------------+ +----------------+ +----------------+
+ | (1)            | | (2)            | | (3)            | | (4)            |
+ | Display list   | | Display list   | | List           | | List           |
+ | of connected   | | of connected   | | existing       | | existing       |
+ | devices        | | devices        | | hardware       | | network        |
+ | for which      | | for which      | | settings       | | service        |
+ | no hardware    | | no hardware    | |                | | provider       |
+ | nor hardware   | | exists         | |                | | settings       |
+ | settings       | |                | |                | |                |
+ | exist          | |                | |                | |                |
+ +----------------+ +----------------+ +----------------+ +----------------+
+
+ (*) A search is performed across all media (MC, HDD, CD-ROM), and the results displayed altogether in the list.
+ (*) Except for duplication, Read-Only media (CD-ROM) settings are not displayed.
+ (*) For (1), settings for which a device is not connected are grayed out so they cannot be selected.
+
+
+                                (1) or (2)
+                                     |
+                +----------------------------------------+
+                | Select a device for which there are    |
+                | no hardware settings                   |
+                +----------------------------------------+
+                                     |
+             +-----------------------+-------------------------+
+             |                       |                         |
+ +----------------------+ +----------------------+ +----------------------+
+ | Select USB Ether     | | select Modem or TA   | | Select HDD Ether     |
+ | hardware             | | hardware             | | hardware             |
+ +----------------------+ +----------------------+ +----------------------+
+             |                       |                         |
+             +-----------------------+-------------------------+
+                                     |
++----------------------------------->+
+|                                    |
+|                 +------------------+-------+-------------------------+
+|                 |                          |                         |
+|+---------+ +----------+ +---------+ +------------+ +---------+ +----------+
+||Advanced |-|Confirm   | |Advanced |-|Select      | |Advanced |-|Confirm   |
+||settings | |settings  | |settings | |dialing type| |settings | |settings  |
+||  (a)    | |name,     | |  (b)    | |    (c)     | |  (a)    | |name,     |
+||         | |display   | |         | |            | |         | |display   |
+||         |-|whether   | |         |-|            | |         |-|whether   |
+||         | |editable  | |         | |            | |         | |editable  |
+||         | |and       | |         | |            | |         | |and       |
+||         | |HW addr   | |         | |            | |         | |HW addr   |
+|+---------+ +----------+ +---------+ +------------+ +---------+ +----------+
+|                |                          |                         |
+|                |           +---------------------------+            |
+|                |           | Confirm settings name     |            |
+|                |           +-----------+---------------+            |
+|                |                       |                            |
+|                +-----------------------+----------------------------+
+|                                        |
+|               +========================================+
+|               |                 New settings?          |------ yes -------+
+|               +========================================+                  |
+|                                    |                                      |
+|                                    no                                     |
+|                                    |                                      |
+|               +----------------------------------------+                  |
+|               |                Select media            |                  |
+|               +----------------------------------------+                  |
+|                                    |                                      |
+|               +========================================+                  |
+|               |                  Save?                 |--+               |
+|               +========================================+  |               |
+|                                    |                      |               |
+|                                   yes                     no              |
+|                                    |                      |               |
+|               +----------------------------------------+  |               |
+|               |              Save completed            |  |               |
+|               +----------------------------------------+  |               |
+|                                    |                      |               |
+|                                  START -------------------+               |
+|                                                                           |
+|                                                                           |
+|                               (1) or (3)                                  |
+|                                    |                                      |
+|               +----------------------------------------+                  |
+|               | Select existing hardware settings      |                  |
+|               +----------------------------------------+                  |
+|                                    |                                      |
+|            +-----------------------+-------------------------+            |
+|            |                       |                         |            |
+|+----------------------+ +----------------------+ +----------------------+ |
+|| Select USB Ether     | | select Modem or TA   | | Select HDD Ether     | |
+|| settings             | | settings             | | settings             | |
+|+----------------------+ +----------------------+ +----------------------+ |
+|            |                       |                         |            |
+|            +-----------------------+-------------------------+            |
+|                                    |                                      |
+|               +========================================+                  |
+|               |        New or additional settings?     |------ yes -------+
+|               +========================================+                  |
+|                                    |                                      |
+|                                    no                                     |
+|                                    |                                      |
+|               +========================================+                  |
++---- yes ------|                   Edit?                |                  |
+                +========================================+                  |
+                                     |                                      |
+                                     no                                     |
+                                     |                                      |
+                +========================================+                  |
+       +--------|                  Delete?               |                  |
+       |        +========================================+                  |
+       |                             |                                      |
+      yes                            no                                     |
+       |                             |                                      |
+  +----------+  +========================================+                  |
+  |Confirm   |  |                Duplicate               |                  |
+  |delete    |  |                                        |                  |
+  +----------+  +========================================+                  |
+       |                             |                                      |
+       |        +----------------------------------------+                  |
+       |        |               Select media             |                  |
+       |        +----------------------------------------+                  |
+       |                             |                                      |
+       |        +========================================+                  |
+    Delete      |                  Save?                 |--+               |
+       |        +========================================+  |               |
+       |                             |                      |               |
+       |                            yes                     no              |
+       |                             |                      |               |
+  +----------+  +----------------------------------------+  |               |
+  |Delete    |  |              Save completed            |  |               |
+  |completed |  |                                        |  |               |
+  +----------+  +----------------------------------------+  |               |
+       |                             |                      |               |
+       +-------------------------- START -------------------+               |
+                                                                            |
+                                                                            |
+                                    (4)                                     |
+                                     |                                      |
+                +----------------------------------------+                  |
+                |     Select existing network service    |                  |
+                |             provider settings          |                  |
+                +----------------------------------------+                  |
+                                     |                                      |
+             +-----------------------+-------------------------+            |
+             |                       |                         |            |
+ +----------------------+ +----------------------+ +----------------------+ |
+ | Select type eth      | | Select type ppp      | | Select type nic      | |
+ | settings             | | settings             | | settings             | |
+ +----------------------+ +----------------------+ +----------------------+ |
+             |                       |                         |            |
+             +-----------------------+-------------------------+            |
+                                     |                                      |
+                +========================================+                  |
++----- no ------|     New settings, add, or edit?        |<-----------------+
+|               +========================================+
+|                                    |
+|                                   yes
+|                                    |
+|            +-----------------------+-------------------------+
+|            |                       |                         |
+|       (USB Ether)             (Modem, TA)               (HDD Ether)
+|       (type eth)              (type ppp)                (type nic)
+|            |                       |                         |
+|     +===================+          |                  +===================+
+|  +--|     Add?          |          |               +--|     Add?          |
+|  |  +===================+          |               |  +===================+
+|  |         |                       |               |         |
+|  no       yes                      |               no       yes
+|  |         |                       |               |         |
+|  |  +==============+               |               |  +==============+
+|  +--| Use PPPoE?   |               |               +--| Use PPPoE?   |
+|  |  +==============+               |               |  +==============+
+|  |         |                       |               |         |
+|  no       yes                      |               no       yes
+|  |         |                       |               |         |
+|  |  +--------------+        +--------------+       |  +--------------+
+|  |  |   Set (f)    |        |   Set (f)    |       |  |    Set (f)   |
+|  |  +--------------+        +--------------+       |  +--------------+
+|  |         |                       |               |         |
+|  |  +==============+               |               |  +==============+
+|  |  |Automatically |-+             |               |  |Automatically |-+
+|  |  |obtain DNS?   | |             |               |  |obtain DNS?   | |
+|  |  +==============+ |             |               |  +==============+ |
+|  |         |         |             |               |         |         |
+|  |         no       yes            |               |         no       yes
+|  |         |         |             |               |         |         |
+|  |  +--------------+ |             |               |  +--------------+ |
+|  |  |DNS settings  | |             |               |  |DNS settings  | |
+|  |  |- same as     | |             |               |  |- same as     | |
+|  |  |  Auto screen | |             |               |  |  Auto screen | |
+|  |  |- has default | |             |               |  |- has default | |
+|  |  |  button      | |             |               |  |  button      | |
+|  |  +--------------+ |             |               |  +--------------+ |
+|  |         |         |             |               |         |         |
+|  |  +--------------+ |             |               |  +--------------+ |
+|  |  |Confirm       |-+             |               |  |Confirm       |-+
+|  |  |settings name |               |               |  |settings name |
+|  |  |- editable    |               |               |  |- editable    |
+|  |  +--------------+               |               |  +--------------+
+|  |         |                +==============+       |         |
+|  |         +------------+   |    PPPoE?    |       |         +------------+
+|  +---+                  | +-|   (no for    |       +---+                  |
+|      v                  | | |     add)     |           v                  |
+|     +=============+     | | +==============+          +=============+     |
+|  +--| Use DHCP?   |     | |        |               +--| Use DHCP?   |     |
+|  |  +=============+     |yes       no              |  +=============+     |
+|  |         |            | |        |               |         |            |
+| yes        no           | | +--------------+      yes        no           |
+|  |         |            | | |    Set (g)   |       |         |            |
+|  |  +--------------+    | | +--------------+       |  +--------------+    |
+|  |  |  Set (d)     |    | |        |               |  |  Set (d)     |    |
+|  |  |- has default |    | | +==============+       |  |- has default |    |
+|  |  |  button      |    | +-|Automatically |-+     |  |  button      |    |
+|  |  |              |    |   |obtain DNS?   | |     |  |              |    |
+|  |  +--------------+    |   +==============+ |     |  +--------------+    |
+|  |         |            |          |         |     |         |            |
+|  |  +-------------+     |          no       yes    |  +-------------+     |
+|  +--|Confirm      |--+  |          |         |     +--|Confirm      |--+  |
+|     |settings name|  |  |          |         |        |settings name|  |  |
+|  +->|- editable   |  |  |          |         |     +->|- editable   |  |  |
+|  |  +-------------+  |  |   +--------------+ |     |  +-------------+  |  |
+|  no        |         |  |   |DNS settings  | |     no        |         |  |
+|  |  +=============+  |  |   |- same as     | |     |  +=============+  |  |
+|  +--|Settings     |  |  |   |  Auto screen | |     +--|Settings     |  |  |
+|  |  |completed    |  |  |   |- has default | |     |  |completed    |  |  |
+|  |  |to use DHCP? |  |  |   |  button      | |     |  |to use DHCP? |  |  |
+|  |  +=============+  |  |   +--------------+ |     |  +=============+  |  |
+|  |         |         |  |          |         |     |         |         |  |
+|  |        yes        |  |   +--------------+ |     |        yes        |  |
+|  |         |         |  |   |Confirm       |-+     |         |         |  |
+|  |         |         |  |   |settings name |       |         |         |  |
+|  |         |         |  |   |- editable    |       |         |         |  |
+|  |  +-------------+  |  |   +--------------+       |  +-------------+  |  |
+|  +--|Advanced     |  |  |          |               +--|Advanced     |  |  |
+|     |settings (e) |  |  |          |                  |settings (e) |  |  |
+|     +-------------+  |  |          |                  +-------------+  |  |
+|                      +--+----------+-----------------------------------+--+
+|                                                                        |
++------------------------------------+                                   |
+                                     |                                   |
+                +========================================+               |
+       +--------|                 Delete?                |               |
+       |        +========================================+               |
+       |                             |                                   |
+      yes                            no                                  |
+       |                             |                                   |
+  +----------+  +========================================+               |
+  |Confirm   |  |                Duplicate               |               |
+  |delete    |  |                                        |               |
+  +----------+  +========================================+               |
+       |                             |                                   |
+       |        +----------------------------------------+               |
+       |        |               Select media             |               |
+       |        +----------------------------------------+               |
+       |                             |                                   |
+       |        +========================================+               |
+    Delete      |                  Save?                 |--+            |
+       |        +========================================+  |            |
+       |                             |                      |            |
+       |                            yes                     no           |
+       |                             |                      |            |
+  +----------+  +----------------------------------------+  |            |
+  |Delete    |  |              Save completed            |  |            |
+  |completed |  |                                        |  |            |
+  +----------+  +----------------------------------------+  |            |
+       |                             |                      |            |
+       +-------------------------- START -------------------+            |
+
+ (*) USB Ether hardware is associated with type eth settings, Modem and TA hardware is associated with type ppp settings, and HDD Ether hardware is associated with type nic settings.
+ (*) The difference between adding and editing is whether or not a setting value has already been entered.
+ (*) After saving, each type of media must be checked (for example, the format, capacity, etc.)
+ (*) When duplicating, the media where the source settings are present is not displayed.
+ (*) Read Only media are not displayed during media selection.
+ (*) setapp uses common settings for USB Ether hardware and HDD Ether hardware, and for type eth and type nic.
+ (*) Although control can basically return to a location other than the location indicated by the arrow, it cannot return to the Media Selection screen or after.
+ (*) PPPoE settings are not supported.
+ (*) Settings are as follows.
+	(a) Ethernet hardware operating mode
+		Auto-detect
+		10BaseT Half-Duplex
+		10BaseT Full-Duplex
+		100BaseTX Half-Duplex
+		100BaseTX Full-Duplex
+
+	(b) Additional AT commands
+	    Set Outside Number
+	    Set Line Timeout (units: minutes)
+
+	(c) Dialing type
+		Tone
+		Pulse
+
+	(d) IP address
+	    Netmask
+	    Primary DNS Server Address
+	    Secondary DNS Server Address
+	    Default Router Address
+
+	(e) DHCP Host Name
+	    Automatically Obtain DNS Server Address
+	    Primary DNS Server Address
+	    Secondary DNS Server Address
+
+	(f) User ID
+	    Password
+
+	(g) Telephone number 1 (required)
+	    Telephone number 2 (spare)
+	    Telephone number 3 (spare)
+
+

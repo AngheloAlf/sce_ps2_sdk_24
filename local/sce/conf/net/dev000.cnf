@@ -1,0 +1,29 @@
+# <Sony Computer Entertainment Inc.>
+
+type eth
+
+vendor "Melco"
+product "LUA-TX"
+
+#vendor "I-O Data"
+#product "ET/TX"
+
+#vendor "PLANEX"
+#product "UE-100TX"
+
+#vendor "Corega"
+#product "USB-TX"
+
+#vendor "Linksys"
+#product "USB100TX"
+
+#vendor "D-Link"
+#product "DSB-650TX"
+
+#vendor "ADMtek"
+#product "Pegasus"
+
+#vendor "D-Link"
+#product "DU-E100"
+
+phy_config auto

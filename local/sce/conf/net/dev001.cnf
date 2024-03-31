@@ -1,0 +1,7 @@
+# <Sony Computer Entertainment Inc.>
+
+type ppp
+vendor "SCE"
+product "Modem (Network Adaptor)"
+dialing_type tone
+idle_timeout 600

@@ -1,0 +1,118 @@
+This is Info file cgen.info, produced by Makeinfo version 1.68 from the
+input file ../../../src/cgen/doc/cgen.texi.
+
+START-INFO-DIR-ENTRY
+* Cgen: (cgen).                 The Cpu tools GENerator.
+END-INFO-DIR-ENTRY
+
+   Copyright (C) 2000 Red Hat, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the entire resulting derived work is distributed under the terms
+of a permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions.
+
+
+File: cgen.info,  Node: Credits,  Next: Index,  Prev: Miscellaneous notes,  Up: Top
+
+Credits
+*******
+
+   The following people, listed in alphabetical order, have helped in
+their own way.  Thanks!
+
+   - Dave Brolley
+
+   - Andrew Cagney
+
+   - Steve Chamberlain
+
+   - Nick Clifton
+
+   - Bob Cmelik
+
+   - Frank Ch. Eigler
+
+   - Ben Elliston
+
+   - Kim Knuttila
+
+   - Ken Raeburn
+
+   - Jim Wilson
+
+   There's a TV program I watched growing up called "The Hilarious House
+Of Frightenstein".  The credits at the end had a twist in that Billy
+Van, who played most of the characters, appeared in them again and
+again.  I would do the same here for Ian Lance Taylor.
+
+
+File: cgen.info,  Node: Index,  Prev: Credits,  Up: Top
+
+Index
+*****
+
+* Menu:
+
+* .iota:                                 Number generation.
+* .map:                                  Mapping a macro over a list.
+* .splice:                               List splicing.
+* .str:                                  String concatenation.
+* .sym:                                  Symbol concatenation.
+* anyof operands:                        Derived operands.
+* Architecture variants:                 Architecture variants.
+* Attributes:                            Attributes.
+* Attributes, bitset:                    Attributes.
+* Attributes, boolean:                   Attributes.
+* Attributes, enumerated:                Attributes.
+* Attributes, integer:                   Attributes.
+* begin:                                 Multiple output expressions.
+* bfd-name:                              define-mach.
+* decode-assist:                         define-isa.
+* define-arch:                           define-arch.
+* define-cpu:                            define-cpu.
+* define-isa:                            define-isa.
+* define-mach:                           define-mach.
+* define-pmacro:                         Defining a preprocessor macro.
+* Definitions:                           Definitions.
+* Derived operands:                      Derived operands.
+* Enumerated constants:                  Enumerated constants.
+* Enumerations:                          Enumerated constants.
+* Expressions:                           Expressions.
+* Fields, instruction:                   Instruction fields.
+* Fields, non-contiguous:                Instruction fields.
+* insn-lsb0?:                            define-arch.
+* Instructions:                          Instructions.
+* Instructions, macro:                   Macro-instructions.
+* liw-insns:                             define-isa.
+* Macro-expressions:                     Macro-expressions.
+* Macro-instructions:                    Macro-instructions.
+* Miscellaneous notes:                   Miscellaneous notes.
+* Modes:                                 Modes.
+* Number generation:                     Number generation.
+* Opcodes support:                       Opcodes.
+* Operands, anyof:                       Derived operands.
+* Operands, derived:                     Derived operands.
+* Operands, instruction <1>:             Derived operands.
+* Operands, instruction:                 Instruction operands.
+* parallel-insns:                        define-isa.
+* pmacros:                               Preprocessor macros.
+* Porting:                               Porting.
+* Preprocessor macros:                   Preprocessor macros.
+* Register Transfer Language:            RTL.
+* RTL:                                   RTL.
+* Semantics:                             Instructions.
+* Simulation support:                    Simulation.
+* Timing:                                Instructions.
+* version:                               Top.
+* Writing an application:                Writing an application.
+
+

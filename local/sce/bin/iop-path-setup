@@ -1,0 +1,148 @@
+#! /bin/sh -f
+# $Id: iop-path-setup.sh,v 1.7 2000/06/28 04:41:15 tei Exp $
+#
+# iop-path-setup.sh --  IOP compiler path search and setup
+#
+# Copyright (C) 1999 Sony Computer Entertainment Inc., All Rights Reserved.
+#
+
+case "$1" in
+ elf|ELF|Elf) OBJTYPE=ELF;;
+ coff|COFF|Coff|ecoff|ECOFF|Ecoff) OBJTYPE=COFF;;
+ *) OBJTYPE=ELF;;
+esac
+
+CHECKPATH=".:/usr/local/bin/:/usr/local/iop/bin/:/usr/local/sce/iop/bin/:/usr/local/sce/iop/gcc/bin/:/usr/local/sce/bin/:/g/tools/bin/"
+
+if [ "$OBJTYPE" = "ELF" ]; then
+    #for elf compiler
+    CHECKEXEGNU="iop-elf-:mipsel-scei-elfl-:iop-"
+else
+    #for ecoff compiler
+    CHECKEXEGNU="iop-coff-:mipsel-scei-ecoffl-"
+fi
+
+local_which() {
+    wCMD=$1
+    wOLDIFS=$IFS
+    IFS=":"
+    for wdir in $PATH
+    do
+        wdir=`echo ${wdir} | sed 's,/$,,'`
+	if [ -x ${wdir}/${wCMD} ]; then
+            IFS=$wOLDIFS
+            echo "ok"
+	    exit 0
+        fi
+    done
+    IFS=$wOLDIFS
+    echo "ng"
+    exit 0
+}
+
+search_gcc() {
+    OLDIFS=$IFS
+    IFS=":"
+    for dir in $CHECKPATH
+    do
+        if [ "y$dir" = "y." ]; then
+           for cmd in $CHECKEXEGNU
+           do
+	       echo "  check ${cmd}gcc" 1>&2
+               if [ `local_which ${cmd}gcc` = "ok" ]; then
+	           echo "  found ${cmd}gcc" 1>&2
+                   echo $cmd
+		   IFS=$OLDIFS
+                   exit 0
+               fi
+	   done
+        else
+           for cmd in $CHECKEXEGNU
+           do
+               echo "  check ${dir}${cmd}gcc" 1>&2
+	       if [ -x $dir${cmd}gcc ]; then
+                   echo "  found ${dir}${cmd}gcc" 1>&2
+	           echo ${dir}${cmd}
+		   IFS=$OLDIFS
+                   exit 0
+               fi
+           done
+        fi
+    done
+    IFS=$OLDIFS
+    exit 1
+}
+
+search_sce_tool() {
+    cmd=$1
+
+    OLDIFS=$IFS
+    IFS=":"
+    for dir in $CHECKPATH
+    do
+        if [ "x${dir}" = "x." ]; then
+	    echo "  check ${cmd}" 1>&2
+            if [ `local_which ${cmd}` = "ok" ]; then
+		echo "  found ${cmd}" 1>&2
+	        echo ${dir}
+		IFS=$OLDIFS
+                exit 0
+            fi
+        else
+		echo "  check ${dir}${cmd}" 1>&2
+	    if [ -x ${dir}${cmd} ]; then
+		echo "  found ${dir}${cmd}" 1>&2
+	        echo ${dir}
+		IFS=$OLDIFS
+                exit 0
+           fi
+        fi
+    done
+    IFS=$OLDIFS
+    echo "  not found command \`${cmd}'" 1>&2
+    exit 1
+}
+
+result=`search_gcc`
+if [ $? != 0 ]; then
+   exit 1
+fi
+
+GNUDIR=`dirname $result`
+CMDBASE=`basename $result`
+if [ "k$GNUDIR" = "k." ]; then
+    GNUDIR=
+else
+    GNUDIR=$GNUDIR/
+fi
+SCEDIR=`search_sce_tool iopfixup`
+if [ $? != 0 ]; then
+   exit 1
+fi
+if [ "d$SCEDIR" = "d." ]; then
+    SCEDIR=
+fi
+
+INSTDIR=`${GNUDIR}${CMDBASE}gcc --print-search-dirs | grep install: | sed -e 's/^install:[ ]*//'`
+echo "AR      = ${GNUDIR}${CMDBASE}ar"
+echo "AS      = ${GNUDIR}${CMDBASE}as"
+echo "CC      = ${GNUDIR}${CMDBASE}gcc"
+echo "GCC     = ${GNUDIR}${CMDBASE}gcc"
+echo "LD      = ${GNUDIR}${CMDBASE}ld"
+echo "NM      = ${GNUDIR}${CMDBASE}nm"
+echo "SIZE    = ${GNUDIR}${CMDBASE}size"
+echo "STRIP   = ${GNUDIR}${CMDBASE}strip"
+echo "RANLIB  = ${GNUDIR}${CMDBASE}ranlib"
+echo "OBJCOPY = ${GNUDIR}${CMDBASE}objcopy"
+echo "OBJDUMP = ${GNUDIR}${CMDBASE}objdump"
+
+echo "IFIXUP  = ${SCEDIR}iopfixup"
+echo "ILBGEN  = ${SCEDIR}ioplibgen"
+echo "ILBLD   = ${SCEDIR}ioplibld"
+echo "ILBDUMP = ${SCEDIR}ioplibdump"
+if [ "$OBJTYPE" = "ELF" ]; then
+    echo "BIN2OBJ = ${SCEDIR}bin2elf"
+else
+    echo "BIN2OBJ = ${SCEDIR}bin2ecoff"
+fi
+echo "GCCINSTDIR = ${INSTDIR}"

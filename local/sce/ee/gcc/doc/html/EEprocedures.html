@@ -1,0 +1,325 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE> Emotion Engine Tools User's Guide</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="ECOS" WIDTH="100%" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR>
+<TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">
+Emotion Engine Tools User's Guide</P>
+</TH></TR>
+<TR><TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEcontents.html">
+contents</A>
+</P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEIntro.html">
+previous&nbsp;page</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEreference.html">
+next&nbsp;page</A></P>
+</TD>
+</TR></TABLE>
+<HR ALIGN="center">
+</DIV>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+</TD>
+</TR>
+</TABLE>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-521212"></A><A NAME="30101"></A>Procedures<DIV>
+<IMG SRC="botclear.gif">
+</DIV>
+</H1>
+<P CLASS="BodyAfterHead">
+<A NAME="pgfId-474719"></A>This section demonstrates the main utilities. Follow the sequence to verify the correct installation and operation of the utilities. For more information, refer to the standard GNUPro documentation.</P>
+<P CLASS="Body">
+<A NAME="pgfId-476161"></A>It is important to note that the GNUPro Toolkit is <A NAME="marker-476160"></A>case-sensitive, so you must enter all commands and options exactly as indicated in this document.</P>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-474927"></A>Create Source Code</H1>
+<P CLASS="Body">
+<A NAME="pgfId-474930"></A>There are four sample programs provided to help you verify installation. These samples are located in Appendix A of this User's Guide. See <A HREF="appendA.html#16489" CLASS="XRef">Sample Code</A>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-475016"></A>The sample source files are:</P>
+<UL>
+<LI>
+<A NAME="pgfId-513875"></A><KBD CLASS="Code">
+sky_main.c</KBD>
+</LI>
+<LI>
+<A NAME="pgfId-513876"></A><KBD CLASS="Code">
+sky_test.dvpasm</KBD>
+</LI>
+<LI>
+<A NAME="pgfId-513877"></A><KBD CLASS="Code">
+sky_test.vuasm</KBD>
+</LI>
+<LI>
+<A NAME="pgfId-513878"></A><KBD CLASS="Code">
+sky_refresh.s</KBD>
+</LI>
+</UL>
+<P CLASS="Body">
+<A NAME="pgfId-513883"></A>The instructions in this section provide the commands needed to compile, assemble and link the program.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-475106"></A><A NAME="marker-513888"></A>Compile, Assemble and <A NAME="marker-513889"></A>Link Sample Code</H2>
+<P CLASS="Body">
+<A NAME="pgfId-475107"></A>Throughout these examples, screen samples are shown with a gray background. Code input is shown in plain monofont. Code output is shown in bold monofont. All samples are displayed in UNIX format. The UNIX command prompt is shown as <KBD CLASS="CodeOutput">
+%</KBD>
+. To <A NAME="marker-474900"></A>compile, assemble and link this example, enter the following command:</P>
+<P CLASS="CodeScreen"><A NAME="pgfId-513898"></A>   <KBD CLASS="CodeOutput">%</KBD>
+ ee-gcc -g -c sky_main.c -o sky_main.o<br>
+   <KBD CLASS="CodeOutput">%</KBD>
+ ee-dvp-as sky_test.dvpasm -o sky_test.o<br>
+   <KBD CLASS="CodeOutput">%</KBD>
+ ee-dvp-as sky_refresh.s -o sky_refresh.o<br>
+   <KBD CLASS="CodeOutput">%</KBD>
+ ee-gcc -g -Tsky.ld sky_main.o &#92;
+     sky_test.o sky_refresh.o -o sky_main.exe</P>
+<P CLASS="Body">
+<A NAME="pgfId-476033"></A><KBD CLASS="CodeOutput">
+</KBD>
+You must specify a linker script (for example, <KBD CLASS="Code">
+sky.ld</KBD>). The <KBD CLASS="Code">
+-T</KBD>
+ option specifies the linker script. The syntax requires that there be no space between the <KBD CLASS="Code">
+-T </KBD>
+and the linker script name.</P>
+<P CLASS="Body">
+<A NAME="pgfId-513910"></A>The option <KBD CLASS="Code">
+-g </KBD>
+generates debugging information and the option <KBD CLASS="Code">
+-o </KBD>
+specifies the name of the executable to be produced. Other useful options include, <KBD CLASS="Code">
+-O </KBD>
+for standard optimization, and <KBD CLASS="Code">
+-O2 </KBD>
+for extensive optimization. When no optimization option is specified, GCC will perform no optimizations on the code. Refer to &quot;GNU CC Command Options&quot; in <EM CLASS="Emphasis">
+Using GNU CC</EM>
+ in <STRONG CLASS="BoldEmphasis">
+GNUPro Compiler Tools</STRONG>
+ for a complete list of available options.</P>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-514093"></A>Assembler Listing from Sample Code</H1>
+<P CLASS="Body">
+<A NAME="pgfId-514094"></A>If you want to see how the compiler implements certain language constructs, such as function calls, or if you want to learn more about assembly language, you can produce an assembly listing of a source module.</P>
+<P CLASS="Body">
+<A NAME="pgfId-514096"></A>Use the following command to produce an <A NAME="marker-514095"></A>assembler listing:</P>
+<P CLASS="CodeScreen"><A NAME="pgfId-514100"></A><KBD CLASS="CodeOutput">   %</KBD>
+ <KBD CLASS="Code">ee</KBD>
+-gcc -c -g -O2 -Wa,-alh sky_main.c</P>
+<P CLASS="Body">
+<A NAME="pgfId-514101"></A>The compiler option <KBD CLASS="Code">
+-c </KBD>
+compiles without linking. The compiler option <KBD CLASS="Code">
+-g </KBD>
+gives the assembler the necessary debugging information. The <KBD CLASS="Code">
+-O2 </KBD>
+option produces more fully optimized code. The option <KBD CLASS="Code">
+-Wa </KBD>
+tells the compiler to pass along the comma-separated list of options that follow it to the assembler. The assembler option <KBD CLASS="Code">
+-alh </KBD>
+requests a listing with high-level language and assembler language interspersed. </P>
+<P CLASS="Body">
+<A NAME="pgfId-483344"></A>Here is a partial excerpt of the output: </P>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521216"></A><KBD CLASS="CodeOutput">
+103:sky_main.c      **** </KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521218"></A><KBD CLASS="CodeOutput">
+104:sky_main.c      **** int main() </KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521220"></A><KBD CLASS="CodeOutput">
+105:sky_main.c      **** {</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521222"></A><KBD CLASS="CodeOutput">
+341                .stabn 68,0,105,$LM35</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521224"></A><KBD CLASS="CodeOutput">
+342                .stabs &quot;sky_main.c&quot;,132,0,0,$Ltext0</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521226"></A><KBD CLASS="CodeOutput">
+343                .ent   main</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521228"></A><KBD CLASS="CodeOutput">
+344                 main:</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521230"></A><KBD CLASS="CodeOutput">
+345                .frame  $fp,32,$31	</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521232"></A><KBD CLASS="CodeOutput">
+346                .mask  0xc0000000,-16</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521234"></A><KBD CLASS="CodeOutput">
+347                .fmask0x00000000,0</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521236"></A><KBD CLASS="CodeOutput">
+348 020c E0FFBD27   subu  $sp,$sp,32</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521238"></A><KBD CLASS="CodeOutput">
+349 0210 1000BF7F   sq $31,16($sp)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521240"></A><KBD CLASS="CodeOutput">
+350 0214 0000BE7F   sq $fp,0($sp)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521242"></A><KBD CLASS="CodeOutput">
+351 0218 2DF0A003   move  $fp,$sp</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521244"></A><KBD CLASS="CodeOutput">
+352 021c 0000000C   jal __main</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521246"></A><KBD CLASS="CodeOutput">
+352      00000000   </KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521248"></A><KBD CLASS="CodeOutput">
+353                 $LM36:</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521250"></A><KBD CLASS="CodeOutput">
+106:sky_main.c      ****   enable_cop2();</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521252"></A><KBD CLASS="CodeOutput">
+354                .stabn 68,0,106,$LM36</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521254"></A><KBD CLASS="CodeOutput">
+355 0224 3500000C   jal enable_cop2</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-521256"></A><KBD CLASS="CodeOutput">
+355      00000000 </KBD>
+</P>
+</TD>
+</TR>
+</TABLE>
+<HR ALIGN="center">
+<TABLE CLASS="ECOS" WIDTH="100%" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">Emotion Engine Tools User's Guide</P>
+</TH></TR>
+<TR><TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEcontents.html">
+contents</A></P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEIntro.html">
+previous&nbsp;page</A></P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEreference.html">
+next&nbsp;page</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

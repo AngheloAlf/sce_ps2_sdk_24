@@ -1,0 +1,1893 @@
+[SCE CONFIDENTIAL DOCUMENT]
+"PlayStation 2" Programmer Tool Runtime Library Release 2.5
+                Copyright (C) 2002 Sony Computer Entertainment Inc.
+                                                   All Rights Reserved
+	   						     Mar. 2002
+
+                        Library Changes, New Additions and Precautions
+========================================================================
+This document contains library and module changes and new additions 
+as follows:
+
+- Precautions
+- New additions since Release 2.4
+- Library and module changes since Release 2.4.3
+- Library and module changes from Release 2.4 to Release 2.4.3
+
+========================================================================
+Precautions
+========================================================================
+< CD(DVD)-ROM Library/Module >
+- As of this release, the function, which supports Dual Layer DVD disc 
+  has been added.
+  (*)
+  If you wish to use this function in your titles, please contact SCEI 
+  for further details.
+
+< GS Basic Library >
+- As of this release, the process which supports DTV mode function has 
+  been added.
+  (*)
+  If you wish to use this function in your titles, please contact SCEI 
+  for further details.
+
+< Network Configuration GUI Library >
+- Libraries such as header file, related to the network configuration 
+  GUI library are not contained in this release. They will be released 
+  as a separate package after the version 2.5 is released.
+
+< libnet Libraries >
+- As of theis release, libnet sample programs are released as libraries. 
+  Configuration of the libraries and source files is as follows:
+
+  Libraries:			        Source files:
+  ee/lib/libnet.a			ee/src/lib/libnet
+  iop/modules/libnet.irx		iop/src/modules/libnet
+
+< EE Kernel >
+[Change of eekernel.h ]
+- The argument type of the member, entry in ThreadParam structure has 
+  been changed according to the reference document, which has the 
+  correct indication.
+
+  Note:
+  Due to this change, there may be a case that you require modifying 
+  the type of the function pointer to be substituted in the entry.
+
+[ app.cmd ]
+- The failure that cannot link in C++ language has been fixed. 
+
+  Note:
+  With the former compiler, Tool Chain EE 2.9-ee-991111-01, note that 
+  the app.cm file cannot be linked.
+
+  To prevent this, change the commands as follows:
+
+  KEEP (*EXCLUDE_FILE (*crtend.o) .ctors)) --> KEEP (*(.ctors))
+  KEEP (*EXCLUDE_FILE (*crtend.o) .dtors)) --> KEEP (*(.dtors))
+ 
+< IOP Kernel >
+- Note that CpuDisableIntr() and CpuEnableIntr() functions released in
+  intrman.h up to and including Release 2.4.3 are old functions, 
+  therefore, they cannot be used hereafter. 
+  
+  New functions equivalent to the above are CpuSuspendIntr() and 
+  CpuResumeIntr(), respectively. Be sure to replace them accordingly.
+
+  Due to the change of intrman.h, an error occurs in case the deleted 
+  functions mentioned above are used in the applications. 
+  In such a case, we recommend you include introld.h provided as a 
+  tentative measure. Error does not occur in the existing program, 
+  which has already been compiled.
+ 
+  However, the introld.h will be deleted before the next release is
+  introduced, for being a tentative version. Be reminded to use 
+  the new functions.
+  
+< CSL MIDI Sequencer (modmidi) >
+- "Marking function" that calls callback function by using NRPN in the 
+  sequence data (SQ) has been added. Along with this change, new 
+  members; markCallBack and  markCallBackPrivateData have been added to 
+  sceMidiEnv structure. Note that all the files refer to modmidi.h must 
+  be re-compiled.
+
+- Make sure to use the flash t10000-rel250.bin for developing the
+  programs with the use of libraries in the Release 2.5. Also, use 
+  ioprp250.img to replace the IOP default modules.
+  For the details of the module replacement, refer to SIF system 
+  (sif.pdf) or [Tech Notes] on the Developer Support Web site.
+
+< Notes on the use of Release 2.5 flash >
+  The following message appears when terminating the program. However, 
+  this does not cause any problem.
+ 
+  "# TLB spad=0 kernel=1:12 default=13:36 extended=37:47"
+
+- Since the use of an986.irx in titles is prohibited (See [Tech Notes] 
+  on the Developer Support Web site as of Nov. 22, 2000 for details)
+  an986.irx is not included under sce/iop/modules in the release
+  package. The an986.irx can be downloaded from the Developer Support
+  Web site.
+
+- To use USB modem drivers, we recommend you obtain the driver provided 
+  by the Tools & Middleware licensees by downloading from the Developer
+  Support Web site.
+
+- In some cases, it may take minutes for the USB Ethernet adapter
+  to be recognized after replacing with a different adaptor.
+  If the adapter do not work properly, and it is not due to a hardware
+  problem, please contact SCE. 
+
+========================================================================
+New Additions since Release 2.4
+========================================================================
+<Release 2.5>
+- A resident library, scrtchpd.irx which provides API to use scratchpad 
+  RAM on IOP has been added. Also, scrtchpd.h and the following 
+  functions have been added.
+
+	AllocScratchPad()	Retrieves scratchpad RAM	
+	FreeScratchPad()	Returns scratchpad RAM
+
+- Common network configuration interface library, netcnfif.a and 
+  netcnfif.irx IOP module have been added. 
+
+  The source of the above library has been released at the following 
+  locations. 
+
+  ee/src/lib/netcnfif
+  iop/src/module/netcnfif
+
+<Release 2.4.2>
+- HTTP library (libhttp.a)  library have been added.
+
+- Network wrapper API (netglue_insck.a) for inet has been added.
+
+<Release 2.4.1>
+- Basic Graphics Library (libgp) has been added.
+
+========================================================================
+Changes since Release 2.4.3
+========================================================================
+Overall Libraries in EE 
+------------------------------------------------------------------------
+- printf() included in the library has been changed to scePrintf().
+
+------------------------------------------------------------------------
+dsnet related issues
+------------------------------------------------------------------------
+- The version name of the dsnet has been changed to dsreset 
+  (Version 1.7.0).
+  There is no need to standardize the version with rpm package as of 
+  this version.
+
+- For executing dsreset without arguments, the process which recognizes 
+  dsreset 0 0 has been changed so that the parameter kept within dsnetm 
+  can be used.
+
+- The default behavior of mlist command of dsidb has been changed so 
+  that only the module list on the memory can be displayed.
+
+- With ds[ei]cons, a function which can handle both of ETTYP and ITTYP 
+  has been added.
+
+- As pft, the following functions can be called for host0: and host1:.
+  remove(), mkdir(), rmdir(), dopen(), dclose() ,dread() ,getstat(),
+  chstat(), rename(), chdir() ,lseek64(), devctl(), symlink(), readlink()
+  
+  And the functions for the above can be called from EE.
+
+  Restrictions:
+  - sceChStat and chstat support only the change of SCE_CST_MODE.
+  - If a function on EE, which correspond to chdir is called, an error
+    will be returned.
+  - File access with 2GB or over is not supported.
+
+- For case when the option value, help_lang is not set, a modification 
+  made so that the environment variable of the host machine , LANG can 
+  be referred. If the LANG is set in Japanese, then the indication 
+  also will be in Japanese. However for other cases, the indication 
+  will be in English. 
+
+- In executing help reset, an explanation on dsnet boot parameter has 
+  been added.
+
+- The following command has been added.
+ 
+  luntil 		Executes up to the specified line of 
+			the current source including $PC
+
+------------------------------------------------------------------------
+Flash/Replacement Module
+------------------------------------------------------------------------
+< fileio.irx >
+- With sifdev.h, const declaration has been added to the third argument
+  (void *arg) for sceDevctl() and sceIoctl2() functions.
+
+------------------------------------------------------------------------
+IOP Programming Tool
+------------------------------------------------------------------------
+<Utility of ioplibld >
+- The error indication of the double definition error when reading ilb 
+  file has been changed.
+
+< Utility of iopfixup >
+- The process has been added to determine the following case as an error.
+  Due to the coding that specified an align explicitly, an invalid align 
+  that exceeds 16 exists in a section in the input object file.
+
+------------------------------------------------------------------------
+EE Kernel
+------------------------------------------------------------------------
+- The calling conditions for scePrintf()  has been changed as follows:
+  Calling conditions:
+  Can be called from a thread.
+  Multithread safe (interrupt disabled, independent from permission state)   
+
+< Change of eekernel.h >
+- The argument type of the member, entry in ThreadParam structure has 
+  been changed according to the reference document, which has the 
+  correct indication.
+
+  Note:
+  Due to this change, there may be a case that you require modifying 
+  the type of the function pointer to be substituted in the entry.
+
+< Change of eestruct.h >
+- The type in SCE_GIF_SET_TAG has been modified.
+
+< Change of sifdev.h >
+- The following functions, which retrieve memory pool in IOP, have been 
+  added.
+
+  sceSifQueryMemSize()			Returns memory size in IOP
+  sceSifQueryMaxFreeMemSize()		Returns the maximum size of 
+					memory which can be allocated in 
+					IOP
+  sceSifQueryTotalFreeMemSize()		Returns total size of memory 
+					which can be allocated in IOP 
+  sceSifQueryBlockTopAddress()		Queries memory block in IOP 
+  sceSifQueryBlockSize()		Queries memory block size in IOP 
+
+< Change of eeregs.h >
+- Incorrect values of the macro, GIF_STAT_FQC_M have been amended as 
+  follows: 
+
+  Incorrect:  	#define GIF_STAT_FQC_M        	(0x01<<24)
+  Correct:	#define GIF_STAT_FQC_M        	(0x1F<<24)
+
+- Incorrect values of the macro, GIF_STAT_APATH_M have been amended as 
+  follows:   
+
+  Incorrect: 	#define GIF_STAT_APATH_M  	(0x01<<10)
+  Correct:  	#define GIF_STAT_APATH_M  	(0x03<<10)
+
+< crt0.s >
+  A change has been made to initialize GPR and FPR registers. 
+
+< app.cmd >
+- The failure that cannot link in C++ language has been fixed. 
+
+  Note:
+  With the former compiler, Tool Chain EE 2.9-ee-991111-01, note that 
+  the app.cm file cannot be linked.
+  To prevent this, change the commands as follows:
+
+  KEEP (*EXCLUDE_FILE (*crtend.o) .ctors)) --> KEEP (*(.ctors))
+  KEEP (*EXCLUDE_FILE (*crtend.o) .dtors)) --> KEEP (*(.dtors))
+
+------------------------------------------------------------------------
+CD(DVD)-ROM Library/Module
+------------------------------------------------------------------------
+- A function which supports Dual Layer DVD disc has been added.
+  Functions and devctl command have been added as follows:
+  
+  Functions:
+  sceCdReadDvdDualInfo()	Reads Dual Layer DVD information
+  sceCdLayerSearchFile()	
+
+  devctl command:
+  CDIOC_READDVDDUALINFO		Reads Dual Layer DVD information
+
+  The following changes have been made to standard I/O function device 
+  identifiers:
+
+  "cdrom0:" can specify Layer0, and
+  "cdrom1:" can specify Layer1
+  
+  Note: If you wish to use this function in your titles, please contact 
+ 	SCE for further details.
+
+- The tray was opened while sceCdSearchFIle() was being executed, 
+  which resulted in a successful process despite the fact that the 
+  error has occurred. However, this problem has been fixed.
+
+- The following devctl command has been added.
+
+  CDIOC_INIT		Initializes CD(DVD)-ROM subsystem
+
+------------------------------------------------------------------------
+Debug Support Library for Development
+------------------------------------------------------------------------
+- Source of the library has been released at the following location.
+  ee/src/lib/dev
+
+------------------------------------------------------------------------
+DMA Library
+------------------------------------------------------------------------
+- Source of the library has been released at the following location.
+  ee/src/lib/dma
+
+<Change of libdma.h >
+- Unnecessary function, sceDmaDebug() has been deleted. 
+
+
+------------------------------------------------------------------------
+Packet Library
+------------------------------------------------------------------------
+- Source of the library has been released at the following location.
+  ee/src/lib/pkt
+
+- With sceVif0PkOpenUpkCode()/sceVif1PkOpenUpkCode(), calculation of 
+  the packet size was not correct. This problem has been fixed. 
+
+------------------------------------------------------------------------
+Memory Card Library/Module
+------------------------------------------------------------------------
+
+- When executing sceMcGetDir() with a negative value specified to the 
+  argument maxent, the number of entries of files could be obtained in 
+  normal cases. However, only when this is executed with the 
+  PocketStation, the function does not return the value. This problem 
+  has been fixed.
+  
+------------------------------------------------------------------------
+GS Basic Library
+------------------------------------------------------------------------
+- Source of the library has been released at the following location. 
+  ee/src/lib/graph
+
+- A process that supports DTV mode function has been added.
+
+  Note: If you wish to use this function in your titles, please contact 
+ 	SCE for further details.
+
+< Change of libgraph.h >
+- Along with the support for DTV mode function, the following macro has 
+  been added.
+
+  SCE_GS_DTV480P
+
+------------------------------------------------------------------------
+High Level Graphics Library
+------------------------------------------------------------------------
+- With sceHiGsMemAlloc(), if it frees the first memory table allocated 
+  initially, it allocates the last memory table and the following tables 
+  even if there is space in the beginning part of the next memory table. 
+  This problem has been fixed.
+
+- With sceHiDMAInit(), the error check process for DMA buffer overflow 
+  has been added.
+
+  With sceHiGsDisplayMode(), SCE_HIGS_NTSCIH and SCE_HIGS_PALIH 
+  (interlace field mode) have been added to sceHiGsDisp_t to be 
+  specified in mode. 
+
+- The following function has been added.
+  sceHiDMAMake_ExecMicroAddr()		Execute micro-code with address 
+					specification
+
+------------------------------------------------------------------------
+High Level Graphics Plugin Library
+------------------------------------------------------------------------
+- sceHiPlugHrchy() has been speeded up. 
+
+- With sceHiPlugShape(), the error check process for DMA buffer 
+  overflow has been added.
+
+- With sceHiPlugTim2() and sceHiPlugTim2*(), the error check process 
+  has been added 
+
+- With sceHiPlugLightMap(), texture matrix generation failure has been 
+  fixed. 
+
+- With sceHiPlugClip(), a plugin function, which performs object 
+  clipping by matrix has been added.  
+
+- The following functions and structures have been added. 
+
+  Functions:
+  sceHiPlugClip()		Clip plugin
+  sceHiPlugClipGetHead()	Gets CLIP header
+  sceHiPlugClipGetData()	Gets CLIP data
+
+  Structures:
+  sceHiPlugClipHead_t		Clip header structure
+  sceHiPlugClipData_t		Clip data structure
+
+
+-----------------------------------------------------------------------
+Basic Graphics Library (libgp)
+-----------------------------------------------------------------------
+- With the drawing packet type, SCE_GP_PRIM_R, SCE_GP_PRIM_P, register 
+  sequences that have the following subtypes have been changed.
+
+  SCE_GP_LINE_F
+  SCE_GP_LINE_FTU
+  SCE_GP_TRI_F
+  SCE_GP_TRI_FTU
+  SCE_GP_SPRITE_F
+  SCE_GP_SPRITE_FTU
+
+- The following functions have been added to 32 bit Z drawing packets. 
+
+  sceGpSetZ32()		Sets XYZF2/XYZ2 registers used by the drawing 
+			packet
+  sceGpSetDefaultZ32()	Sets the default values of the registers used 
+  			by the drawing packet  
+  sceGpSetXyz32()	Sets XYZ value to XYZ2 (macro function)
+
+- A change has been made so that ADC bit can be zero out simultaneously 
+  when the following functions are used for P format drawing packet. 
+
+  sceGpSetXy, sceGpSetXyz, sceGpSetXyzf, sceGpSetXyz32
+
+-----------------------------------------------------------------------
+HTTP Library
+-----------------------------------------------------------------------
+- The following functions have been added: 
+  sceHTTPGetTransferedBytes()		Returns transferred byte number 
+					during transaction
+  sceHTTPGetSocketError() 		Gets socket error code
+  sceHTTPGetContentLength()		Gets content length at GET 
+					transaction
+  sceHTTPVerifyAuthInfo()		Verifies authentication info.
+ 
+- The field, content_length that represents the same length has been 
+  added to sceHTTPResponse structure.  
+
+- As an option at transaction, if sceHTTPO_HashCB and sceHTTPO_HashSize 
+  were added and call back function has already been set, this call back 
+  function can be called back each time the number of transferred byte 
+  during the transaction exceeds the byte previously set.
+
+- With libhttp, the type that represents time, sceHTTPTime_t has been 
+  defined as 64-bit integer.
+
+- With libhttp, the type that represents content length, sceHTTPSize_t 
+  has been defined as 64-bit signed integer.    
+
+- The type of length field in sceHTTPResponse structure has been changed 
+  to sceHTTPSize_t.
+
+- For case when transaction is executed with GET method, the function 
+  has been added, which enables to receive contents addressed to files, 
+  not to memory, with file descriptor and file write function.
+
+- For case when timeout or abort occurs in user setting during data 
+  transfer, the returned value has been fixed so that sceHTTPRequest() 
+  returns -1.
+
+- With sceHTTPSetOption(), using sceHTTPO_ClientName to set client name 
+  can cause invalid memory to be freed in the library. This problem has 
+  been fixed.
+
+- In the state with no connection with the server, an error does not 
+  occur even if sceHTTPRequest() function is called. This problem has 
+  been fixed.
+
+- A modification has been made: user can use client names as they are.
+  
+- A modification has been made to the library to prevent it from adding 
+  Accept-Encoding header automatically.
+
+- With sceHTTPSetOption(), a new mode has been added so that all of the 
+  names can be deleted from the request header list, when 
+  sceHTTPO_RequestHeaders option is specified and headers with the 
+  same names as in the additional header list are contained in the 
+  request header list.
+
+- sceHTTPO_DelRequestHeader option has been added and so 
+  sceHTTPSetOption() function can delete all the headers of the 
+  specified names from the request header list.
+
+- sceHTTPError_WRITEF has been added as an error number returned by 
+  sceHTTPGetClientError() in case when an error occurs with a file 
+  write function. 
+ 
+- With sceHTTPSetCookie(), domain names cannot be checked incorrectly. 
+  This problem has been fixed.
+
+- With sceHTTPParseCookie(), an incorrect value is set in expires field 
+  in the retrieved list element of sceHTTPCookie_t. This problem has 
+  been fixed.
+ 
+- With sceHTTPParseCookie(), a change has been made so that default 
+  values of domain and path names can be processed. Along with this 
+  change, the type of sceHTTPParseCookie() has been modified and 
+  another change has been made to the pointer to be able to specify 
+  HTTP client structure as the second argument.
+
+- With sceHTTPAddCookieList(), a change has been made; 
+  if sceHTTPCookie_t type elements with common variable, path, and 
+  domain names exist, the elements can be overwritten instead of 
+  adding new elements.
+
+- With sceHTTPSetCookie(), a change has been made; when Cookie header 
+  is created from the list of sceHTTPCookie_t type element, the list 
+  can be sorted by path names.
+
+- With sceHTTPSetCookie(), a change has been made so that the Cookie 
+  header which is not defined in RFC2109 with linefeed cannot be output. 
+  (this is to prevent a Cookie header not defined in RFC with linefeed 
+  from being recognized as an invalid format in a part of HTTP server) 
+
+- A part of response header cannot occasionally be retrieved. 
+  This problem has been fixed.
+
+< Change of netglue.h >
+- __sceNetGlueErrnoLoc() and __sceNetGlueHErrnoLoc() were declared 
+  outside of extern "C," however, a change has been made so that the
+  functions can declare internally.
+
+----------------------------------------------------------------------
+Multithreaded SIF Remote Procedure Call Libraries and Modules
+----------------------------------------------------------------------
+- buffersize, stacksize, and prio members have been added to 
+  sceSifMClientData structure.
+ 
+  Along with this change, the following macros have been added to 
+  libmrpc.h.
+
+   sceSifMGetBufferSize()
+   sceSifMGetStackSize()
+   sceSifMGetPriority()
+
+------------------------------------------------------------------------
+libnet Library
+------------------------------------------------------------------------
+- The following sample programs that had been released up to and 
+  including Release 2.4.3 have been released as libraries.
+
+  ee/sample/inet/libnet		-> ee/lib/libnet.a
+  iop/sample/inet/libnet	-> iop/modules/libnet.irx
+
+ Source for the libraries are contained at the following locations. 
+  
+  ee/src/lib/libnet
+  iop/src/module/libnet
+
+- To support the signed "Your Network Configuration file," 
+  load_set_conf_extra() has been added.
+
+ - Error codes for libnet library have been added.
+
+------------------------------------------------------------------------
+Network Socket Library 
+------------------------------------------------------------------------
+- A function that supports IP multicast has been added. 
+  The following functions and macros have been added. 
+
+   Function: 	sceInsockGetsockopt()		Gets socket option
+   Macro:	getsockopt()
+
+   Function:	sceInsockSetsockopt() 		Sets socket option
+   Macro:	setsockopt()
+
+- In accept(), the failure that sceInsockAbort() does not behave 
+  correctly has been fixed. 
+
+- The following structure has been added. 
+
+  sceInsockIpMreq_t		Structure for IP multicast setting
+
+------------------------------------------------------------------------
+Network Library / Module related issues
+------------------------------------------------------------------------
+  < Network related library overall >
+- A function that supports IP multicast has been added. 
+  IGMP implements Version 2.
+
+- Sending/receiving speed of packets has been increased.
+
+- With the following modules, the argument, thstack=<stack> which 
+  enables stack size to be adjusted at startup has been added.
+
+  inet.irx, inetctl.irx, ppp.irx, pppoe.irx, smap.irx
+
+< Protocols >
+< inet.irx >
+- With inet.h, const declaration has been added to the third argument, 
+  (name) of sceInetName2Address() function.
+  
+DHCP related issues:
+- The process which brings the interface "down" has been added for case
+  when IP address retrieval is failed after the lease of DHCP expired.
+
+- Queuing time until the first DHCP Discover message is sent has been 
+  changed from "0.1 to 1.0" to "0.6 to 1.5." Also, a 30-second interval 
+  of timeout has been changed to a 5-second interval before 30 seconds 
+  elapses. (This is to support the Hub that cannot send/receive 
+  immediately after Nego)
+
+TCP related issues:
+- The following changes have been made;
+
+  ARP request retry interval:  	    "1 to 9" seconds --> One second
+  No. of retry times:	 	    Two --> Four times
+  Timeout in case of no response:   Three minutes --> 24 seconds
+
+- With sceInetClose(), send/receive queue cannot be cleared when 
+  terminating with TimeWait. This problem has been fixed.
+ 
+- When the interface is "down," the connection with TimeWait cannot be 
+  freed correctly. This problem has been fixed.
+
+- With sceINETC_GET_INFO, the process which sets send buffer size to 
+  send_queue_length has been added.
+
+- With send/receive packets smaller than the maximum Segment Size, 
+  the process that reduces the used internal memory has been added.
+
+- A change has been made; Address Error and Bus Error do not 
+  occur in inet.irx even if sceInetClose() is executed for TCP 
+  connection in the wait state. 
+
+inet related issues:
+- With TCP and UDP, receive packet to the port No. 0 is processed 
+  incorrectly. This problem has been fixed.
+
+- Addition process to ARP cache has been reviewed and then, a change 
+  has been made so that cache entry can be updated by the ARP response 
+  requested on its own. (This is effective only in the environment 
+  that allows many broadcast packets to flow)
+
+- With all timer processes used for resending TCP, etc., the process 
+  speed can be decreased by a second at most. This problem has been 
+  fixed. 
+
+- The following control codes have been added to sceInetInterfaceControl(). 
+
+   sceInetCC_GetIP_RxPackets
+   sceInetCC_GetIP_TxPackets
+   sceInetCC_GetIP_RxDropped
+   sceInetCC_GetIP_TxDropped
+   sceInetCC_GetTCP_RxPackets
+   sceInetCC_GetTCP_TxPackets
+   sceInetCC_GetTCP_RxDropped
+   sceInetCC_GetTCP_TxDropped
+   sceInetCC_GetUDP_RxPackets
+   sceInetCC_GetUDP_TxPackets
+   sceInetCC_GetUDP_RxDropped
+   sceInetCC_GetUDP_TxDropped
+   sceInetCC_GetMemFreeCurrent
+   sceInetCC_GetMemFreeMinimum
+
+- With sceInetSend() and sceInetSendTo(), the process which handles it 
+  as an error with sceINETE_INSUFFICIENT_RESOURCES has been added for 
+  case when the free space is less than 1/8 of the whole size.  
+
+- With sceInetName2Address(), if the specified timeout is smaller 
+  than 0, which also uses the default value, the value gets multiplied 
+  to 1000-fold. This problem has been fixed.   
+
+- The function which refers and modifies buffer sizes of TCP, UDP, and 
+  RAW has been added. 
+
+  Setting example: ceInetControl(code=sceINETC_CODE_{SET,GET}_{SND,RCV}BUF)
+
+- Along with the addition of the function that supports IP multicast, 
+  the following structure and control codes for sceInetControl() have 
+  been added.
+
+  Structure:
+  sceInetIP_MREQ_t	Structure for setting IP multicast
+
+  Control codes:
+  sceINETC_CODE_SET_MULTICAST_IF
+  sceINETC_CODE_GET_MULTICAST_IF
+  sceINETC_CODE_SET_MULTICAST_TTL
+  sceINETC_CODE_GET_MULTICAST_TTL
+  sceINETC_CODE_SET_MULTICAST_LOOP
+  sceINETC_CODE_GET_MULTICAST_LOOP
+  sceINETC_CODE_ADD_MEMBERSHIP
+  sceINETC_CODE_DROP_MEMBERSHIP
+
+< ppp.irx >
+PPP related issues: 
+- Processes for the following key words added to the common network 
+  configuration library/module (netcnf) have been added.
+
+  lcp_max_configure
+  lcp_max_terminate
+  ipcp_max_configure,
+  ipcp_max_terminate
+  auth_timoeut
+  auth_max_failure
+
+- The function, which can retrieve a result code with 
+  scePPPCC_GetLastResultString when the line is connected, has been 
+  added.
+
+- A change has been made; when PAP and CHAP authentications have failed, 
+  "AUTH failed" can be set in the status string which is retrieved with 
+  scePPPCC_GetLastResultString and so, it would not be overwritten.
+
+< inetctl.irx >
+inetctl related issues:
+- The following events have been added to notify event handlers.
+
+  sceINETCTL_IEV_Up
+  sceINETCTL_IEV_Down
+  sceINETCTL_IEV_Retry
+
+- The following funcitons have been added.
+
+  sceInetCtlGetConfiguration()		Gets the current configuration 
+
+------------------------------------------------------------------------
+IOP Kernel
+------------------------------------------------------------------------
+- Execute defection count for respective thread has been added as a 
+  support function for thread programming. The following functions also 
+  have been added in order to refer from user programs.
+
+    GetThreadCurrentPriority()	Gets the current priority of self thread
+    GetThreadStackFreeSize()	Gets unused size of thread stack
+    ReferThreadRunStatus()	Refers to thread run status
+    GetSystemTimeLow()		Refers to lower part of system time
+    ReferSystemStatus()		Refers to system status
+    GetThreadmanIdList()	Gets ID list under thread manager
+
+- Drivers of the file system, which can be accessed with host0: and 
+  host1:, have been extended to the equivalent function of pfs driver 
+  and can support the following functions.
+
+  remove(), mkdir(), rmdir(), dopen(), dclose() ,dread() ,getstat(),
+  chstat(), rename(), chdir() ,lseek64(), devctl(), symlink(), readlink()
+
+< Change of intrman.h >
+- Note that CpuDisableIntr() and CpuEnableIntr() functions released in 
+  intrman.h up to and including Release 2.4.3 are old functions, 
+  therefore, they cannot be used hereafter. New functions equivalent 
+  to the above are CpuSuspendIntr() and CpuResumeIntr(), respectively. 
+  Be sure to replace them accordingly.
+
+  Note:
+  Due to the change of intrman.h, an error occurs in case the deleted 
+  functions are used in the applications. In such a case, we recommend 
+  you include introld.h provided as a tentative measure. Error does not 
+  occur in the existing program, which has already been compiled.
+ 
+  The introld.h will be deleted before the next release is introduced, 
+  for being a tentative version. Be reminded to use the new function.
+ 
+< Change of stdlib.h >
+- const declaration has been added to the first argument of strtol() 
+  and strtoul().
+
+< Change of modload.h >
+- The function which clears module memory when unloading modules has 
+  been added and also SetModuleFlags() function has been added to define 
+  clear for modules individually.
+ 
+< Change of thread.h >
+- TH_CLEAR_STACK has been added to the thread attribute (attr) specified
+  when CreateThread() is executed. When deleting the thread which has 
+  this attribute, the stack is cleared before freeing the stack area.
+
+------------------------------------------------------------------------
+Controller Library 2 (libpad2)
+------------------------------------------------------------------------
+< Change of libpad2.h >
+- extern in C++ language has been added to the prototype declaration 
+  of the function.
+
+------------------------------------------------------------------------
+Vibration Library
+------------------------------------------------------------------------
+< Change of libvib.h >
+- extern in C++ language has been added to the prototype declaration 
+  of the function.
+
+------------------------------------------------------------------------
+Controller Driver Module (ds2u.irx, ds2o.irx )
+------------------------------------------------------------------------
+- With DUALSHOCK 2 analog button data, the moment the buttons are 
+  pressed or released, the analog data occasionally does not get updated 
+  and so the old data is sent to the console as-is. A corrective function 
+  has been added for this problem.
+
+------------------------------------------------------------------------
+Serial Communication Module (sio2d.irx)
+------------------------------------------------------------------------
+- Controller switching process does not operate correctly. 
+  This problem has been fixed.
+
+------------------------------------------------------------------------
+Standard Kit Library / Sound System (libsk)
+------------------------------------------------------------------------
+- The following functions have been added 
+
+  sceSkSsExcludeVoice()		Standard Kit / Sound System Libraries
+				Sets SPU2 voice, which excludes from 
+     				(SKSS) environment
+  sceSkSsGetExcludedVoice()	Standard Kit / Sound System Libraries
+				Gets SPU2 voice, which excludes from 
+				(SKSS) environment				
+------------------------------------------------------------------------
+CSL Line-out Library (liblout)
+------------------------------------------------------------------------
+< Change of liblout.h >
+- extern in C++ language has been added to the prototype declaration 
+  of the function.
+
+------------------------------------------------------------------------
+CSL SoftwareSynthesizer (libssyn)
+------------------------------------------------------------------------
+< Change of libssyn.h >
+- extern in C++ language has been added to the prototype declaration 
+  of the function.
+
+-----------------------------------------------------------------------
+Low-Level Sound Library on IOP (libsdr)
+-----------------------------------------------------------------------
+- The following commands have been added: 
+
+  Commands			Functions called on IOP
+  --------------------------------------------------------
+  rSdStopTrans			sceSdStopTrans()
+  rSdSetEffectMode		sceSdSetEffectMode()
+  rSdSetEffectModeParams	sceSdSetEffectModeParams()
+  rSdCleanEffectWorkArea	sceSdCleanEffectWorkArea()
+
+- Codes that corresponde to rSdSetEffectMode and rSdSetEffectModeParams 
+  commands have been added. 
+
+- With rSdSetEffectAttr command, the return value is not returned 
+  correctly. This problem has been fixed.
+
+------------------------------------------------------------------------
+Low-Level Sound Library on IOP (libsd)
+------------------------------------------------------------------------
+- With transfer processing and SPU2 interrupt hander, the internal 
+  processes conflict each other, which causes incorrect settings. 
+  This problem has been fixed.
+
+- With sceSdSetEffectAttr(), a modification has been made so that 
+  transfer channel to be used can be specified when effect work area 
+  is removed.  
+
+- The following functions have been added 
+  
+  sceSdCleanEffectWorkArea()	Removes effect area asynchronously
+
+  sceSdSetEffectMode()		Effect mode setting, which enable to 
+  				specify that effect area can be removed 
+				asynchronously
+
+  sceSdSetEffectModeParams()	Sets effect mode parameters
+
+------------------------------------------------------------------------
+Low-Level Sound Driver Module (sdrdrv)
+------------------------------------------------------------------------
+- When rSdGetEffectAttr is specified, a part of the memory area is 
+  overwritten. This problem has been fixed.  
+
+- Functions that process the following command macros have been added:
+
+  Commands		  	Called functions
+  --------------------------------------------------------
+  rSdStopTrans			sceSdStopTrans()
+  rSdSetEffectMode		sceSdSetEffectMode()
+  rSdSetEffectModeParams	sceSdSetEffectModeParams()
+  rSdCleanEffectWorkArea	sceSdCleanEffectWorkArea()
+
+------------------------------------------------------------------------
+CSL MIDI Sequencer (modmidi)
+------------------------------------------------------------------------
+- "Marking function" that calls callback function by using NRPN in the 
+  sequence data (SQ) has been added. Along with this change, new 
+  members; markCallBack and markCallBackPrivateData have been added 
+  to sceMidiEnv structure. Note that all the files refer to modmidi.h 
+  must be re-compiled.
+ 
+- The following functions have been added: 
+
+  sceMidi_Unload() 	Invalidates the specified sequence data in the 
+  			specified input port
+
+------------------------------------------------------------------------
+CSL Hardware Synthesizer (modhsyn)
+------------------------------------------------------------------------
+- The following functions have been added: 
+
+  sceHSyn_Unload()		Invalidates specified banks
+  sceHSyn_GetOutputMode()	Gets output mode
+
+------------------------------------------------------------------------
+CSL MIDI Stream Generation (modmsin)
+------------------------------------------------------------------------
+- The following macro has been added:
+ 
+  sceMSIn_BankSelect()   Writes bank select message in input port
+
+------------------------------------------------------------------------
+USB Driver Library/Module
+------------------------------------------------------------------------
+- Due to IOP hardware, USBD module is reloaded after unloading USBD 
+  module, then OpenHCI operates incorrectly. This problem has been 
+  fixed.
+
+-----------------------------------------------------------------------
+Hard Disk Related Library/Module
+------------------------------------------------------------------------
+< Change of hdd.irx >
+- Once failed in open process and dread is performed, then a part of 
+  partition information cannot be retrieved. This problem has been 
+  fixed.
+
+- A modification has been made; SMART information can be saved in device1 
+  hard disk before turning the power off.
+
+- With ioctl.h, the following devctl command has been added:
+
+  HDIOC_IDLEIMM 	Transfer to idle mode
+
+< Change of pfs.irx >
+- With lseek() and sceLseek(), a modificaiton has been made; 
+  if a transfer that exceeds 32 bit unsigned integer, -EFBIG is 
+  returned.
+
+- A modification has been made so that logs can be updated only when 
+  metadata is updated.
+
+< Change of atad.irx >
+- A modification has been made; retry is done when CRC error occurs.
+
+- A modification has been made; all commands can be performed in LBA 
+  mode.
+
+- A modification has been made to queuing time until the status is 
+  verified since device is switched.
+
+- Multi DMA mode function has been deleted.
+
+- Connection check at booting has been enhanced.
+
+- The fault of timing setting for accessing PIO has been fixed.
+
+- A modification has been made so that hard disk LED can be controlled 
+  correctly.
+
+< Change of dev9.irx >
+- Interrupt handling cannot be performed correctly. This problem has 
+  been fixed.
+
+- Register setting when powering off has been changed.
+
+------------------------------------------------------------------------
+Common Network Configuration Library/Module (netcnf)
+------------------------------------------------------------------------
+- Module unloading is supported.
+
+- The process that created excessive semaphore has been deleted.
+
+- Semaphore is not released in case of non-resident. 
+  This problem has been fixed.
+
+- With sceNetCnfInterface_t, the following key words have been added:
+
+	lcp_max_configure
+	lcp_max_terminate
+	ipcp_max_configure
+	ipcp_max_terminate
+	auth_timeout
+	auth_max_failure
+
+- If error occurs frequently, file descriptor gets consumed. 
+  This problem has been fixed.
+
+- If the following functions are executed in the state that setting 
+  management files do not exist, 0 (normal termination) is returned. 
+  This problem has been fixed.
+
+ sceNETCNF_OPEN_ERROR(-3) is returned in normal state. 
+
+  sceNetCnfEditEntry()
+  sceNetCnfDeleteEntry()
+  sceNetCnfSetLatestEntry()
+
+- A modification has been made; when sceNetCnfDeleteEntry() is executed,
+  remaining area can be verified.
+
+- The following interconversion functions between chat script and AT 
+  command have been added.
+
+  sceNetCnfConvA2S()		Converts AT command into chat script
+  sceNetCnfConvS2A()		Converts chat script into AT command
+
+----------------------------------------------------------------------
+HDD Driver for Ethernet (smap module)
+----------------------------------------------------------------------
+- Even if the interface is initially requested to be "up" and then 
+  requested to go "down" before the state enters "running," the 
+  interface remains "up."  This problem has been fixed.
+
+- The interval of monitoring the connection of Ethernet cable has been 
+  changed from "10 seconds with no send/receive transmission" to 
+  "every three seconds" however, if receive data is sent continuously
+  in order to increase the process speed, then link off will not be 
+  detected.
+
+- The process that abandons all submission packets while Ethernet 
+  cable is not connected has been added.
+
+- Exclusion process used only when link off has been reviewed and the 
+  speed has been improved.
+
+- The function, which enables to obtain the result of Nego of Hub 
+  with sceInetNDCC_GET_NEGO_STATUS, has been added.
+
+- In case submission is continued in a short period time, unsent 
+  data remains. This problem has been fixed. (Reproduced only at 10Mps)
+
+- The following control codes have been added to 
+  sceInetInterfaceControl():
+
+   sceInetNDCC_GET_RX_BROADCAST_PACKETS
+   sceInetNDCC_GET_TX_BROADCAST_PACKETS
+   sceInetNDCC_GET_RX_BROADCAST_BYTES
+   sceInetNDCC_GET_TX_BROADCAST_BYTES
+   sceInetNDCC_GET_RX_MULTICAST_PACKETS
+   sceInetNDCC_GET_TX_MULTICAST_PACKETS
+   sceInetNDCC_GET_RX_MULTICAST_BYTES
+   sceInetNDCC_GET_TX_MULTICAST_BYTES
+
+
+========================================================================
+Changes up to Release 2.4.3
+========================================================================
+Flash/Replacement Module
+------------------------------------------------------------------------
+Release 2.4.1
+- In interrupt handler, it has been changed to display the context of 
+  thread that is in the state of RUN. 
+  
+  Restrictions on EE thread expansion of DBGP
+  "When breaking program with interrupt hander, the current value is 
+  returned if register that is in the state of RUN is received." 
+  is not necessary any more.
+
+- A feature that enables switching RGB/YCrCb by using EE boot parameter 
+  of dsedb/dsidb has been added.
+
+- A feature that enables switching the memory size of EE, 128MB/32MB by 
+  using EE boot parameter of dsedb/dsidb has been added.
+
+  Please refer to the document, "DSNET Overview" for details.
+
+Release 2.4.2
+- An error handling (retry processing) has been added to sceSifSendCmd() 
+  function.
+
+- When executing standard input-output in EE, an error handling failure 
+  occurred in allocating memory and generating thread in IOP. 
+  This problem has been fixed.
+
+Release 2.4.3
+- A change has been made to return NULL when reaching the end of the 
+  file and attempting to read it with fdgets()/gets().
+
+- A change has been made to enable stack check features of the threads on 
+  the EE kernel to be switched using the EE boot parameter of dsedb/dsidb.
+  Default is disabled.
+
+  For details, please refer to the "DSNET Overview" document in this 
+  package. 
+
+[Simple Thread Monitor]
+- With the thlist command, when specifying an incorrect thread ID, 
+  the system went down. This problem has been fixed.
+  In addition, a change has been made to enable specification with 
+  the thread number displayed in the list, instead of the thread ID.
+
+- The following options have been added to the semlist and evlist 
+  commands.
+  -w option	: Displays the thread list connected with the waiting queue
+  -v option 	: Specifies detailed display of the thread list
+
+-----------------------------------------------------------------------
+EE Kernel
+-----------------------------------------------------------------------
+Release 2.4.1
+- The process that used the function printf() has been changed to a process
+  which uses scePrintf().
+
+- In the event that stack is short when thread is switched or is created, 
+  it has been changed to issue the following notice and then stop the 
+  operation.
+  "#tid 3 stack overflow: stack 0x00111d80 > stackpointer 0x00111c0c"
+
+- In the event that the value of stack pointer is not a multiple of 16 bytes 
+  when thread is switched, it has been changed to issue the following notice 
+  and then stop the operation.
+
+   "#tid 1 stackpointer 0x07ff69a8 must be devided by 1"
+
+- There was a failure that TLB exception was issued when a start interrupt 
+  of V blank occurred with the combination of sceGsSyncV() and 
+  sceGsSyncVCallBack(). This problem has been fixed.
+
+<Change of eestruct.h>
+- Definitions of the structure of GIF packet mode register has been added.
+
+Release 2.4.3
+< Changes made to eeregs.h >
+- The type of IPU_in_FIFO and IPU_out_FIFO has been changed from 
+  (volatile u_long*) to (volatile u_long128*).
+
+------------------------------------------------------------------------
+Memory Card Library/Module
+------------------------------------------------------------------------
+Release 2.4.3
+- When executing sceMcGetDir() with a negative value specified to the 
+  argument maxent, the number of entries of files could be obtained in 
+  normal cases. When executing to the PocketStation, however, this 
+  function did not return. This problem has been fixed.  
+
+- When accessing a Memory Card (PS2) from an IOP program with mcserv.irx 
+  loaded, file access functions such as open did not return. This problem 
+  has been fixed.
+ 
+- The following function has been added.
+
+  sceMcEnd()	: Function for end process of memory card environment
+
+< Change made to libmc.h >
+- The const modifier has been added to the second argument (void*) in 
+  the prototype declaration of sceMcWrite().
+
+- The following structure and members have been added.
+
+  sceMcStDateTime		: Structure of date/time 
+  sceMcTblGetDir._Create	: Member for entry creation date/time
+  sceMcTblGetDir._Modify	: Member for entry modification date/time
+
+- The macros listed below, that had been defined in the libmc.h file up to 
+  this release, have been deleted due to the addition of the above 
+  structure and members.
+
+  As for user applications that have been using these old macros, define 
+  -D__SCE_MC_OLD_DEFINE__ as a compile option to be able to use them in 
+  conventional way. 
+
+  However, since these macros will be excluded from the next release, make 
+  sure to replace them with the above structure and members by then.
+
+  #define CSec	_Create.Sec
+  #define CMin	_Create.Min
+  #define CHour	_Create.Hour
+  #define CDay	_Create.Day
+  #define CMonth _Create.Month
+  #define CYear	_Create.Year
+  #define MSec	_Modify.Sec
+  #define MMin	_Modify.Min
+  #define MHour	_Modify.Hour
+  #define MDay	_Modify.Day
+  #define MMonth _Modify.Month
+  #define MYear _Modify.Year
+
+-----------------------------------------------------------------------
+Basic Graphics Library (libgp)
+-----------------------------------------------------------------------
+Release 2.4.3
+- The following functions have been added.
+ sceGpKickChain2()		: Transfers chain (Does not check whether 
+				  a DMA channel is available or not) 
+ sceGpSetEndLevel()		: Sets transfer end level of chain
+ sceGpSetTexEnvByDrawEnv()	: Sets texture environment configuration 
+				  packet
+ sceGpAddChain2()		: Registers sub chain after the specified 
+				  position 
+ sceGpAddPacket2()		: Registers packet after the specified 
+				  position
+ sceGpCallChain2()		: Registers call of sub chain after the 
+				  specified position
+ sceGpGetTail()			: Gets tail pointer of packet 
+ sceGpGetTailChain()		: Gets tail pointer of the specified level 
+				  of chain
+ sceGpSearchTailToRemove()	: Gets tail pointer for removal 
+ sceGpRemoveNextPacket()	: Removes packet from chain
+ sceGpRemoveNextChain() 	: Removes chain from main chain
+ sceGpSetPacketMode()   	: Changes transfer mode of packet
+ sceGpSyncPacket()/sceGpSyncPacketI()	
+				: Flushes cache within packet area
+ sceGpKickPacket()		: Transfers a single packet
+ sceGpKickPacket2()		: Transfers a single packet
+
+-----------------------------------------------------------------------
+CD (DVD)-ROM Library
+-----------------------------------------------------------------------
+Release 2.4.2
+- A modification has been made; if sceCdStSeekF() function is called 
+  when the tray is open, an error will be returned.
+
+-----------------------------------------------------------------------
+dev9 Module
+-----------------------------------------------------------------------
+Release 2.4.2
+- DMA interrupt setting was changed incorrectly. 
+  This problem has been fixed.
+
+-----------------------------------------------------------------------
+atad Module
+-----------------------------------------------------------------------
+Release 2.4.2
+- There was a failure in recovery processing when timeout occurs. 
+  This problem has been fixed.
+
+-----------------------------------------------------------------------
+SIF RPC that Supports Multhithread
+-----------------------------------------------------------------------
+Release 2.4.1
+- In case that sceSifMBindRpc() and sceSifMBindRpcParam() stopped in error,
+  it has been changed to delete semaphore created internally before 
+  the operation stops .
+
+- The program may hang when using sceSifMUnBindRpc() since the member of 
+  sceSifMServeEntry structure has not been initialized. 
+
+Release 2.4.3
+- Calling conditions of functions inside the modules were incorrect.  
+  This error has been fixed. 
+
+-----------------------------------------------------------------------
+High Level Graphics Library
+-----------------------------------------------------------------------
+Release 2.4.2
+- With sceHiDMAMake_LoadGSLump(), internal buffer was not allocated 
+  correctly. This problem has been fixed.
+
+- From this release, the ID conflict problem has been resolved by 
+  implementing ID management feature to DMA service.
+
+Release 2.4.3
+- sceHiDMARegist() has been sped up.
+  ID of the return value has been changed from number to address.
+
+- sceHiMemInit() and sceHiDMAInit() hung up when exceeding the heap area.
+  This problem has been fixed.
+  
+- sceHiGsStdCtx display set to "double" was kept unchanged when changing
+  the setting to "single". This problem has been fixed.
+
+- With sceHiGsServiceSetRegistFunc(), a change has been made to return 
+  the setting to the initial value when specifying the argument NULL. 
+
+- The following function has been added.
+  sceHiGsCtxSetHalfOffset() 	: Sets drawing offset data in interlace 
+				  mode
+
+< Change made to libhig.h >
+- *_PROCESS defined as an old macro up to this release has been deleted 
+  from libhig.h.
+  Make sure to replace *_PROCESS with SCE_HIG_*_PROCESS.
+
+-----------------------------------------------------------------------
+High Level Graphics Plugin Library
+-----------------------------------------------------------------------
+Release 2.4.1
+- With sceHiPlugHrchy(), there was a failure that conversion matrix was 
+  incorrect when pivot data existed. This problem has been fixed.
+
+Release 2.4.2
+- sceHiPlugShapeMasterChainSetting() function which changes Shape packet 
+  string setting has been added.
+
+- With Tim2 plugin, some texflush instructions were not inserted in the 
+  packet. This problem has been fixed.
+
+- With Tim2 plugin, an extra code that created a packet, which might 
+  cause Gif to stop, has been deleted.
+
+<Change of libhip.h>
+- SCE_HIP_SHAPE_MASTER_CHAIN_IN_STATIC_O flag constant has been added.
+
+Release 2.4.3
+- The following functions and structures have been added.
+
+ sceHiPlugShapeHead_t			: SHAPE Header Union 
+ sceHiPlugShapeMatrix_t			: BASEMATRIX Data Structure 1
+ sceHiPlugHrchyHead_t			: HRCHY Header Structure 
+ sceHiPlugHrchyData_t			: HRCHY Data Structure 
+ sceHiPlugTex2DHead_t			: TEX2D Header Structure 
+ sceHiPlugTex2DData_t			: TEX2D Data Structure 
+ sceHiPlugMicroLight_t			: MICRO Light Structure   
+ sceHiPlugMicroData_t			: MICRO Data Structure  
+ sceHiPlugShadowBoxData_t		: SHADOWBOX Data Structure  
+ sceHiPlugClutBumpHead_t		: CLUTBUMP Header Structure 
+ sceHiPlugClutBumpData_t		: CLUTBUMP Data Structure  
+ sceHiPlugTim2Head_t			: TIM2 Header Structure  
+ sceHiPlugTim2Data_t			: TIM2 Data Structure
+ sceHiPlugAnimeHead_t			: ANIME Header Union
+ sceHiPlugAnimeData_t			: ANIME Data Structure
+ sceHiPlugShareHead_t			: SHARE Header Union
+ sceHiPlugShareData_t			: SHARE Data Union
+ sceHiPlugShapeGetHead()		: Gets SHAPE Header 
+ sceHiPlugShapeGetDataHead()		: Gets Shape Data Header 
+ sceHiPlugShapeGetMaterialHead()	: Gets Material Data Header 
+ sceHiPlugShapeGetGeometryHead()	: Gets Geometry Data Header 
+ sceHiPlugShapeGetMaterialGiftag()	: Gets Material Giftag 
+ sceHiPlugShapeGetMaterialAttrib()	: Gets Material Attribute 
+ sceHiPlugShapeGetGeometryVertex()	: Gets Geometry Vertex Data  
+ sceHiPlugShapeGetGeometryNormal()	: Gets Geometry Normal Data  
+ sceHiPlugShapeGetGeometryST()		: Gets Geometry Texture Coordinates
+ sceHiPlugShapeGetGeometryColor()	: Gets Geometry Vertex Color 
+ sceHiPlugShapeGetMatrix()		: Gets Matrix Data 
+ sceHiPlugHrchyGetHead()		: Gets HRCHY Header 
+ sceHiPlugHrchyGetData()		: Gets HRCHY Data 
+ sceHiPlugHrchyGetPivot()		: Gets PIVOT Data 
+ sceHiPlugTex2DGetHead()		: Gets TEX2D Header 
+ sceHiPlugTex2DGetData()		: Gets TEX2D Data 
+ sceHiPlugTex2DGetTexel()		: Gets TEX2D Texel Data
+ sceHiPlugTex2DGetClut()		: Gets TEX2D CLUT Data
+ sceHiPlugTex2DGetEnv()			: Gets TEX2D Texture Environment 
+					  Data
+ sceHiPlugMicroGetData()		: Gets MICRO Data
+ sceHiPlugShadowBoxGetData()		: Gets SHADOWBOX Data
+ sceHiPlugClutBumpGetHead()		: Gets CLUTBUMP Header
+ sceHiPlugClutBumpGetData()		: Gets CLUTBUMP Data
+ sceHiPlugClutBumpGetNormal()		: Gets CLUTBUMP Normal Table 
+ sceHiPlugTim2GetHead()			: Gets TIM2 Header 
+ sceHiPlugTim2GetData()			: Gets TIM2 Data
+ sceHiPlugAnimeGetHead()		: Gets ANIME Header
+ sceHiPlugAnimeGetData()		: Gets ANIME Data
+ sceHiPlugAnimeGetKeyHead()		: Gets ANIME Key Header
+ sceHiPlugAnimeGetFrame()		: Gets ANIME Frame Data
+ sceHiPlugAnimeGetValue()		: Gets ANIME Value Data
+ sceHiPlugShareGetHead()		: Gets SHARE Header
+ sceHiPlugShareGetData()		: Gets SHARE Data
+ sceHiPlugShareGetShare()		: Gets Share Data
+ sceHiPlugShareGetIndex()		: Gets SHARE Index Data
+ sceHiPlugShareGetSrc()			: Gets SHARE Vertex/Normal Source 
+					  Data
+ sceHiPlugShareGetDst()			: Gets SHARE Vertex/Normal 
+					  Destination Data
+
+- The declaration of sceVu0FMATRIX in the Hermite() function in 
+  ee/src/lib/hip/anime.c file has been changed to the static declaration. 
+
+-----------------------------------------------------------------------
+HTTP Library
+-----------------------------------------------------------------------
+Release 2.4.3
+- The descriptions of the following members have been added to 
+  the structure sceHTTPClient_t.
+
+  t_notify_opt	   : User-defined argument to the callback function 
+		     for end-of-transaction notification
+  t_busy	   : Transaction busy flag
+  chunkf_opt	   : User-defined argument to the callback function 
+		     for chunk receive notification
+
+- Values of void * type have been newly added as arguments.  They are 
+  specified for a callback function when registering the transaction end 
+  callback and chunk receive callback functions with the sceHTTPSetOption() 
+  function. 
+
+  sceHTTPO_EndOfTransactionCB
+  sceHTTPO_ReceiveChunkCB
+
+- A change has been made to receive a value of void * type as well, 
+  which has been specified at the time of registration, when obtaining 
+  the transaction end callback and chunk receive callback functions 
+  with the sceHTTPGetOption() function. 
+
+  sceHTTPO_EndOfTransactionCB
+  sceHTTPO_ReceiveChunkCB
+
+- The sceHTTPGetClientError() function returned an incorrect error code. 
+  This problem has been fixed. 
+
+- When attempting to process a new transaction with the sceHTTPRequest() 
+  function while a transaction is in process in non-blocking mode, it 
+  resulted in an abnormal operation, not an error. This problem has been 
+  fixed. 
+
+- Operation sometimes became abnormal at the end of a transaction in 
+  non-blocking mode. This problem has been fixed.
+
+- Error handling has been enhanced in MIME processing.
+  A failure in obtaining memory did not cause an error. This problem has 
+  been fixed.
+
+- A change has been made to automatically free resources allocated for 
+  the Response structure by an old transaction, if there are some, before 
+  executing a transaction with the sceHTTPRequest() function. 
+
+- The following function has been added.
+
+  sceHTTPTerminate()		: Terminates library
+
+-----------------------------------------------------------------------
+Controller Library/Module
+-----------------------------------------------------------------------
+Release 2.4.1
+- With scePadSetActDirect(), even if the submission of actuator 
+  information was failed, a return value is returned to notify normal
+  termination. This problem has been fixed.
+
+-----------------------------------------------------------------------
+MPEG Library
+-----------------------------------------------------------------------
+Release 2.4.1
+- With the argument of sceMpegCreate(), a bus error occurred in case the 
+  transferred work area had not been initialized. 
+  This problem has been fixed.
+
+Release 2.4.2
+- A buffer for writing DMAref tag often did not become 64byte alignment. 
+  This problem has been fixed.
+
+-----------------------------------------------------------------------
+Standard Kit Library/Sound System
+-----------------------------------------------------------------------
+Release 2.4.2
+- The following functions have been added.
+  sceSkSsVoiceSetPitchBend()   Adds pitch bend effect to a voice 
+			       generating
+  sceSkSsVoiceSetExpression()  Specifies expression to a single tone
+
+-----------------------------------------------------------------------
+Network Configuration GUI Library (ntgui_j.a/ntgui_e.a/ntguicnf.irx)
+-----------------------------------------------------------------------
+Release 2.4.1
+- Since a standard function, malloc/free was being used in the library, 
+  it has been changed to use a callback function defined in the 
+  application.
+
+Release 2.4.2
+- At the connection test, even if the telephone number [1-3] was set, 
+  the number could not be redialed. 
+  This problem has been fixed. 
+
+- During the test, the number of the connection destination now can be 
+  displayed.
+
+- A modification has been made; an appropriate message is output when 
+  IOERROR was detected.
+
+Release 2.4.3
+- The error message for detecting an error on available memory space in the  
+  Hard Disk Drive has been changed as follows:
+
+ "Insufficient free space. Check again when you secure free space of 
+  244 Kbytes or more."
+
+- A change has been made to return the selected combination name, hardware 
+  setting name, network service provider setting name, and the device in 
+  which settings are stored.
+  (The sceNetGuiCnf_Arg structure in ntguicnf.h has been changed.)
+
+- SCE_NETGUICNF_FLAG_USE_USB_KB in the flag member of the sceNetGuiCnf_Arg 
+  structure was not referred in the library. This problem has been fixed.
+
+-----------------------------------------------------------------------
+VU0 Library
+-----------------------------------------------------------------------
+Release 2.4.1
+- With vu0 macro instruction of sceVu0Normalize(), there was a failure 
+  in the value of Q register when an exception (including interrupt) 
+  occurred. This problem has been fixed.
+
+-----------------------------------------------------------------------
+DBC Library/Module
+-----------------------------------------------------------------------
+Release 2.4.1
+- In case the controller driver on IOP detected the connection of the 
+  controller prior to scePad2CreateSocket() execution, the connecting 
+  information of the controller was not notified to libpad2 correctly. 
+  This problem has been fixed.
+
+-----------------------------------------------------------------------
+Network Socket Library
+-----------------------------------------------------------------------
+Release 2.4.1
+- The following functions have been added.
+     sceInsockSetRecvTimeout()		Timeout setting for reception
+     sceInsockSetSendTimeout()		Timeout setting for submission
+     sceInsockAbort()			Abort process
+     sceInsockTerminate()		Release memory area 
+
+- With accept() for connection that received SYN, an error 
+  occurred with EISCONN(=127). This problem has been fixed.
+
+- In the event that socket() is called from a different thread while the 
+  accept() is being called, there was a failure that the socket ID in the 
+  accept() had been recognized as "Unused socket ID."  This problem has 
+  been fixed.
+
+<Change of libinsck.h>
+- A declaration that informs prevention of multiplex reading has been added.
+
+Release 2.4.2
+- Due to the change of libnet, the library has been rebuilt.
+
+<Change of libinsck/arpa/inet.h>
+- #define inet_lnaof  sceInsockInetLnatof has been changed to  
+  #define inet_lnaof  sceInsockInetLnaof.
+
+Release 2.4.3
+< Changes made to libinsck.h >
+- The description of extern for C++ has been added to the prototype 
+  declaration of functions.
+
+- When automatic allocation mode was specified to the local port with 0 
+  bound via listen(), a port number different from the one allocated to 
+  the first port was allocated to the local port for the second socket 
+  and after. This problem has been fixed. 
+
+- getsockname() could not be executed for a listen socket. This problem 
+  has been fixed.
+ 
+- getsockname() and getpeername() did not return 0 under normal operating 
+  conditions but accessed an undefined address. This problem has been 
+  fixed.
+
+- With socket.h, the following symbols have been added to the argument how 
+  for shutdown(). 
+
+  #define SHUT_RD    0
+  #define SHUT_WR    1
+  #define SHUT_RDWR  2
+
+- The size judgment value for *paddrlen in accept(), recvfrom(), 
+  getsockname(), and getpeername() was too small. This problem has been 
+  fixed.
+  (To be more specific, this error occurs to a value lower than 
+  sizeof(struct sockaddr_in). In the above case, the value specified for 
+  the size judgment was 4 bytes.)
+
+- Since memory for a new socket replenished by accept() was not fully 
+  initialized, an unauthorized memory access was sometimes made. This 
+  problem has been fixed. 
+
+- There was a possibility that a socket ID for a new socket replenished by 
+  accept() might be used in duplicate elsewhere. This problem has been 
+  fixed.
+
+------------------------------------------------------------------------
+USB Driver Library/Module
+------------------------------------------------------------------------
+Release 2.4.3
+- The following structures have been added.
+  sceUsbdIsochronousPswLen	  : Packet structure for multiple 
+				    Isochronous transfer
+  sceUsbdMultiIsochronousRequest  : Structure for multiple Isochronous 
+				    transfer request
+
+- The following function has been added.
+  sceUsbdMultiIsochronousTransfer()  : Takes the huge load off the CPU 
+				       during Isochronous transfer
+
+-----------------------------------------------------------------------
+USB Keyboard Library/Module
+-----------------------------------------------------------------------
+Release 2.4.3
+- If USB keyboards are connected and disconnected repeatedly when the 
+  number of USB ports is more than the maximum number of connectable 
+  devices set by the user, the system sometimes hung up. This problem 
+  has been fixed.
+
+-----------------------------------------------------------------------
+Network Library/Module
+-----------------------------------------------------------------------
+Release 2.4.1
+- With TCP, there was a failure that a function had not been returned even 
+  after the timeout specified with sceInetClose() elapsed when the link was 
+  "down."  This problem has been fixed.
+
+Release 2.4.2
+- With TCP in resend processing, the receipt of small delayed ACK 
+  caused an abnormal increase of the number of resending times. 
+  This problem has been fixed. 
+
+- A log feature of send/receive packets to PPP has been added.
+
+- Resend was performed even when ACK has been received normally. 
+  This problem has been fixed. 
+
+- A modification has been made for a process NOT to discard RST packets, 
+  which has invalid SEQ numbers.
+
+- A process that verifies other NETDEV interface version numbers except 
+  for version No. 2 as error and that rejects such connections has 
+  been added.
+
+-----------------------------------------------------------------------
+Network Configuration Library/Module
+-----------------------------------------------------------------------
+Release 2.4.1
+- When the interface of PPP becomes "up" immediately after the interface 
+  became "down," sceINETE_BUSY error occurred, and therefore re-connection 
+  could not been made. This problem has been fixed.
+
+Release 2.4.2
+- Redial process could not be performed normally. 
+  This problem has been fixed. 
+
+- sceInetCtlGetState() function for getting the transition state of the 
+  interface has been added. This function enables us to verify if the 
+  redial is in process in PPP.
+
+-----------------------------------------------------------------------
+Common Network Configuration Library/Module
+-----------------------------------------------------------------------
+Relase2.4.2
+- With sceNetCnfAddEntry() and sceNetCnfEditEntry(), a load argument 
+  option (-no_check_capacity) of netcnf.irx, which invalidates capacity 
+  check has been added.
+  
+- sceNetCnfCheckCapacity() function for checking the remaining capacity 
+  has been added.
+
+Release 2.4.3
+- When specifying Hard Disk Drive with available memory space checking 
+  features including sceNetCnfCheckCapacity(), a change has been made 
+  to return sceNETCNF_CAPACITY_ERROR if less than 244 Kbytes are
+  available.
+
+- If a Memory Card (PS2) was removed while executing sceNetCnfDeleteEntry(), 
+  only files disappeared but the entries remained occasionally. This 
+  problem has been fixed.
+
+-----------------------------------------------------------------------
+PPP Module
+-----------------------------------------------------------------------
+Release 2.4.1
+- With PPP interface, modem driver that has time restriction was applied 
+  in case that the interface becomes "up" immediately after it became 
+  "down."
+
+- In case the modem driver changed to abnormal state while the submission 
+  is being processed, the state may enter infinite loop. This problem has 
+  been fixed.
+
+Release 2.4.2
+- Redial process could not be performed correctly. 
+  This problem has been fixed. 
+
+- When a submission is performed with excess load for the line transfer 
+  rate, the packets piled up. This problem has been fixed. 
+
+-----------------------------------------------------------------------
+Network Driver Module (smap.irx)
+-----------------------------------------------------------------------
+Release 2.4.1
+- With link status process, the status value that is obtained with 
+  sceInetNDCC_GET_LINK_STATUS may not be correct. 
+  This problem has been fixed.
+
+- A process, sceInetNDCC_SET_MULTICAST_LIST has been added.
+
+-----------------------------------------------------------------------
+ifconfig.irx Utility
+-----------------------------------------------------------------------
+Release 2.4.1
+- A process for testing sceInetNDCC_SET_MULTICAST_LIST has been added.
+
+Release 2.4.2
+- For case when the interface of the modem driver is serial interface 
+  for PPP connection, the following processes for representing the 
+  number of errors have been added.
+     overrun-error
+     parity-error
+     framing-error
+     buffer-overrun
+
+-----------------------------------------------------------------------
+USB Module Auto Loader Configuration File
+-----------------------------------------------------------------------
+Release 2.4.2
+- conf/usb/usbdrvho.cnf
+  A list of the following devices newly added in the an986.irx 
+  (Release 2.4.1) module has been added.
+  
+	Elecom		LD-USBL/TX
+	PLANEX		UE-200TX
+	Melco		LUA2-TX
+	Linksys		USB100TX B
+	D-Link		DU-E100 B1
+
+-----------------------------------------------------------------------
+Low Level Sound Library
+-----------------------------------------------------------------------
+Release 2.4.1
+- With sceSdBlockTrans(), after specifying SD_TRANS_MODE_READ, there was 
+  a failure that transfer could not be stopped with SD_TRANS_MODE_STOP. 
+  This problem has been fixed.
+
+Release 2.4.2
+- printf() contained in the library has been deleted.
+
+- sceSdStopTrans() function that stops transfer process to SPU2 local 
+  memory has been added.
+
+- A modification has been made to the following functions to enable us 
+  to verify cause of errors from the return values when terminated with 
+  error.
+
+  sceSdBlockTrans(), sceSdClearEffectWorkArea(), sceSdInit(),
+  sceSdSetEffectAttr(), sceSdVoiceTrans(), and sceSdVoiceTransStatus(),
+
+- With sceSdProcBatch() and sceSdProcBatchEx() functions, if SD_WRITE_EE 
+  and SD_RETURN_EE were specified for the command, the data could not be 
+  transferred correctly. This problem has been fixed.
+
+- With sceSdBlockTrans() function, the following problems have been 
+  resolved:
+
+    * With a transfer channel in process of transferring, when an attempt 
+      had been made to perform a transfer start processing (regardless of 
+      WRITE/READ/WRITE_FROM) to the transferring channel by using 
+      sceSdBlockTrans(), a negative value was returned to notify that the 
+      channel was already in transferring process, which caused the 
+      transfer state to be irregular.
+  
+    * When SD_TRANS_MODE_STOP was specified, the transfer did not stop 
+      correctly.
+  
+    * When SD_TRANS_MODE_STOP was specified, the bit that represents a 
+      buffer in transferring process could not be set in the return value 
+      correctly.
+
+- With sceSdBlockTransStatus(), the bit that represents a buffer in 
+  transferring process could not be set in the return value correctly. 
+  This problem has been fixed.
+
+- With sceSdGetEffectAttr(), when each EVOL had been changed by using 
+  sceSdSetEffectAttr() and sceSdSetParam(), depth_L and depth_R were 
+  not returned correctly. This problem has been fixed.
+
+- With sceSdVoiceTransStatus(), even if SD_TRANS_STATUS_WAIT had been 
+  specified, multiple threads could not be waited. 
+  This problem has been fixed.
+
+- With sceSdBlockTrans() and sceSdVoiceTrans(), when SD_TRANS_MODE_READ
+  was specified, the data that had been read from SPU2 local memory 
+  could not be read correctly. 
+  This problem has been fixed.
+
+- A modification has been made; with sceSdVoiceTrans(), if SD_TRANS_BY_IO 
+  is specified for the transfer device, the transfer can be performed by 
+  the unit of 64 bytes.
+  When both of SD_TRANS_BY_DMA and SD_TRANS_BY_IO are specified, data can 
+  be transferred by the unit of 64 bytes (rounded up to 64-byte multiple).
+ 
+Release 2.4.3
+- If both CORE0 and CORE1 used an SPU2 interrupt, user's interrupt handler 
+  might not be called. This problem has been fixed.
+ 
+- sceSdInit() wrote data exceeding the reserved area in SPU2 local memory. 
+  This problem has been fixed. 
+
+-----------------------------------------------------------------------
+CSL SE Stream Generation (libsein/modsein)
+-----------------------------------------------------------------------
+Release 2.4.2
+- The following functions for generating "SE message: Note on status" 
+  have been added.
+   sceSEIn_MakeNoteOnZero()   Writes note on message in output port 
+			      buffer
+   sceSEIn_MakePitchOnZero()  Writes note on message (pitch specified) 
+			      in output port buffer
+
+<Change of cslse.h>
+- sceSEMsg_STATUS_NOTE0 which represents "SE message: Note on status"
+  has been added.
+
+Release 2.4.3
+- Libraries could not link. This problem has been fixed using an undefined 
+  function.
+
+-----------------------------------------------------------------------
+CSL MIDI Sequencer
+-----------------------------------------------------------------------
+Release 2.4.3
+< Change made to modmidi.h >
+- The constant macro sceMidi_MidiVolumeChange_AllMIDIChannel has been 
+  added to sceMidi_MidiVolumeChange() to specify all MIDI channels. 
+
+-----------------------------------------------------------------------
+i.LINK Driver Library
+-----------------------------------------------------------------------
+Release 2.4.3
+- ilink.irx module has been made unloadable. 
+
+-----------------------------------------------------------------------
+i.LINK Socket Library
+-----------------------------------------------------------------------
+Release 2.4.3
+- ilsock.irx module has been made unloadable. 
+
+-----------------------------------------------------------------------
+Device Control Library
+-----------------------------------------------------------------------
+Release 2.4.3
+< Change made to dbcman.irx >
+- With scePad2CreateSocket(), when a controller port was specified by the 
+  following macros, driver module could not properly control connection 
+  and disconnection of the controller. This problem has been fixed.
+
+  SCE_PAD2_PORT_1C
+  SCE_PAD2_PORT_2C
+  SCE_PAD2_PORT_USB
+
+-----------------------------------------------------------------------
+CSL Sound Effect Sequencer (modsesq)
+-----------------------------------------------------------------------
+Release 2.4.1
+- With sound effect sequence, there was a failure that SE sequence set 
+  volume and SE sequence set panpot specified by SQ files were not 
+  reflected correctly when the sound is played. This problem has been 
+  fixed.
+
+Release 2.4.2
+- "SE message: Note on status (0x9n)" in SQ data has been supported.
+
+-----------------------------------------------------------------------
+CSL Hardware Synthesizer (modhsyn)
+-----------------------------------------------------------------------
+Release 2.4.2
+- "SE message: Note on status (0x9n)" has been supported.
+
+------------------------------------------------------------------------
+Copyrights
+-----------------------------------------------------------------------
+PPP module uses MD4 and MD5 message-digest algorithms of RSA Data 
+Security, Inc.
+
+RSA Data Security, Inc., MD4 message-digest algorithm
+Copyright (C) 1990-2, RSA Data Security, Inc. All rights reserved.
+
+License to copy and use this software is granted provided that it
+is identified as the "RSA Data Security, Inc. MD4 Message-Digest
+Algorithm" in all material mentioning or referencing this software
+or this function.
+
+License is also granted to make and use derivative works provided
+that such works are identified as "derived from the RSA Data
+Security, Inc. MD4 Message-Digest Algorithm" in all material
+mentioning or referencing the derived work.
+
+RSA Data Security, Inc. makes no representations concerning either
+the merchantability of this software or the suitability of this
+software for any particular purpose. It is provided "as is"
+without express or implied warranty of any kind.
+
+These notices must be retained in any copies of any part of this
+documentation and/or software.
+
+
+RSA Data Security, Inc., MD5 message-digest algorithm
+Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991.
+All rights reserved.
+
+License to copy and use this software is granted provided that it
+is identified as the "RSA Data Security, Inc. MD5 Message-Digest
+Algorithm" in all material mentioning or referencing this software
+or this function.
+
+License is also granted to make and use derivative works provided
+that such works are identified as "derived from the RSA Data
+Security, Inc. MD5 Message-Digest Algorithm" in all material
+mentioning or referencing the derived work.
+
+RSA Data Security, Inc. makes no representations concerning either
+the merchantability of this software or the suitability of this
+software for any particular purpose. It is provided "as is"
+without express or implied warranty of any kind.
+
+These notices must be retained in any copies of any part of this
+documentation and/or software.

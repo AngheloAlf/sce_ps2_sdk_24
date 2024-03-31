@@ -1,0 +1,1467 @@
+This is Info file cgen.info, produced by Makeinfo version 1.68 from the
+input file ../../../src/cgen/doc/cgen.texi.
+
+START-INFO-DIR-ENTRY
+* Cgen: (cgen).                 The Cpu tools GENerator.
+END-INFO-DIR-ENTRY
+
+   Copyright (C) 2000 Red Hat, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the entire resulting derived work is distributed under the terms
+of a permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions.
+
+
+File: cgen.info,  Node: Instructions,  Next: Macro-instructions,  Prev: Derived operands,  Up: RTL
+
+Instructions
+============
+
+   Each instruction in the instruction set has an entry in the
+description file.  For complicated instruction sets this is a lot of
+typing.  However, macros can reduce a lot of that typing.  The real
+question is given the amount of information that must be expressed, how
+succinct can one express it and still be clean and usable?  I'm open to
+opinions on how to improve this, but such improvements must take
+everything CGEN wishes to be into account.  (*note: Of course no claim
+is made that the current design is the be-all and end-all or that there
+is one be-all and end-all.)
+
+   The syntax for defining an instruction is:
+
+     (define-insn
+       (name insn-name)
+       (comment "description")
+       (attrs attribute-list)
+       (syntax "assembler syntax")
+       (format (+ field-list))
+       (semantics (semantic-expression))
+       (timing timing-data)
+     )
+
+   Instructions specific to a particular cpu variant are denoted as
+such with the MACH attribute.
+
+   Possible additions for the future:
+
+   * a field to describe a final constraint for determining a match
+
+   * choosing the output from a set of choices
+
+attrs
+-----
+
+   A list of attributes, for which there are several predefined
+instruction attributes:
+
+`MACH'
+     A bitset attribute used to specify which machines have this
+     hardware element. Do not specify the MACH attribute if the value
+     is for all machines.
+
+     Usage: `(MACH mach1,mach2,...)'
+
+     There must be no spaces in "`mach1,mach2,...'".
+
+`UNCOND-CTI'
+     The instruction is an unconditional "control transfer instruction".
+
+     (*note: This attribute is derived from the semantic code. However
+     if the computed value is wrong (dunno if it ever will be) the
+     value can be overridden by explicitly mentioning it.)
+
+`COND-CTI'
+     The instruction is an conditional "control transfer instruction".
+
+     (*note: This attribute is derived from the semantic code. However
+     if the computed value is wrong (dunno if it ever will be) the
+     value can be overridden by explicitly mentioning it.)
+
+`SKIP-CTI'
+     The instruction can cause one or more insns to be skipped. This is
+     derived from the semantic code.
+
+`DELAY-SLOT'
+     The instruction has one or more delay slots. This is derived from
+     the semantic code.
+
+`RELAXABLE'
+     The instruction has one or more identical variants.  The assembler
+     tries this one first and then the relaxation phases switches to
+     larger ones as necessary.
+
+`RELAX'
+     The instruction is a non-minimal variant of a relaxable
+     instruction.  It is avoided by the assembler in the first pass.
+
+`ALIAS'
+     Internal attribute set for macro-instructions that are an alias
+     for one real insn.
+
+`NO-DIS'
+     For macro-instructions, don't use during disassembly.
+
+syntax
+------
+
+   This is a character string consisting of raw characters and operands.
+Fields are denoted by `$operand' or `${operand}'(1).  If a `$' is
+required in the syntax, it is specified with `\$'.  At most one
+white-space character may be present and it must be a blank separating
+the instruction mnemonic from the operands.  This doesn't restrict the
+user's assembler, this is just a description file restriction to
+separate the mnemonic from the operands(2).  The assembly language
+accepted by the generated assembler does not have to take exactly the
+same form as the syntax described in this field-additional whitespace
+may be present in the input file.
+
+   Operands can refer to registers, constants, and whatever else is
+necessary.
+
+   Instruction mnemonics can take operands.  For example, on the SPARC a
+branch instruction can take `,a' as an argument to indicate the
+instruction is being annulled (e.g. `bge$a $disp22').
+
+format
+------
+
+   This is a complete list of fields that specify the instruction.  At
+present it must be prefaced with `+' to allow for future additions.
+Reserved bits must also be specified, gaps are not allowed.  The
+ordering of the fields is not important.
+
+   Format elements can be any of:
+
+   * instruction field specifiers with a value (e.g. `(f-r1 14)')
+
+   * an instruction field enum, as in `OP1_4'
+
+   * an operand
+
+semantics
+---------
+
+   This field provides a mathematical description of what the
+instruction does.  Its syntax is GCC-RTL-like on purpose since GCC's
+RTL is well known by the intended audience.  However, it is not
+intended that it be precisely GCC-RTL.
+
+   Obviously there are some instructions that are difficult if not
+impossible to provide a description for (e.g. I/O instructions).  Rather
+than create a new semantic function for each quirky operation, escape
+hatches to C are provided to handle all such cases.  The `c-code',
+`c-call' and `c-raw-call' semantic functions provide an escape-hatch to
+invoke C code to perform the operation.  (*xref: Expressions)
+
+timing
+------
+
+   A list of entries for each function unit the instruction uses on
+each machine that supports the instruction.  The default function unit
+is the u-exec unit.
+
+   The syntax is:
+
+     (mach-name (unit name (unit-var-name1 insn-operand-name1)
+                           (unit-var-name2 insn-operand-name2)
+                           ...
+                           (cycles cycle-count))
+
+   unit-var-name/insn-operand-name mappings are optional.  They map
+unit inputs/outputs to semantic elements.
+
+   `cycles' overrides the `done' value (latency) of the function unit
+and is optional.
+
+Simplification macros
+---------------------
+
+   To simplify `.cpu' files, the `dni' macro has been created.  It
+takes a fixed set of positional arguments for the typical instruction
+field.  `dni' is short for `define-normal-insn'.
+
+   The syntax of `dni' is:
+
+   `(dni name comment attrs syntax format semantics timing)'
+
+   Example:
+
+     (dni addi "add 8 bit signed immediate"
+          ()
+          "addi $dr,$simm8"
+          (+ OP1_4 dr simm8)
+          (set dr (add dr simm8))
+          ()
+     )
+
+   ---------- Footnotes ----------
+
+   (1) Support for `${operand}' is work-in-progress.
+
+   (2) The restriction can be relaxed by saying the first blank is the
+one that separates the mnemonic from its operands.
+
+
+File: cgen.info,  Node: Macro-instructions,  Next: Modes,  Prev: Instructions,  Up: RTL
+
+Macro-instructions
+==================
+
+   Macro-instructions are for the assembler side of things and are not
+used by the simulator. The syntax for defining a macro-instruction is:
+
+     (define-macro-insn
+       (name macro-insn-name)
+       (comment "description")
+       (attrs attribute-list)
+       (syntax "assembler syntax")
+       (expansions expansion-spec)
+     )
+
+syntax
+------
+
+   Syntax of the macro-instruction. This has the same value as the
+`syntax' field in `define-insn'.
+
+expansions
+----------
+
+   An expression to emit code for the instruction.  This is intended to
+be general in nature, allowing tests to be done at runtime that choose
+the form of the expansion.  Currently the only supported form is:
+
+   `(emit insn arg1 arg2 ...)'
+
+   where `insn' is the name of an instruction defined with
+`define-insn' and *argn* is the set of operands to `insn''s syntax.
+Each argument is mapped in order to one operand in `insn''s syntax and
+may be any of:
+
+   * operand specified in `syntax'
+
+   * `(operand value)'
+
+   Example:
+
+     (dni st-minus "st-" ()
+          "st $src1,$src2"
+          (+ OP1_2 OP2_7 src1 src2)
+          (sequence ((WI new-src2))
+     	       (set new-src2 (sub src2 (const 4)))
+     	       (set (mem WI new-src2) src1)
+     	       (set src2 new-src2))
+          ()
+     )
+
+     (dnmi push "push" ()
+       "push $src1"
+       (emit st-minus src1 (src2 15)) ; "st %0,sp"
+     )
+
+   In this example, the `st-minus' instruction is a general
+store-and-decrement instruction and `push' is a specialized version of
+it that uses the stack pointer.
+
+
+File: cgen.info,  Node: Modes,  Next: Expressions,  Prev: Macro-instructions,  Up: RTL
+
+Modes
+=====
+
+   Modes provide a simple and succinct way of specifying data types.
+
+   (*note: Should more complex types will be needed (e.g. structs?
+unions?), these can be handled by extending the definition of a mode to
+encompass them.)
+
+   Modes are similar to their usage in GCC, but there are some
+differences:
+
+   * modes for boolean values (i.e. bits) are also supported as they are
+     useful
+
+   * integer modes exist in signed and unsigned versions
+
+   * constants have modes
+
+   Currently supported modes are:
+
+`VOID'
+     VOIDmode in GCC.
+
+`DFLT'
+     Indicate the default mode is wanted, the value of which depends on
+     context.  This is a pseudo-mode and never appears in generated
+     code.
+
+`BI'
+     Boolean zero/one
+
+`QI,HI,SI,DI'
+     Same as GCC.
+
+     QI is an 8 bit quantity ("quarter int").  HI is a 16 bit quantity
+     ("half int").  SI is a 32 bit quantity ("single int").  DI is a 64
+     bit quantity ("double int").
+
+     In cases where signedness matters, these modes are signed.
+
+`UQI,UHI,USI,UDI'
+     Unsigned versions of QI,HI,SI,DI.
+
+     These modes do not appear in semantic RTL.  Instead, the RTL
+     function specifies the signedness of its operands where necessary.
+
+     ??? I'm not entirely sure these unsigned modes are needed.  They
+     are useful in removing any ambiguity in how to sign extend
+     constants which has been a source of problems in GCC.
+
+     ??? Some existing ports use these modes.
+
+`WI,UWI'
+     word int, unsigned word int (word_mode in gcc).  These are aliases
+     for the real mode, typically either `SI' or `DI'.
+
+`SF,DF,XF,TF'
+     Same as GCC.
+
+     SF is a 32 bit IEEE float ("single float").  DF is a 64 bit IEEE
+     float ("double float").  XF is either an 80 or 96 bit IEEE float
+     ("extended float").  (*note: XF values on m68k and i386 are
+     different so may wish to give them different names).  TF is a 128
+     bit IEEE float ("??? float").
+
+`AI'
+     Address integer
+
+`IAI'
+     Instruction address integer
+
+`INT,UINT'
+     Varying width int/unsigned-int.  The width is specified by context,
+     usually in an instruction field definition.
+
+
+File: cgen.info,  Node: Expressions,  Next: Macro-expressions,  Prev: Modes,  Up: RTL
+
+Expressions
+===========
+
+   The syntax of CGEN's RTL expressions (or *rtx*) basically follows
+that of GCC's RTL.
+
+   The handling of modes is different to simplify the implementation.
+Implementation shouldn't necessarily drive design, but it was a useful
+simplification.  Still, it needs to be reviewed.  The difference is that
+in GCC `(function:MODE arg1 ...)' is written in CGEN as `(function MODE
+arg1 ...)'.  Note the space after `function'.
+
+   GCC RTL allows flags to be recorded with RTL (e.g. MEM_VOLATILE_P).
+This is supported in CGEN RTL by prefixing each RTL function's arguments
+with an optional list of modifiers: `(function (:mod1 :mod2) MODE arg1
+...)'.  The list is a set of modifier names prefixed with ':'.  They
+can take arguments.  ??? Modifiers are supported by the RTL traversing
+code, but no use is made of them yet.
+
+   The currently defined semantic functions are:
+
+`(set mode destination source)'
+     Assign `source' to `destination' reference in mode `mode'.
+
+`(set-quiet mode destination source)'
+     Assign `source' to `destination' referenced in mode `mode', but do
+     not print any tracing message.
+
+`(reg mode hw-name [index])'
+     Return an `operand' of hardware element `hw-name' in mode `mode'.
+     If `hw-name' is an array, `index' selects which register.
+
+`(raw-reg mode hw-name [index])'
+     Return an `operand' of hardware element `hw-name' in mode `mode',
+     bypassing any `get' or `set' specs of the register.  If `hw-name'
+     is an array, `index' selects which register.  This cannot be used
+     with virtual registers (those specified with the `VIRTUAL'
+     attribute).
+
+     `raw-reg' is most often used in `get' and `set' specs of a
+     register: if it weren't read and write operations would infinitely
+     recurse.
+
+`(mem mode address)'
+     Return an `operand' of memory referenced at `address' in mode
+     `mode'.
+
+`(const mode value)'
+     Return an `operand' of constant `value' in mode `mode'.
+
+`(enum mode value-name)'
+     Return an `operand' of constant `value-name' in mode `mode'.  The
+     value must be from a previously defined enum.
+
+`(subword mode value word-num)'
+     Return part of `value'.  Which part is determined by `mode' and
+     `word-num'.  There are three cases.
+
+     If `mode' is the same size as the mode of `value', `word-num' must
+     be `0' and the result is `value' recast in the new mode.  There is
+     no change in the bits of `value', they're just interpreted in a
+     possibly different mode.  This is most often used to interpret an
+     integer value as a float and vice versa.
+
+     If `mode' is smaller, `value' is divided into N pieces and
+     `word-num' picks which piece.  All pieces have the size of `mode'
+     except possibly the last.  If the last piece has a different size,
+     it cannot be referenced.  This follows GCC and is byte order
+     dependent.(1).  Word number 0 is the most significant word if
+     big-endian-words.  Word number 0 is the least significant word if
+     little-endian-words.
+
+     If `mode' is larger, `value' is interpreted in the larger mode
+     with the upper most significant bits treated as garbage (their
+     value is assumed to be unimportant to the context in which the
+     value will be used).  `word-num' must be `0'.  This case is byte
+     order independent.
+
+`(join out-mode in-mode arg1 . arg-rest)'
+     Concatenate `arg1[,arg2[,...]]' to create a value of mode
+     `out-mode'.  `arg1' becomes the most significant part of the
+     result.  Each argument is interpreted in mode `in-mode'.
+     `in-mode' must evenly divide `out-mode'.  ??? Endianness issues
+     have yet to be decided.
+
+`(sequence mode ((mode1 local1) ...) expr1 expr2 ...)'
+     Execute `expr1', `expr2', etc. sequentially. `mode' is the mode of
+     the result, which is defined to be that of the last expression.
+     ``((mode1 local1) ...)'' is a set of local variables.
+
+`(parallel mode empty expr1 ...)'
+     Execute `expr1', `expr2', etc. in parallel. All inputs are read
+     before any output is written.  `empty' must be `()' and is present
+     for consistency with `sequence'. `mode' must be `VOID' (void
+     mode). `((mode1 local1) ...)' is a set of local variables.
+
+`(unop mode operand)'
+     Perform a unary arithmetic operation. `unop' is one of `neg',
+     `abs', `inv', `not', `zflag', `nflag'.  `zflag' returns a bit
+     indicating if `operand' is zero. `nflag' returns a bit indicating
+     if `operand' is negative. `inv' returns the bitwise complement of
+     `operand', whereas `not' returns its logical negation.
+
+`(binop mode operand1 operand2)'
+     Perform a binary arithmetic operation. `binop' is one of `add',
+     `sub', `and', `or', `xor', `mul', `div', `udiv', `mod', `umod'.
+
+`(binop-with-bit mode operand1 operand2 operand3)'
+     Same as `binop', except taking 3 operands. The third operand is
+     always a single bit. `binop-with-bit' is one of `addc',
+     `add-cflag', `add-oflag', `subc', `sub-cflag', `sub-oflag'.
+
+`(shiftop mode operand1 operand2)'
+     Perform a shift operation. `shiftop' is one of `sll', `srl',
+     `sra', `ror', `rol'.
+
+`(boolifop mode operand1 operand2)'
+     Perform a sequential boolean operation. `operand2' is not processed
+     if `operand1' "fails". `boolifop' is one of `andif', `orif'.
+
+`(convop mode operand)'
+     Perform a mode->mode conversion operation. `convop' is one of
+     `ext', `zext', `trunc', `float', `ufloat', `fix', `ufix'.
+
+`(cmpop mode operand1 operand2)'
+     Perform a comparison. `cmpop' is one of `eq', `ne', `lt', `le',
+     `gt', `ge', `ltu', `leu', `gtu', `geu'.
+
+`(if mode condition then [else])'
+     Standard `if' statement.
+
+     `condition' is any arithmetic expression.  If the value is
+     non-zero the `then' part is executed.  Otherwise, the `else' part
+     is executed (if present).
+
+     `mode' is the mode of the result, not of `condition'.  If `mode'
+     is not `VOID' (void mode), `else' must be present.
+
+`(cond mode (condition1 expr1a ...) (...) [(else exprNa...)])'
+     From Scheme: keep testing conditions until one succeeds, and then
+     process the associated expressions.
+
+`(case mode test ((case1 ..) expr1a ..) (..) [(else exprNa ..)])'
+     From Scheme: Compare `test' with `case1', `case2', etc. and
+     process the associated expressions.
+
+`(c-code mode "C expression")'
+     An escape hook to insert arbitrary C code. `mode' must the
+     compatible with the result of "C expression".
+
+`(c-call mode symbol operand1 operand2 ...)'
+     An escape hook to emit a subroutine call to function named `symbol'
+     passing operands `operand1', `operand2', etc.  An implicit first
+     argument of `current_cpu' is passed to `symbol'.  `mode' is the
+     mode of the result.  Be aware that `symbol' will be restricted by
+     reserved words in the C programming language any by existing
+     symbols in the generated code.
+
+`(c-raw-call mode symbol operand1 operand2 ...)'
+     Same as `c-call': except there is no implicit `current_cpu' first
+     argument.  `mode' is the mode of the result.
+
+`(clobber mode object)'
+     Indicate that `object' is written in mode `mode', without saying
+     how. This could be useful in conjunction with the C escape hooks.
+
+`(annul yes?)'
+     Annul the following instruction if `yes?' is non-zero. This rtx is
+     an experiment and will probably change.
+
+`(skip yes?)'
+     Skip the next instruction if `yes?' is non-zero. This rtx is an
+     experiment and will probably change.
+
+`(attr mode kind attr-name)'
+     Return the value of attribute `attr-name' in mode `mode'. `kind'
+     must currently be `insn': the current instruction.
+
+`(symbol name)'
+     Return a symbol with value `name', for use in attribute
+     processing. This is equivalent to `quote' in Scheme but `quote'
+     sounds too jargonish.
+
+`(eq-attr mode attr-name value)'
+     Return non-zero if the value of attribute `attr-name' is `value'.
+     If `value' is a list return "true" if `attr-name' is any of the
+     listed values.
+
+`(nop)'
+     A no-op.
+
+`(ifield field-name)'
+     Return the value of field `field-name'. `field-name' must be a
+     field in the instruction. Operands can be any of:
+
+        * an operand defined in the description file
+
+        * a register reference, created with (reg mode [index])
+
+        * a memory reference, created with (mem mode address)
+
+        * a constant, created with (const mode value)
+
+        * a `sequence' local variable
+
+        * another expression
+
+     The `symbol' in a `c-call' or `c-raw-call' function is currently
+     the name of a C function or macro that is invoked by the generated
+     semantic code.
+
+   ---------- Footnotes ----------
+
+   (1) To be revisited
+
+
+File: cgen.info,  Node: Macro-expressions,  Prev: Expressions,  Up: RTL
+
+Macro-expressions
+=================
+
+   Macro RTL expressions started out by wanting to not have to always
+specify a mode for every expression (and sub-expression thereof).
+Whereas the formal way to specify, say, an add is `(add SI arg1 arg2)'
+if SI is the default mode of `arg1' then this can be simply written as
+`(add arg1 arg2)'.  This gets expanded to `(add DFLT arg1 arg2)' where
+`DFLT' means "default mode".
+
+   It might be possible to replace macro expressions with preprocessor
+macros, however for the nonce there is no plan to do this.
+
+
+File: cgen.info,  Node: Preprocessor macros,  Next: Porting,  Prev: RTL,  Up: Top
+
+Preprocessor macros
+*******************
+
+   Preprocessor macros provide a way of simplifying the writing of
+`.cpu' files and serve the same purpose that macros do in C.
+
+* Menu:
+
+* Defining a preprocessor macro:: `define-pmacro'
+* Using preprocessor macros::
+* Macro expansion::               The `pmacro-expand' procedure
+* Default argument values::       Specifying default values of arguments
+* Multiple output expressions::   Using `begin'
+* Symbol concatenation::          The `.sym' builtin
+* String concatenation::          The `.str' builtin
+* Convert a number to a hex::     The `.hex' builtin
+* Convert a string to uppercase:: The `.upcase' builtin
+* Convert a string to lowercase:: The `.downcase' builtin
+* Getting part of a string::      The `.substr' builtin
+* List splicing::                 The `.splice' builtin
+* Number generation::             The `.iota' builtin
+* Mapping a macro over a list::   The `.map' builtin
+* Applying a macro to a list::    The `.apply' builtin
+* Defining a macro inline::       The `.pmacro' builtin
+* Passing macros as arguments::   Passing a macro to another macro
+
+
+File: cgen.info,  Node: Defining a preprocessor macro,  Next: Using preprocessor macros,  Up: Preprocessor macros
+
+Defining a preprocessor macro
+=============================
+
+   Preprocessor macros are defined with:
+
+     (define-pmacro (name parm1 parm2 ... parmN)
+       expansion
+     )
+
+   The result is `expansion' with parameters replaced with the actual
+arguments of the macro invocation.  Free variables are left unchanged.
+[A "free variable", as defined here, is one that doesn't appear in the
+parameter list.]
+
+   `expansion' must be exactly one expression.
+
+
+File: cgen.info,  Node: Using preprocessor macros,  Next: Macro expansion,  Prev: Defining a preprocessor macro,  Up: Preprocessor macros
+
+Using preprocessor macros
+=========================
+
+   Preprocessor macros are invoked in either of two ways: positional
+arguments and arguments by name.
+
+     (define-pmacro (foo arg1 arg2) (bar arg1 arg2))
+     
+     ; Invoke by positional arguments.
+     
+     (foo abc def) ==> (bar abc def)
+     
+     ; Invoke by naming arguments.
+     
+     (foo #:arg1 ghi #:arg2 jkl) ==> (bar ghi jkl)
+
+
+File: cgen.info,  Node: Macro expansion,  Next: Default argument values,  Prev: Using preprocessor macros,  Up: Preprocessor macros
+
+Macro expansion
+===============
+
+   At the implementation level, pmacros are expand with the
+`pmacro-expand' Scheme procedure.
+
+   The following is executed from a Guile shell, as opposed to
+appearing in a cpu description file, hence the extra quoting.
+
+     guile> (define-pmacro '(foo a b) '(+ a b))
+     guile> (pmacro-expand '(foo 3 4))
+     (+ 3 4)
+
+
+File: cgen.info,  Node: Default argument values,  Next: Multiple output expressions,  Prev: Macro expansion,  Up: Preprocessor macros
+
+Default argument values
+=======================
+
+   Invoking pmacros by specifying argument names allows some, or all,
+arguments to be elided and thus allows for arguments to have default
+values.
+
+   Specify default values with the following syntax.
+
+     (define-pmacro (macro-name (arg1 . default-value)
+                                (arg2 . default value) ...)
+       ...
+     )
+
+   Example:
+
+     (define-pmacro (foo (arg1 . 1) (arg2 . 2))
+       (bar arg1 arg2)
+     )
+     
+     (foo #:arg2 33) ==> (bar 1 33)
+
+
+File: cgen.info,  Node: Multiple output expressions,  Next: Symbol concatenation,  Prev: Default argument values,  Up: Preprocessor macros
+
+Multiple output expressions
+===========================
+
+   The result of a preprocessor macro is exactly one expression.  It is
+often useful, however, to return multiple expressions, say for example
+when you want one macro to define several instructions.
+
+   The way to do this is to enclose all the expressions with `begin'.
+`begin' is only valid at the top [definition] level.
+
+   ??? It's moderately clumsy to restrict `begin' like this.  Using
+`sequence' for this purpose might be cleaner except that sequence
+locals don't make sense in this context (though perhaps that's a lesser
+evil).  In the end, `begin' can be shorthand for a void-mode sequence
+with no locals so I haven't been in a rush to resolve this.
+
+
+File: cgen.info,  Node: Symbol concatenation,  Next: String concatenation,  Prev: Multiple output expressions,  Up: Preprocessor macros
+
+Symbol concatenation
+====================
+
+   Symbol and string concatenation are supported. Symbol concatenation
+is done with:
+
+   `(.sym arg1 arg2 ...)'
+
+   Acceptable arguments are symbols, strings, and numbers.  The result
+is a symbol with the arguments concatenated together.  Numbers are
+converted to a string, base 10, and then to a symbol.  The result must
+be a valid Scheme symbol with the additional restriction that the first
+character must be a letter.
+
+
+File: cgen.info,  Node: String concatenation,  Next: Convert a number to a hex,  Prev: Symbol concatenation,  Up: Preprocessor macros
+
+String concatenation
+====================
+
+   String concatenation is done with
+
+   `(.str arg1 arg2 ...)'
+
+   Acceptable arguments are symbols, strings, and numbers.  The result
+is a string with the arguments concatenated together.  Numbers are
+converted base 10.
+
+   Example:
+
+     (define-pmacro (bin-op mnemonic op2-op sem-op)
+       (dni mnemonic
+            (.str mnemonic " reg/reg")
+            ()
+            (.str mnemonic " $dr,$sr")
+            (+ OP1_0 op2-op dr sr)
+            (set dr (sem-op dr sr))
+            ())
+     )
+     (bin-op and OP2_12 and)
+     (bin-op or OP2_14 or)
+     (bin-op xor OP2_13 xor)
+
+
+File: cgen.info,  Node: Convert a number to a hex,  Next: Convert a string to uppercase,  Prev: String concatenation,  Up: Preprocessor macros
+
+Convert a number to a hex
+=========================
+
+   Convert a number to a lowercase hex string with `.hex'.  If `width'
+is present, the result is that many characters beginning with the least
+significant digit.  Zeros are prepended as necessary.
+
+   Syntax: `(.hex number [width])'
+
+   Examples:
+
+     (.hex 42)   --> "2a"
+     (.hex 42 1) --> "a"
+     (.hex 42 4) --> "002a"
+
+
+File: cgen.info,  Node: Convert a string to uppercase,  Next: Convert a string to lowercase,  Prev: Convert a number to a hex,  Up: Preprocessor macros
+
+Convert a string to uppercase
+=============================
+
+   Convert a string to uppercase with `.upcase'.
+
+   Syntax: `(.upcase string)'
+
+   Example:
+
+     (.upcase "foo!") --> "FOO!"
+
+
+File: cgen.info,  Node: Convert a string to lowercase,  Next: Getting part of a string,  Prev: Convert a string to uppercase,  Up: Preprocessor macros
+
+Convert a string to lowercase
+=============================
+
+   Convert a string to lowercase with `.downcase'.
+
+   Syntax: `(.downcase string)'
+
+   Example:
+
+     (.downcase "BAR?") --> "bar?"
+
+
+File: cgen.info,  Node: Getting part of a string,  Next: List splicing,  Prev: Convert a string to lowercase,  Up: Preprocessor macros
+
+Getting part of a string
+========================
+
+   Extract a part of a string with `.substr'.
+
+   Syntax: `(.substr string start end)'
+
+   where `start' is the starting character, and `end' is one past the
+ending character.  Character numbering begins at position 0.  If
+`start' and `end' are the same, and both valid, the empty string is
+returned.
+
+   Example:
+
+     (.substr "howzitgoineh?" 2 6) --> "wzit"
+
+
+File: cgen.info,  Node: List splicing,  Next: Number generation,  Prev: Getting part of a string,  Up: Preprocessor macros
+
+List splicing
+=============
+
+   It is often useful to splice a list into a "parent" list.  This is
+best explained with an example.
+
+     (define-pmacro (splice-test a b c)
+                    (.splice a (.unsplice b) c))
+     (pmacro-expand (splice-test (1 (2) 3)))
+     
+     --> (1 2 3)
+
+   Note that a level of parentheses around `2' has been removed.
+
+   This is useful, for example, when one wants to pass a list of fields
+to a macro that defines an instruction.  For example:
+
+     (define-pmacro (cond-move-1 name comment mnemonic cc-prefix cc-name cc-opcode
+     			    src-name src-opcode cond test)
+       (dni name
+            (.str "move %" cc-name " " comment ", v9 page 191")
+            ((MACH64))
+            (.str mnemonic " " cc-prefix cc-name ",$" src-name ",$rd")
+            (.splice + OP_2 rd OP3_MOVCC cond
+     		(.unsplice cc-opcode) (.unsplice src-opcode))
+            (if (test cc-name)
+     	   (set rd src-name))
+            ())
+     )
+
+   This macro, taken from `sparc64.cpu', defines a conditional move
+instruction. Arguments `cc-opcode' and `src-opcode' are lists of
+fields. The macro is invoked with (simplified from `sparc64.cpu'):
+
+     (cond-move-1 mova-icc "blah ..." mova
+                  "%" icc ((f-fmt4-cc2 1) (f-fmt4-cc1-0 0))
+                  rs2 ((f-i 0) (f-fmt4-res10-6 0) rs2)
+                  CC_A test-always)
+     (cond-move-1 mova-imm-icc "blah ..." mova
+                  "%" icc ((f-fmt4-cc2 1) (f-fmt4-cc1-0 0))
+                  simm11 ((f-i 1) simm11)
+                  CC_A test-always)
+
+   Macro `cond-move-1' is being used here to define both the register
+and the immediate value case.  Each case has a slightly different list
+of opcode fields.  Without the use of `.splice'/`.unsplice', the
+resulting formats would be:
+
+     (+ OP_2 rd OP3_MOVCC CC_A ((f-fmt4-cc2-1) (f-fmt4-cc1-0 0))
+        ((f-i 0) (f-fmt4-res10-6 0) rs2))
+     
+     and
+     
+     (+ OP_2 rd OP3_MOVCC CC_A ((f-fmt4-cc2-1) (f-fmt4-cc1-0 0))
+        ((f-i 1) simm11))
+
+   respectively.  This is not what is wanted.  What is wanted is
+
+     (+ OP_2 rd OP3_MOVCC CC_A (f-fmt4-cc2-1) (f-fmt4-cc1-0 0)
+        (f-i 0) (f-fmt4-res10-6 0) rs2)
+     
+     and
+     
+     (+ OP_2 rd OP3_MOVCC CC_A (f-fmt4-cc2-1) (f-fmt4-cc1-0 0)
+        (f-i 1) simm11)
+
+   respectively, which is what `.splice' achieves.
+
+   `.unsplice' is a special reserved symbol that is only recognized
+inside `.splice'.
+
+
+File: cgen.info,  Node: Number generation,  Next: Mapping a macro over a list,  Prev: List splicing,  Up: Preprocessor macros
+
+Number generation
+=================
+
+   Machine descriptions often require a list of sequential numbers.
+Generate a list of numbers with the `.iota' builtin macro.
+
+   The syntax is `(.iota count [start [incr]])'.
+
+   Examples:
+
+     (.iota 5)      --> 0 1 2 3 4
+     (.iota 5 4)    --> 4 5 6 7 8
+     (.iota 5 5 -1) --> 5 4 3 2 1
+
+
+File: cgen.info,  Node: Mapping a macro over a list,  Next: Applying a macro to a list,  Prev: Number generation,  Up: Preprocessor macros
+
+Mapping a macro over a list
+===========================
+
+   Apply a macro to each element of a list, or set of lists, with
+`.map'.
+
+   The syntax is `(.map macro-name list1 [list2 ...])'.
+
+   The result is a list with `macro-name' applied to each element of
+`listN'.  `macro-name' should take as many arguments as there are
+lists.  This is often useful in constructing enum and register name
+lists.
+
+   Example:
+
+     (define-pmacro (foo name number) ((.sym X name) number))
+     (.map foo (A B C D E) (.iota 5))
+     
+     -->
+     
+     ((XA 0) (XB 1) (XC 2) (XD 3) (XE 4))
+
+
+File: cgen.info,  Node: Applying a macro to a list,  Next: Defining a macro inline,  Prev: Mapping a macro over a list,  Up: Preprocessor macros
+
+Applying a macro to a list
+==========================
+
+   Invoke a macro with each argument coming from an element of a list,
+with `.apply'.
+
+   The syntax is `(.apply macro-name list)'.
+
+   The result is the result of invoking macro `macro-name'.
+`macro-name' should take as many arguments as there elements in `list'.
+If `macro-name' takes a variable number of trailing arguments, there
+must be at least as many list elements as there are fixed arguments.
+
+   Example:
+
+     (.apply .str (.iota 5))
+     
+     -->
+     
+     "01234"
+
+   Note that `(.str (.iota 5))' is an error.  Here the list `(0 1 2 3
+4)' is passed as the first argument of `.str', which is wrong.
+
+
+File: cgen.info,  Node: Defining a macro inline,  Next: Passing macros as arguments,  Prev: Applying a macro to a list,  Up: Preprocessor macros
+
+Defining a macro inline
+=======================
+
+   Define a macro inline with `.pmacro'.  This is only supported when
+passing macros as arguments to other macros.
+
+     (define-pmacro (load-op suffix op2-op mode ext-op)
+       (begin
+         (dni (.sym ld suffix) (.str "ld" suffix)
+     	 ()
+     	 (.str "ld" suffix " $dr,@$sr")
+     	 (+ OP1_2 op2-op dr sr)
+     	 (set dr (ext-op WI (mem: mode sr)))
+     	 ())
+       )
+     )
+     
+     (load-op "" OP2_12 WI (.pmacro (mode expr) expr))
+     (load-op b OP2_8 QI (.pmacro (mode expr) (ext: mode expr)))
+     (load-op h OP2_10 HI (.pmacro (mode expr) (ext: mode expr)))
+     (load-op ub OP2_9 QI (.pmacro (mode expr) (zext: mode expr)))
+     (load-op uh OP2_11 HI (.pmacro (mode expr) (zext: mode expr)))
+
+   Currently, .pmacro's don't bind the way Scheme lambda expressions do.
+For example, arg2 in the second pmacro is not bound to the arg2 argument
+of the first pmacro.
+
+     (define-pmacro (foo arg1 arg2) ((.pmacro (bar) (+ arg2 bar)) arg1))
+     (foo 3 4) ==> (+ arg2 3)
+
+   One can make an argument either way.  I'm not sure what the right
+thing to do here is (leave things as is, or have lexical binding like
+Scheme).
+
+
+File: cgen.info,  Node: Passing macros as arguments,  Prev: Defining a macro inline,  Up: Preprocessor macros
+
+Passing macros as arguments
+===========================
+
+   Macros may be passed to other macros.
+
+   Example:
+
+     (define-pmacro (no-ext-expr mode expr) expr)
+     (define-pmacro (ext-expr mode expr) (ext: mode expr))
+     (define-pmacro (zext-expr mode expr) (zext: mode expr))
+     
+     (define-pmacro (load-op suffix op2-op mode ext-op)
+       (begin
+         (dni (.sym ld suffix) (.str "ld" suffix)
+     	 ()
+     	 (.str "ld" suffix " $dr,@$sr")
+     	 (+ OP1_2 op2-op dr sr)
+     	 (set dr (ext-op WI (mem: mode sr)))
+     	 ())
+       )
+     )
+     
+     (load-op "" OP2_12 WI no-ext-expr)
+     (load-op b OP2_8 QI ext-expr)
+     (load-op h OP2_10 HI ext-expr)
+     (load-op ub OP2_9 QI zext-expr)
+     (load-op uh OP2_11 HI zext-expr)
+
+
+File: cgen.info,  Node: Porting,  Next: Opcodes,  Prev: Preprocessor macros,  Up: Top
+
+Porting
+*******
+
+   This chapter describes how to do a CGEN port.  It focuses on doing
+binutils and simulator ports, but the general procedure should be
+generally applicable.
+
+* Menu:
+
+* Introduction to porting::
+* Supported Guile versions::
+* Running configure::
+* Writing a CPU description file::
+* Doing an opcodes port::
+* Doing a GAS port::
+* Building a GAS test suite::
+* Doing a simulator port::
+* Building a simulator test suite::
+
+
+File: cgen.info,  Node: Introduction to porting,  Next: Supported Guile versions,  Up: Porting
+
+Introduction to porting
+=======================
+
+   Doing a GNU tools port for a new processor basically consists of
+porting the following components more or less in order.  The order can
+be changed, of course, but the following order is reasonable.
+Certainly things like BFD and opcodes need to be finished earlier than
+others.  Bugs in earlier pieces are often not found until testing later
+pieces so each piece isn't necessarily finished until they all are.
+
+   * DejaGNU
+
+   * BFD
+
+   * CGEN
+
+   * Opcodes
+
+   * GAS
+
+   * Binutils
+
+   * Linker (`ld')
+
+   * newlib
+
+   * libgloss
+
+   * simulator
+
+   * GCC
+
+   * GDB
+
+   The use of CGEN affects the opcodes, GAS, and simulator portions
+only.  As always, the M32R port is a good reference base.
+
+   One goal of CGEN is to describe the CPU in an application
+independent manner so that program generators can do all the repetitive
+work of generating code and tables for each CPU that is ported.
+
+   For opcodes, several files are generated.  No additional code need be
+written in the opcodes directory although as an escape hatch the user
+can add target specific code to file <arch>.opc in the CGEN source
+directory.  These functions will be included in the relevant generated
+files.  An example of when you need to create an <arch>.opc file is when
+there are special pseudo-ops that need to be parsed, for example the
+high/shigh pseudo-ops of the M32R.  *Note Doing an opcodes port::.
+
+   For GAS, no files are generated (except test cases!) so the port is
+done more or less like the other GAS ports except that the assembler
+uses the CGEN-built opcode table plus `devo/gas/cgen.[ch]'.
+
+   For the simulator, several files are built, and other support files
+need to be written.  *Note Doing a simulator port::.
+
+
+File: cgen.info,  Node: Supported Guile versions,  Next: Running configure,  Prev: Introduction to porting,  Up: Porting
+
+Supported Guile versions
+========================
+
+   In order to avoid suffering from the bug of the day when using
+snapshots, CGEN development has been confined to Guile releases only.
+As of this writing (1999-04-26) only Guile 1.2 and 1.3 are supported.
+At some point in the future older versions of Guile will no longer be
+supported.
+
+   If using Guile 1.2, configure it with `--enable-guile-debug
+--enable-dynamic-linking' to work around an unknown bug in this version
+of Guile.  I ran into this on Solaris 2.6.
+
+
+File: cgen.info,  Node: Running configure,  Next: Writing a CPU description file,  Prev: Supported Guile versions,  Up: Porting
+
+Running `configure'
+===================
+
+   When doing porting or maintenance activity with CGEN, the build tree
+must be configured with the `--enable-cgen-maint' option.  This adds
+the necessary dependencies to the `devo/opcodes' and `devo/sim'
+directories.
+
+   CGEN uses Guile so it must be installed.  At present the CGEN
+configury requires that if Guile isn't installed in `/usr/local' then
+the `--with-guile=/guile/install/dir' option must be passed to
+`configure' to specify where Guile is installed.
+
+
+File: cgen.info,  Node: Writing a CPU description file,  Next: Doing an opcodes port,  Prev: Running configure,  Up: Porting
+
+Writing a CPU description file
+==============================
+
+   The first step in doing a CGEN port is writing a CPU description
+file.  The best way to do that is to take an existing file (such as the
+M32R) and use it as a template.
+
+   Writing a CPU description file generally involves writing each of the
+following types of entries, in order.  *Note RTL:: for detailed
+descriptions of each type of entry that appears in the description file.
+
+* Menu:
+
+* Conventions::                      Programming style conventions
+* Writing define-arch::              Architecture wide specs
+* Writing define-isa::               Instruction set characteristics
+* Writing define-cpu::               CPU families
+* Writing define-mach::              Machine variants
+* Writing define-model::             Models of each machine variant
+* Writing define-hardware::          Hardware elements
+* Writing define-ifield::            Instruction fields
+* Writing define-normal-insn-enum::  Instruction enums
+* Writing define-operand::           Instruction operands
+* Writing define-insn::              Instructions
+* Writing define-macro-insn::        Macro instructions
+* Using define-pmacro::              Preprocessor macros
+* Interactive development::          Useful things to do in a Guile shell
+
+
+File: cgen.info,  Node: Conventions,  Next: Writing define-arch,  Up: Writing a CPU description file
+
+Conventions
+-----------
+
+   First a digression on conventions and programming style.
+
+  1. `define-foo' vs. `define-normal-foo'
+
+     Each CPU description `define-' entry generally provides two forms:
+     the normal form and the general form.  The normal form has a
+     simple, fixed-argument syntax that allows one to specify the most
+     popular elements.  When one needs to specify more obscure elements
+     of the entry one uses the long form which is a list of name/value
+     pairs.  The naming convention is to call the normal form
+     `define-normal-foo' and the general form `define-foo'.
+
+  2. Parentheses placement
+
+     Consider:
+
+          (define-normal-insn-enum
+            insn-op1 "insn format enums" () f-op1 OP1_
+            (ADD ADDC SUB SUBC
+             AND OR   XOR INV)
+          )
+
+     All Lisp/Scheme code I've read puts the trailing parenthesis on the
+     previous line.  CGEN programming style says the last trailing
+     parenthesis goes on a line by itself.  If someone wants to put
+     forth an argument of why this should change, please do.  I like
+     putting the very last parenthesis on a line by itself in column 1
+     because it makes it easier to traverse the file with a parenthesis
+     matching keystroke.
+
+  3. `StudlyCaps' vs. `_' vs. `-'
+
+     The convention is to have most things lowercase with words
+     separated by `-'.  Things that are uppercase are fixed and well
+     defined: enum values and mode names.  This convention must be
+     followed.
+
+
+File: cgen.info,  Node: Writing define-arch,  Next: Writing define-isa,  Prev: Conventions,  Up: Writing a CPU description file
+
+Writing define-arch
+-------------------
+
+   Various simple and architecture-wide common things like the name of
+the processor must be defined somewhere, so all of this stuff is put
+under `define-arch'.
+
+   This must be the first entry in the description file.
+
+
+File: cgen.info,  Node: Writing define-isa,  Next: Writing define-cpu,  Prev: Writing define-arch,  Up: Writing a CPU description file
+
+Writing define-isa
+------------------
+
+   There are two purposes to `define-isa'.  The first is to specify
+parameters needed to decode instructions.
+
+   The second is to give the instruction set a name.  This is important
+for architectures like the ARM where one CPU can execute multiple
+instruction sets.
+
+
+File: cgen.info,  Node: Writing define-cpu,  Next: Writing define-mach,  Prev: Writing define-isa,  Up: Writing a CPU description file
+
+Writing define-cpu
+------------------
+
+   CPU families are an internal and artificial classification designed
+to collect processor variants that are sufficiently similar together
+under one roof for the simulator.  What is "sufficiently similar" is up
+to the programmer.  For example, if the only difference between two
+processor variants is that one has a few extra instructions, there's no
+point in treating them separately in the simulator.
+
+   When simulating the variant without the extra instructions, said
+instructions are marked as "invalid".  On the other hand, putting 32
+and 64 bit variants of an architecture under one roof is problematic
+since the word size is different.  What "under one roof" means is left
+fuzzy for now, but basically the simulator engine has a collection of
+structures defining internal state, and "CPU families" minimize the
+number of copies of generated code that manipulate this state.
+
+
+File: cgen.info,  Node: Writing define-mach,  Next: Writing define-model,  Prev: Writing define-cpu,  Up: Writing a CPU description file
+
+Writing define-mach
+-------------------
+
+   CGEN uses "mach" in the same sense that BFD uses "mach".  "Mach",
+which is short for `machine', defines a variant of the architecture.
+
+
+File: cgen.info,  Node: Writing define-model,  Next: Writing define-hardware,  Prev: Writing define-mach,  Up: Writing a CPU description file
+
+Writing define-model
+--------------------
+
+   When describing a CPU, in any context, there is "architecture" and
+there is "implementation".  In CGEN parlance a "model" is an
+implementation of a "mach".  Models specify pipeline and other
+performance related characteristics of the implementation.
+
+   Some architectures bring pipeline details up into the architecture
+(rather than making them an implementation detail).  It's not clear yet
+how to handle all the various possibilities so at present this is done
+on a case-by-case basis.  Maybe a straightforward solution will emerge.
+
+
+File: cgen.info,  Node: Writing define-hardware,  Next: Writing define-ifield,  Prev: Writing define-model,  Up: Writing a CPU description file
+
+Writing define-hardware
+-----------------------
+
+   The registers of the processor are specified with `define-hardware'.
+Also, immediate constants and addresses are defined to be "hardware".
+By convention, all hardware elements names are prefaced with `h-'.
+This convention must be followed.
+
+   Pre-defined hardware elements are:
+
+`h-memory'
+     Normal CPU memory(1)
+
+`h-sint'
+     signed integer
+
+`h-uint'
+     unsigned integer
+
+`h-addr'
+     an address
+
+`h-iaddr'
+     an instruction address
+
+   Where are floats you ask?  They'll be defined when the need arises.
+
+   The program counter is named `h-pc' and must be specified.  It is
+not a builtin element as sometimes architectures need to modify its
+behaviour (in the get/set specs).
+
+   ---------- Footnotes ----------
+
+   (1) A temporary simplifying assumption is to treat all memory
+identically.  Being able to specify various kinds of memory (e.g.
+on-chip RAM,ROM) is work-in-progress.
+
+
+File: cgen.info,  Node: Writing define-ifield,  Next: Writing define-normal-insn-enum,  Prev: Writing define-hardware,  Up: Writing a CPU description file
+
+Writing define-ifield
+---------------------
+
+   Writing instruction field entries involves analyzing the instruction
+set and creating an entry for each field.  If a field has multiple
+purposes, one can create separate entries for each intended purpose.
+The names should generally follow the names used by the architecture
+reference manual.
+
+   By convention, all instruction field names are prefaced with `f-'.
+This convention must be followed.
+
+
+File: cgen.info,  Node: Writing define-normal-insn-enum,  Next: Writing define-operand,  Prev: Writing define-ifield,  Up: Writing a CPU description file
+
+Writing define-normal-insn-enum
+-------------------------------
+
+   Writing instruction enum entries involves analyzing the instruction
+set and attaching names to the opcode fields.  For example, if a field
+named `op1' is used to select which of add, addc, sub, subc, and, or,
+xor, and inv instructions, one would write something like the following:
+
+     (define-normal-insn-enum
+       insn-op1 "insn format enums" () f-op1 OP1_
+       (ADD ADDC SUB SUBC
+        AND OR   XOR INV)
+     )
+
+   These entries simplify instruction definitions by giving a name to a
+particular value for a particular instruction field.  By convention,
+enum names are uppercase.  This convention must be followed.
+
+
+File: cgen.info,  Node: Writing define-operand,  Next: Writing define-insn,  Prev: Writing define-normal-insn-enum,  Up: Writing a CPU description file
+
+Writing define-operand
+----------------------
+
+   Operands are what instruction semantics use to refer to hardware
+elements.  The typical use of an operand is to map instruction fields to
+hardware.  For example, if field `f-r2' is used to specify one of the
+registers defined by the `h-gr' hardware entry, one would write:
+
+   `(dnop sr "source register" () h-gr f-r2)'
+
+   `dnop' is short for "define normal operand" (1).  *Note RTL:: for
+more information.
+
+   ---------- Footnotes ----------
+
+   (1) A profound aversion to typing causes me to often provide brief
+names of things that get typed a lot.
+
+
+File: cgen.info,  Node: Writing define-insn,  Next: Writing define-macro-insn,  Prev: Writing define-operand,  Up: Writing a CPU description file
+
+Writing define-insn
+-------------------
+
+   This involves going through the CPU manual and writing an entry for
+each instruction.  Instructions specific to a particular machine
+variant are indicated so with the `MACH' attribute.  Example:
+
+     (define-normal-insn
+       add "add instruction
+       ((MACH mach1)) ; or (MACH mach1,mach2,...) for multiple variants
+       ...
+     )
+
+   The `base' machine is a predefined machine variant that includes
+instructions available to all variants, and is the default if no `MACH'
+attribute is specified.
+
+   When the `.cpu' file is processed, CGEN will analyze the semantics
+to determine:
+
+   * input operands
+
+     The list of hardware elements read by the instruction.
+
+   * output operands
+
+     The list of hardware elements written by the instruction.
+
+   * attributes
+
+     Instruction attributes that can be computed from the semantics.
+
+     CTI: control transfer instruction, generally a branch.
+
+        * UNCOND-CTI
+
+          The instruction unconditionally sets pc.
+
+        * COND-CTI
+
+          The instruction conditionally sets pc.
+
+        * SKIP-CTI
+
+          NB. This is an expermental attribute.  Its usage needs to
+          evolve.
+
+        * DELAY-SLOT
+
+          NB. This is an expermental attribute.  Its usage needs to
+          evolve.
+
+   CGEN will also try to simplify the semantics as much as possible:
+
+   * Constant folding
+
+     Expressions involving constants are simplified and any resulting
+     non-taken paths of conditional expressions are discarded.
+
+
+File: cgen.info,  Node: Writing define-macro-insn,  Next: Using define-pmacro,  Prev: Writing define-insn,  Up: Writing a CPU description file
+
+Writing define-macro-insn
+-------------------------
+
+   Some instructions are really aliases for other instructions, maybe
+even a sequence of them.  For example, an architecture that has a
+general decrement-then-store instruction might have a specialized
+version of this instruction called `push' supported by the assembler.
+These are handled with "macro instructions".  Macro instructions are
+used by the assembler/disassembler only.  They are not used by the
+simulator.
+

@@ -1,0 +1,17 @@
+######################################################
+#                                                    #
+#               USB module auto loader               #
+#                    Config file                     #
+#                                                    #
+######################################################
+
+DeviceName "USB Ž©ŒÈUnload ƒTƒ“ƒvƒ‹(HOST)"  # SJIS
+	Use      1
+	Class    03
+	SubClass 01
+	Protocol 02
+	Category Mouse
+	DriverPath   "host1:/usr/local/sce/iop/sample/usb/selfunld/selfunld.irx"
+	DriverArg    "selfunload=ON"
+
+end

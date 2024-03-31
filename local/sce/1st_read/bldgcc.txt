@@ -1,0 +1,48 @@
+[SCE CONFIDENTIAL DOCUMENT]
+"PlayStation 2" Programmer Tool Tool Chain EE 2.96-ee-001003-1
+                Copyright (C) 2002 Sony Computer Entertainment Inc.
+                                                   All Rights Reserved
+
+=====================================================================
+
+Building and Installing ee-gcc Tools
+----------------------------------------------------------------------
+Normally, it is unnecessary to do the following.  Only when the tools 
+under sce/ee/gcc do not operate normally depending on the OS version 
+etc., do the following work according to the procedure below.  
+
+The following are performed with the root authority. 
+
+1. Decompressing Sources
+
+	# cd /usr/local/sce/ee/gcc
+	# mv src/src.tar.gz .
+	# rmdir src
+	# tar zxvf src.tar.gz 
+
+	The "src.tar.gz" shown above is the one included in the latest 
+        package.
+
+2. Applying Patches
+
+	# cd /usr/local/sce/ee/gcc
+	# patch -p1 < sce-patch
+
+3. Building Tools
+
+	# cd /usr/local/sce/ee/gcc	
+	# mkdir build
+	# cd build
+	# ../config.sh
+	# make all
+	# make install
+	# cd gdb
+	# make install-gdbtk
+		
+Note:
+Building tools results in failure when the current directory '.' is 
+included in the command search path.  Before building the tools, 
+confirm '.' is not included in the environment variable path. 
+Moreover, building the tools requires an empty capacity of about 
+400MB at least in the hard disk. 
+

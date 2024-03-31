@@ -1,0 +1,320 @@
+[SCE CONFIDENTIAL DOCUMENT]
+"PlayStation 2" Programmer Tool Runtime Library Release 2.5
+                Copyright (C) 2002 Sony Computer Entertainment Inc.
+                                                   All Rights Reserved
+                                                             Mar. 2002
+
+======================================================================
+DTL-T10000 Software Setup Guide
+----------------------------------------------------------------------
+
+In this document, the sample program compilation and the execution 
+steps are described.
+All the following operation is executable with the user account.
+For the target name mentioned below, specify the host name of the 
+DTL-T10000.
+
+----------------------------------------------------------------------
+Flash Update
+----------------------------------------------------------------------
+
+Copy t10000-relxx.bin to a suitable directory on the development machine.
+
+	When the t10000-relxx.bin is copied to /tmp:
+	
+	$ dsflash /tmp/t10000-relxx.bin
+
+	The update has completed successfully if the following 
+        is displayed on the screen:
+	
+	:
+	romflash Revision: x.xx  quick mode (pos=c, sig=a4) on native kernel
+
+	inputfile: t10000-relxx.bin size: ...
+	Sector Clear (8-11) oooo
+	Reading [offset:0x80000] ...
+	Writing  ...
+	Verify flash memory
+	Wrote flash memory
+
+	Complete !
+
+Note)
+1) As the header files and static libraries provided by SCE are now
+   searched in the standard directory, install them by executing  
+   sce/iop/install/Install.sh.
+
+
+2) When using the header files under the sce/common/include in the sample,
+   please make sure to include the directory, sce/common/include in 
+   Makefile.
+   
+======================================================================
+EE Sample Program Compilation/Execution
+----------------------------------------------------------------------
+By executing the following command under sce/ee/sample, all the sample
+program compilation is available. For individual compilation, please
+execute the make command under the directory where the program exists.
+
+	$ make
+
+By executing the following command, the sample execution is available.
+
+	$ make run 
+
+Note: 
+Some sample programs might not be executed by the command above. 
+Refer to the respective readme.txt files for execution procedure.
+
+Also, the dsedb command is used to run the program. The dsedb command is 
+originally for a debugger, but it is also used only to run the program.  
+When the execute form file is sample.elf, for instance, input as follows: 
+
+	$ dsedb -d targetname (or IP address) -r run sample.elf
+
+To run the program by starting the debugger, input the following: 
+
+	$ dsedb -d targetname (or IP address)
+	dsedb (Version x.x.xx................)
+	*** Resetting...
+	(type 'help' for getting help)
+
+	dsedb > run sample.elf
+
+For detailed operation methods of various commands, e.g. debugger, refer 
+to the documents under doc/tool.
+
+For a method of compiling the program etc., refer to the "Makefile" in 
+the sample directory.  Be sure to use app.cmd for the link command file
+and crt0.s for the start-up file this time.
+
+======================================================================
+Preparation for IOP Program Loading
+----------------------------------------------------------------------
+When the setup is completed, execute the following command.
+
+        $ dsreset -d targetname (or IP address) 0 2
+
+This disables activation of the program, which starts operating in 
+the event of default and receives controller file requests from 
+the EE.
+After this, the above setting will remain effective even when 
+the system is reset.  Therefore, execute the following command 
+when executing the EE program in the system.
+
+        $ dsreset -d targetname (or IP address) 0 0
+
+For details of the dsreset commands, refer to sce/doc/text/tool/
+dsnet_rf.txt.
+
+----------------------------------------------------------------------
+IOP Sample Program Compilation/Execution
+----------------------------------------------------------------------
+
+Execute the make command under the directory where the program 
+exists.  By executing the following command, the sample execution is 
+available.
+
+        $ make run
+
+Note: 
+Some sample programs might not be executed by the command above. 
+Refer to the respective readme.txt files for execution procedure.
+
+Also, the execution from the command line is possible.  Please use the
+dsistart command. In the case of the hello sample, input as follows:
+
+	$ dsistart -d targetname (or IP address) hello
+
+Also, the dsidb command is used to run the program.  The dsidb command 
+is an application designed for program execution and debugging similar 
+to the dsedb.
+To run the program by starting the debugger, input the following.
+
+        $ dsidb -d targetname (or IP address)
+        dsidb (Version 0.1.70 Tue Apr 25 17:23:41 JST 2000)
+        *** Resetting...
+
+        *** DBGP Version 3.00
+                :
+                :
+        dsidb > mstart hello
+
+
+For a method of compiling the program etc., refer to the "Makefile" in 
+the sample directory.
+
+======================================================================
+
+Loading the iop module from the EE 
+----------------------------------------------------------------------
+
+The method of loading the iop module has been changed in Release 1.2. 
+When loading the iop module from the EE, describe the codes as follows
+in an application. Refer to each sample program as well.
+
+Example) Around main(), specify as follows:
+
+#define SIO2MAN "host0:/usr/local/sce/iop/modules/sio2man.irx"
+#define PADMAN "host0:/usr/local/sce/iop/modules/padman.irx"
+	
+	sceSifInitRpc(0);
+	if (sceSifLoadModule(SIO2MAN, 0, "") < 0) {
+		printf("cant Load Module %s", SIO2MAN);
+		exit(0);
+	}	
+	if (sceSifLoadModule(PADMAN, 0, "") < 0) {
+		printf("cant Load Module %s", PADMAN); 
+		exit(0);
+
+----------------------------------------------------------------------
+Loading the iop module from the IOP (interim)
+----------------------------------------------------------------------
+
+With the enhancement of the dsifilesv feature, the description of 
+Makefile has been changed in Release 1.3.
+Refer to Makefile in each sample program directory as well.
+
+This is interim specification. It will be changed to load the iop
+modules in an application program in the future.
+
+Example) In "run" target of Makefile
+
+run: all 
+	dsifilesv -c "\
+	dsreset 0 2;\
+	dsistart -nf ../../../modules/libsd.irx;\
+	dsistart -nf main.irx"
+
+----------------------------------------------------------------------
+Makefile for IOP Program (Release 1.1. or later)
+----------------------------------------------------------------------
+
+The following two options have been added to the iop-gcc option:
+
+	-startfiles
+	-noiopilb
+
+If directory name is not included in the file name specified by the
+-ilb= option, it is now searchable with the search path specified by
+the -L option or the standard search path.  For details, please refer
+to sce/doc/iop/tool/compile.htm.
+Changes to Makefile are as follows:
+
+1) To link crt0.o, -startfiles is used.
+
+  If crt0.o is specified as an input file in the linker, delete this
+  part and replace with -startfiles.
+
+2) The iop.ilb library has become no need to be specified.
+
+  iop.ilb has been changed to be read automatically from the standard 
+  directory (/usr/local/sce/iop/gcc/mipsel-scei-elfl/lib).  Please
+  delete the -ilb=$(TOP)lib/iop.ilb option for reading the iop.lib 
+  library as it has become unnecessary.
+
+3) The static library provided by SCE is now searchable in the 
+   standard directory.  (/usr/local/sce/iop/gcc/mipsel-scei-elfl/lib/)
+   Please delete the -L$(TOP)lib option for searching the library
+   provided by SCE as it has become unnecessary.
+
+4) The header file provided by SCE is now searchable in the standard
+   directory. (/usr/local/sce/iop/gcc/mipsel-scei-elfl/include/) 
+   Please delete the -I$(TOP)include option for searching the header
+   supplied by SCE as it has become unnecessary.
+
+5) iop-path-setup which is a script to search the compiler for IOP 
+   has been added.  (/usr/local/sce/bin/iop-path-setup)
+   It can be used at the top of Makefile as follows:
+
+	ifeq ($(wildcard PathDefs),)
+	PathDefs:
+	        iop-path-setup > PathDefs || (rm -f PathDefs ; exit 1)
+	        $(MAKE) all
+	else
+	include PathDefs
+	endif
+
+  Please refer to Makefile(s) contained in each sample under
+  sce/iop/sample.
+
+----------------------------------------------------------------------
+Access to CD on DTL-T10000 (Release 1.3.4 or later)
+----------------------------------------------------------------------
+When resetting the system, the CD drive automatically checks the disk.
+The error will be indicated if an access to CD drive takes place such as 
+with sceOpen() before the termination of this check according to the 
+specification changes in the kernel.
+This problem does not occur on the debugging station or the 
+"PlayStation 2" console.  In terms of the compatibility, however, please
+take the following countermeasures;
+
+
+Example 1)
+
+    int main(){
+        sceCdInit(SCECdINIT);
+        sceSifInitRpc(0);
+        while ( sceSifLoadModule("cdrom0:\\SIO2MAN.IRX;1", 0, NULL) < 0);
+                :
+                :
+
+
+Example 2)
+
+    int main(){
+        sceSifInitRpc(0);
+        while ( sceSifLoadModule("host0:/usr/local/sce/iop/modules/sio2man.irx",        0, NULL) < 0);
+                :
+        sceCdInit(SCECdINIT);
+          fd = sceOpen(filename, SCE_RDONLY);
+              :
+
+
+Bad example 1)
+
+    int main(){
+        sceCdInit(SCECdINoD);
+        sceSifInitRpc(0);
+        while ( sceSifLoadModule("cdrom0:\\SIO2MAN.IRX;1", 0, NULL) < 0);
+                :
+                :
+
+
+Bad example 2)
+
+    int main(){
+        sceSifInitRpc(0);
+        while ( sceSifLoadModule("cdrom0:\\SIO2MAN.IRX;1", 0, NULL) < 0);
+                :
+        sceCdInit(SCECdINIT);
+                :
+
+----------------------------------------------------------------------
+Calculating the Available Memory Space of IOP
+----------------------------------------------------------------------
+The available memory space of IOP can be calculated using the following
+source code.
+
+Ex.
+/*
+ compile
+    iop-elf-gcc iopmem.c -o ipmem.irx
+ */
+
+#include <kernel.h>
+#include <stdio.h>
+
+int start()
+{
+    int freesize, maxblock;
+
+    maxblock = QueryMaxFreeMemSize();
+    freesize = QueryTotalFreeMemSize();
+    printf("IOP system memory  0x%x(%d) byte free, Max free block size 0x%x\n",
+	   freesize, freesize, maxblock);
+    return NO_RESIDENT_END;
+}
+
+
+

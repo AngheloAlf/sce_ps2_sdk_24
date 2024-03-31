@@ -1,0 +1,848 @@
+This is Info file texinfo, produced by Makeinfo version 1.68 from the
+input file texinfo.txi.
+
+INFO-DIR-SECTION Texinfo documentation system
+START-INFO-DIR-ENTRY
+* Texinfo: (texinfo).           The GNU documentation format.
+* install-info: (texinfo)Invoking install-info. Updating info/dir entries.
+* texi2dvi: (texinfo)Format with texi2dvi.      Printing Texinfo documentation.
+* texindex: (texinfo)Format with tex/texindex.  Sorting Texinfo index files.
+* makeinfo: (texinfo)makeinfo Preferred.        Translate Texinfo source.
+END-INFO-DIR-ENTRY
+
+  This file documents Texinfo, a documentation system that can produce
+both on-line information and a printed manual from a single source file.
+
+  Copyright (C) 1988, 90, 91, 92, 93, 95, 96, 97, 98 Free Software
+Foundation, Inc.
+
+  This edition is for Texinfo version 3.12.
+
+  Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+  Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+  Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Free Software Foundation.
+
+
+File: texinfo,  Node: Debugging with TeX,  Next: Using texinfo-show-structure,  Prev: Debugging with Info,  Up: Catching Mistakes
+
+Catching Errors with TeX Formatting
+===================================
+
+  You can also catch mistakes when you format a file with TeX.
+
+  Usually, you will want to do this after you have run
+`texinfo-format-buffer' (or, better, `makeinfo-buffer') on the same
+file, because `texinfo-format-buffer' sometimes displays error messages
+that make more sense than TeX.  (*Note Debugging with Info::, for more
+information.)
+
+  For example, TeX was run on a Texinfo file, part of which is shown
+here:
+
+     ---------- Buffer: texinfo.texi ----------
+     name of the Texinfo file as an extension.  The
+     @samp{??} are `wildcards' that cause the shell to
+     substitute all the raw index files.  (@xref{sorting
+     indices, for more information about sorting
+     indices.)@refill
+     ---------- Buffer: texinfo.texi ----------
+
+(The cross reference lacks a closing brace.)  TeX produced the
+following output, after which it stopped:
+
+     ---------- Buffer: *tex-shell* ----------
+     Runaway argument?
+     {sorting indices, for more information about sorting
+     indices.) @refill @ETC.
+     ! Paragraph ended before @xref was complete.
+     <to be read again>
+                        @par
+     l.27
+     
+     ?
+     ---------- Buffer: *tex-shell* ----------
+
+  In this case, TeX produced an accurate and understandable error
+message:
+
+     Paragraph ended before @xref was complete.
+
+`@par' is an internal TeX command of no relevance to Texinfo.  `l.27'
+means that TeX detected the problem on line 27 of the Texinfo file.
+The `?' is the prompt TeX uses in this circumstance.
+
+  Unfortunately, TeX is not always so helpful, and sometimes you must
+truly be a Sherlock Holmes to discover what went wrong.
+
+  In any case, if you run into a problem like this, you can do one of
+three things.
+
+  1. You can tell TeX to continue running and ignore just this error by
+     typing <RET> at the `?' prompt.
+
+  2. You can tell TeX to continue running and to ignore all errors as
+     best it can by typing `r <RET>' at the `?' prompt.
+
+     This is often the best thing to do.  However, beware: the one error
+     may produce a cascade of additional error messages as its
+     consequences are felt through the rest of the file.  To stop TeX
+     when it is producing such an avalanche of error messages, type
+     `C-c' (or `C-c C-c', if you are running a shell inside Emacs).
+
+  3. You can tell TeX to stop this run by typing `x <RET>' at the `?'
+     prompt.
+
+  Please note that if you are running TeX inside Emacs, you need to
+switch to the shell buffer and line at which TeX offers the `?'  prompt.
+
+  Sometimes TeX will format a file without producing error messages even
+though there is a problem.  This usually occurs if a command is not
+ended but TeX is able to continue processing anyhow.  For example, if
+you fail to end an itemized list with the `@end itemize' command, TeX
+will write a DVI file that you can print out.  The only error message
+that TeX will give you is the somewhat mysterious comment that
+
+     (@end occurred inside a group at level 1)
+
+However, if you print the DVI file, you will find that the text of the
+file that follows the itemized list is entirely indented as if it were
+part of the last item in the itemized list.  The error message is the
+way TeX says that it expected to find an `@end' command somewhere in
+the file; but that it could not determine where it was needed.
+
+  Another source of notoriously hard-to-find errors is a missing `@end
+group' command.  If you ever are stumped by incomprehensible errors,
+look for a missing `@end group' command first.
+
+  If the Texinfo file lacks header lines, TeX may stop in the beginning
+of its run and display output that looks like the following.  The `*'
+indicates that TeX is waiting for input.
+
+     This is TeX, Version 3.14159 (Web2c 7.0)
+     (test.texinfo [1])
+     *
+
+In this case, simply type `\end <RET>' after the asterisk.  Then write
+the header lines in the Texinfo file and run the TeX command again.
+(Note the use of the backslash, `\'.  TeX uses `\' instead of `@'; and
+in this circumstance, you are working directly with TeX, not with
+Texinfo.)
+
+
+File: texinfo,  Node: Using texinfo-show-structure,  Next: Using occur,  Prev: Debugging with TeX,  Up: Catching Mistakes
+
+Using `texinfo-show-structure'
+==============================
+
+  It is not always easy to keep track of the nodes, chapters, sections,
+and subsections of a Texinfo file.  This is especially true if you are
+revising or adding to a Texinfo file that someone else has written.
+
+  In GNU Emacs, in Texinfo mode, the `texinfo-show-structure' command
+lists all the lines that begin with the @-commands that specify the
+structure: `@chapter', `@section', `@appendix', and so on.  With an
+argument (`C-u' as prefix argument, if interactive), the command also
+shows the `@node' lines.  The `texinfo-show-structure' command is bound
+to `C-c C-s' in Texinfo mode, by default.
+
+  The lines are displayed in a buffer called the `*Occur*' buffer,
+indented by hierarchical level.  For example, here is a part of what was
+produced by running `texinfo-show-structure' on this manual:
+
+      Lines matching "^@\\(chapter \\|sect\\|subs\\|subh\\|
+      unnum\\|major\\|chapheading \\|heading \\|appendix\\)"
+      in buffer texinfo.texi.
+      ...
+      4177:@chapter Nodes
+      4198:    @heading Two Paths
+      4231:    @section Node and Menu Illustration
+      4337:    @section The @code{@@node} Command
+      4393:        @subheading Choosing Node and Pointer Names
+      4417:        @subsection How to Write an @code{@@node} Line
+      4469:        @subsection @code{@@node} Line Tips
+      ...
+
+  This says that lines 4337, 4393, and 4417 of `texinfo.texi' begin
+with the `@section', `@subheading', and `@subsection' commands
+respectively.  If you move your cursor into the `*Occur*' window, you
+can position the cursor over one of the lines and use the `C-c C-c'
+command (`occur-mode-goto-occurrence'), to jump to the corresponding
+spot in the Texinfo file.  *Note Using Occur: (emacs)Other Repeating
+Search, for more information about `occur-mode-goto-occurrence'.
+
+  The first line in the `*Occur*' window describes the "regular
+expression" specified by TEXINFO-HEADING-PATTERN.  This regular
+expression is the pattern that `texinfo-show-structure' looks for.
+*Note Using Regular Expressions: (emacs)Regexps, for more information.
+
+  When you invoke the `texinfo-show-structure' command, Emacs will
+display the structure of the whole buffer.  If you want to see the
+structure of just a part of the buffer, of one chapter, for example,
+use the `C-x n n' (`narrow-to-region') command to mark the region.
+(*Note Narrowing: (emacs)Narrowing.)  This is how the example used
+above was generated.  (To see the whole buffer again, use `C-x n w'
+(`widen').)
+
+  If you call `texinfo-show-structure' with a prefix argument by typing
+`C-u C-c C-s', it will list lines beginning with `@node' as well as the
+lines beginning with the @-sign commands for `@chapter', `@section',
+and the like.
+
+  You can remind yourself of the structure of a Texinfo file by looking
+at the list in the `*Occur*' window; and if you have mis-named a node
+or left out a section, you can correct the mistake.
+
+
+File: texinfo,  Node: Using occur,  Next: Running Info-Validate,  Prev: Using texinfo-show-structure,  Up: Catching Mistakes
+
+Using `occur'
+=============
+
+  Sometimes the `texinfo-show-structure' command produces too much
+information.  Perhaps you want to remind yourself of the overall
+structure of a Texinfo file, and are overwhelmed by the detailed list
+produced by `texinfo-show-structure'.  In this case, you can use the
+`occur' command directly.  To do this, type
+
+     M-x occur
+
+and then, when prompted, type a "regexp", a regular expression for the
+pattern you want to match.  (*Note Regular Expressions:
+(emacs)Regexps.)  The `occur' command works from the current location
+of the cursor in the buffer to the end of the buffer.  If you want to
+run `occur' on the whole buffer, place the cursor at the beginning of
+the buffer.
+
+  For example, to see all the lines that contain the word `@chapter' in
+them, just type `@chapter'.  This will produce a list of the chapters.
+It will also list all the sentences with `@chapter' in the middle of
+the line.
+
+  If you want to see only those lines that start with the word
+`@chapter', type `^@chapter' when prompted by `occur'.  If you want to
+see all the lines that end with a word or phrase, end the last word
+with a `$'; for example, `catching mistakes$'.  This can be helpful
+when you want to see all the nodes that are part of the same chapter or
+section and therefore have the same `Up' pointer.
+
+  *Note Using Occur: (emacs)Other Repeating Search, for more
+information.
+
+
+File: texinfo,  Node: Running Info-Validate,  Prev: Using occur,  Up: Catching Mistakes
+
+Finding Badly Referenced Nodes
+==============================
+
+  You can use the `Info-validate' command to check whether any of the
+`Next', `Previous', `Up' or other node pointers fail to point to a
+node.  This command checks that every node pointer points to an
+existing node.  The `Info-validate' command works only on Info files,
+not on Texinfo files.
+
+  The `makeinfo' program validates pointers automatically, so you do
+not need to use the `Info-validate' command if you are using
+`makeinfo'.  You only may need to use `Info-validate' if you are unable
+to run `makeinfo' and instead must create an Info file using
+`texinfo-format-region' or `texinfo-format-buffer', or if you write an
+Info file from scratch.
+
+* Menu:
+
+* Using Info-validate::         How to run `Info-validate'.
+* Unsplit::                     How to create an unsplit file.
+* Tagifying::                   How to tagify a file.
+* Splitting::                   How to split a file manually.
+
+
+File: texinfo,  Node: Using Info-validate,  Next: Unsplit,  Prev: Running Info-Validate,  Up: Running Info-Validate
+
+Running `Info-validate'
+-----------------------
+
+  To use `Info-validate', visit the Info file you wish to check and
+type:
+
+     M-x Info-validate
+
+(Note that the `Info-validate' command requires an upper case `I'.  You
+may also need to create a tag table before running `Info-validate'.
+*Note Tagifying::.)
+
+  If your file is valid, you will receive a message that says "File
+appears valid".  However, if you have a pointer that does not point to
+a node, error messages will be displayed in a buffer called `*problems
+in info file*'.
+
+  For example, `Info-validate' was run on a test file that contained
+only the first node of this manual.  One of the messages said:
+
+     In node "Overview", invalid Next: Texinfo Mode
+
+This meant that the node called `Overview' had a `Next' pointer that
+did not point to anything (which was true in this case, since the test
+file had only one node in it).
+
+  Now suppose we add a node named `Texinfo Mode' to our test case but
+we do not specify a `Previous' for this node.  Then we will get the
+following error message:
+
+     In node "Texinfo Mode", should have Previous: Overview
+
+This is because every `Next' pointer should be matched by a `Previous'
+(in the node where the `Next' points) which points back.
+
+  `Info-validate' also checks that all menu entries and cross references
+point to actual nodes.
+
+  Note that `Info-validate' requires a tag table and does not work with
+files that have been split.  (The `texinfo-format-buffer' command
+automatically splits large files.)  In order to use `Info-validate' on
+a large file, you must run `texinfo-format-buffer' with an argument so
+that it does not split the Info file; and you must create a tag table
+for the unsplit file.
+
+
+File: texinfo,  Node: Unsplit,  Next: Tagifying,  Prev: Using Info-validate,  Up: Running Info-Validate
+
+Creating an Unsplit File
+------------------------
+
+  You can run `Info-validate' only on a single Info file that has a tag
+table.  The command will not work on the indirect subfiles that are
+generated when a master file is split.  If you have a large file
+(longer than 70,000 bytes or so), you need to run the
+`texinfo-format-buffer' or `makeinfo-buffer' command in such a way that
+it does not create indirect subfiles.  You will also need to create a
+tag table for the Info file.  After you have done this, you can run
+`Info-validate' and look for badly referenced nodes.
+
+  The first step is to create an unsplit Info file.  To prevent
+`texinfo-format-buffer' from splitting a Texinfo file into smaller Info
+files, give a prefix to the `M-x texinfo-format-buffer' command:
+
+     C-u M-x texinfo-format-buffer
+
+or else
+
+     C-u C-c C-e C-b
+
+When you do this, Texinfo will not split the file and will not create a
+tag table for it.
+
+
+File: texinfo,  Node: Tagifying,  Next: Splitting,  Prev: Unsplit,  Up: Running Info-Validate
+
+Tagifying a File
+----------------
+
+  After creating an unsplit Info file, you must create a tag table for
+it.  Visit the Info file you wish to tagify and type:
+
+     M-x Info-tagify
+
+(Note the upper case `I' in `Info-tagify'.)  This creates an Info file
+with a tag table that you can validate.
+
+  The third step is to validate the Info file:
+
+     M-x Info-validate
+
+(Note the upper case `I' in `Info-validate'.)  In brief, the steps are:
+
+     C-u M-x texinfo-format-buffer
+     M-x Info-tagify
+     M-x Info-validate
+
+  After you have validated the node structure, you can rerun
+`texinfo-format-buffer' in the normal way so it will construct a tag
+table and split the file automatically, or you can make the tag table
+and split the file manually.
+
+
+File: texinfo,  Node: Splitting,  Prev: Tagifying,  Up: Running Info-Validate
+
+Splitting a File Manually
+-------------------------
+
+  You should split a large file or else let the `texinfo-format-buffer'
+or `makeinfo-buffer' command do it for you automatically.  (Generally
+you will let one of the formatting commands do this job for you.  *Note
+Create an Info File::.)
+
+  The split-off files are called the indirect subfiles.
+
+  Info files are split to save memory.  With smaller files, Emacs does
+not have make such a large buffer to hold the information.
+
+  If an Info file has more than 30 nodes, you should also make a tag
+table for it. *Note Using Info-validate::, for information about
+creating a tag table.  (Again, tag tables are usually created
+automatically by the formatting command; you only need to create a tag
+table yourself if you are doing the job manually.  Most likely, you
+will do this for a large, unsplit file on which you have run
+`Info-validate'.)
+
+  Visit the Info file you wish to tagify and split and type the two
+commands:
+
+     M-x Info-tagify
+     M-x Info-split
+
+(Note that the `I' in `Info' is upper case.)
+
+  When you use the `Info-split' command, the buffer is modified into a
+(small) Info file which lists the indirect subfiles.  This file should
+be saved in place of the original visited file.  The indirect subfiles
+are written in the same directory the original file is in, with names
+generated by appending `-' and a number to the original file name.
+
+  The primary file still functions as an Info file, but it contains just
+the tag table and a directory of subfiles.
+
+
+File: texinfo,  Node: Refilling Paragraphs,  Next: Command Syntax,  Prev: Catching Mistakes,  Up: Top
+
+Refilling Paragraphs
+********************
+
+  The `@refill' command refills and, optionally, indents the first line
+of a paragraph.(1) (*note Refilling Paragraphs-Footnotes::) The
+`@refill' command is no longer important, but we describe it here
+because you once needed it.  You will see it in many old Texinfo files.
+
+  Without refilling, paragraphs containing long @-constructs may look
+bad after formatting because the formatter removes @-commands and
+shortens some lines more than others.  In the past, neither the
+`texinfo-format-region' command nor the `texinfo-format-buffer' command
+refilled paragraphs automatically.  The `@refill' command had to be
+written at the end of every paragraph to cause these formatters to fill
+them.  (Both TeX and `makeinfo' have always refilled paragraphs
+automatically.)  Now, all the Info formatters automatically fill and
+indent those paragraphs that need to be filled and indented.
+
+  The `@refill' command causes `texinfo-format-region' and
+`texinfo-format-buffer' to refill a paragraph in the Info file *after*
+all the other processing has been done.  For this reason, you can not
+use `@refill' with a paragraph containing either `@*' or `@w{ ... }'
+since the refilling action will override those two commands.
+
+  The `texinfo-format-region' and `texinfo-format-buffer' commands now
+automatically append `@refill' to the end of each paragraph that should
+be filled.  They do not append `@refill' to the ends of paragraphs that
+contain `@*' or `@w{ ...}' and therefore do not refill or indent them.
+
+
+File: texinfo,  Node: Refilling Paragraphs-Footnotes,  Up: Refilling Paragraphs
+
+  (1) Perhaps the command should have been called the
+`@refillandindent' command, but `@refill' is shorter and the name was
+chosen before indenting was possible.
+
+
+File: texinfo,  Node: Command Syntax,  Next: Obtaining TeX,  Prev: Refilling Paragraphs,  Up: Top
+
+@-Command Syntax
+****************
+
+  The character `@' is used to start special Texinfo commands.  (It has
+the same meaning that `\' has in plain TeX.)  Texinfo has four types of
+@-command:
+
+1. Non-alphabetic commands.
+     These commands consist of an @ followed by a punctuation mark or
+     other character that is not part of the alphabet.  Non-alphabetic
+     commands are almost always part of the text within a paragraph,
+     and never take any argument.  The two characters (@ and the other
+     one) are complete in themselves; none is followed by braces.  The
+     non-alphabetic commands are: `@.', `@:', `@*', `@SPACE', `@TAB',
+     `@NL', `@@', `@{', and `@}'.
+
+2. Alphabetic commands that do not require arguments.
+     These commands start with @ followed by a word followed by left-
+     and right-hand braces.  These commands insert special symbols in
+     the document; they do not require arguments.  For example,
+     `@dots{}' => `...', `@equiv{}' => `==', `@TeX{}' => `TeX', and
+     `@bullet{}' => `*'.
+
+3. Alphabetic commands that require arguments within braces.
+     These commands start with @ followed by a letter or a word,
+     followed by an argument within braces.  For example, the command
+     `@dfn' indicates the introductory or defining use of a term; it is
+     used as follows: `In Texinfo, @@-commands are @dfn{mark-up}
+     commands.'
+
+4. Alphabetic commands that occupy an entire line.
+     These commands occupy an entire line.  The line starts with @,
+     followed by the name of the command (a word); for example,
+     `@center' or `@cindex'.  If no argument is needed, the word is
+     followed by the end of the line.  If there is an argument, it is
+     separated from the command name by a space.  Braces are not used.
+
+  Thus, the alphabetic commands fall into classes that have different
+argument syntaxes.  You cannot tell to which class a command belongs by
+the appearance of its name, but you can tell by the command's meaning:
+if the command stands for a glyph, it is in class 2 and does not
+require an argument; if it makes sense to use the command together with
+other text as part of a paragraph, the command is in class 3 and must
+be followed by an argument in braces; otherwise, it is in class 4 and
+uses the rest of the line as its argument.
+
+  The purpose of having a different syntax for commands of classes 3 and
+4 is to make Texinfo files easier to read, and also to help the GNU
+Emacs paragraph and filling commands work properly.  There is only one
+exception to this rule: the command `@refill', which is always used at
+the end of a paragraph immediately following the final period or other
+punctuation character.  `@refill' takes no argument and does *not*
+require braces.  `@refill' never confuses the Emacs paragraph commands
+because it cannot appear at the beginning of a line.
+
+
+File: texinfo,  Node: Obtaining TeX,  Next: Command and Variable Index,  Prev: Command Syntax,  Up: Top
+
+How to Obtain TeX
+*****************
+
+  TeX is freely redistributable.  You can obtain TeX for Unix systems
+via anonymous ftp or on physical media.  The core material consists of
+the Web2c TeX distribution (`http://tug.org/web2c').
+
+  Instructions for retrieval by anonymous ftp and information on other
+available distributions:
+     `ftp://tug.org/tex/unixtex.ftp'
+     `http://tug.org/unixtex.ftp'
+
+  The Free Software Foundation provides a core distribution on its
+Source Code CD-ROM suitable for printing Texinfo manuals; the
+University of Washington maintains and supports a tape distribution;
+the TeX Users Group co-sponsors a complete CD-ROM TeX distribution.
+
+   * For the FSF Source Code CD-ROM, please contact:
+
+          Free Software Foundation, Inc.
+          59 Temple Place Suite 330
+          Boston, MA   02111-1307
+          USA
+          
+          Telephone: +1-617-542-5942
+          Fax: (including Japan) +1-617-542-2652
+          Free Dial Fax (in Japan):
+                0031-13-2473 (KDD)
+                0066-3382-0158 (IDC)
+          Electronic mail: `gnu@gnu.org'
+
+   * To order a complete distribution on CD-ROM, please see
+     `http://tug.org/tex-live.html'.  (This distribution is also
+     available by FTP; see the URL's above.)
+
+   * To order a full distribution from the University of Washington on
+     either a 1/4in 4-track QIC-24 cartridge or a 4mm DAT cartridge,
+     send $210 to:
+
+          Pierre A. MacKay
+          Denny Hall, Mail Stop DH-10
+          University of Washington
+          Seattle, WA   98195
+          USA
+          Telephone: +1-206-543-2268
+          Electronic mail: `mackay@cs.washington.edu'
+
+     Please make checks payable to the University of Washington.
+     Checks must be in U.S. dollars, drawn on a U.S. bank.  Overseas
+     sites: please add to the base cost, if desired, $20.00 for
+     shipment via air parcel post, or $30.00 for shipment via courier.
+
+  Many other TeX distributions are available; see `http://tug.org/'.
+
+
+File: texinfo,  Node: Command and Variable Index,  Next: Concept Index,  Prev: Obtaining TeX,  Up: Top
+
+Command and Variable Index
+**************************
+
+  This is an alphabetical list of all the @-commands, assorted Emacs
+Lisp functions, and several variables.  To make the list easier to use,
+the commands are listed without their preceding `@'.
+
+* Menu:
+
+* ! (end of sentence):                   Ending a Sentence.
+* ":                                     Inserting Accents.
+* ':                                     Inserting Accents.
+* (newline):                             Multiple Spaces.
+* (space):                               Multiple Spaces.
+* (tab):                                 Multiple Spaces.
+* * (force line break):                  Line Breaks.
+* ,:                                     Inserting Accents.
+* -:                                     - and hyphenation.
+* .  (end of sentence):                  Ending a Sentence.
+* : (suppress widening):                 Not Ending a Sentence.
+* =:                                     Inserting Accents.
+* ? (end of sentence):                   Ending a Sentence.
+* @ (single @):                          Inserting An Atsign.
+* ^:                                     Inserting Accents.
+* `:                                     Inserting Accents.
+* AA:                                    Inserting Accents.
+* aa:                                    Inserting Accents.
+* AE:                                    Inserting Accents.
+* ae:                                    Inserting Accents.
+* afourpaper:                            A4 Paper.
+* appendix:                              unnumbered & appendix.
+* appendixsec:                           unnumberedsec appendixsec heading.
+* appendixsection:                       unnumberedsec appendixsec heading.
+* appendixsubsec:                        unnumberedsubsec appendixsubsec subheading.
+* appendixsubsubsec:                     subsubsection.
+* apply:                                 Sample Function Definition.
+* asis:                                  table.
+* author:                                title subtitle author.
+* b (bold font):                         Fonts.
+* buffer-end:                            Def Cmd Template.
+* bullet:                                bullet.
+* bye <1>:                               File End.
+* bye:                                   Ending a File.
+* c (comment):                           Comments.
+* cartouche:                             cartouche.
+* center:                                titlefont center sp.
+* centerchap:                            chapter.
+* chapheading:                           majorheading & chapheading.
+* chapter:                               chapter.
+* cindex:                                Indexing Commands.
+* cite:                                  cite.
+* clear:                                 ifset ifclear.
+* code:                                  code.
+* columnfractions:                       Multitable Column Widths.
+* comment:                               Comments.
+* contents:                              Contents.
+* copyright <1>:                         copyright symbol.
+* copyright:                             Copyright & Permissions.
+* cropmarks:                             Cropmarks and Magnification.
+* defcodeindex:                          New Indices.
+* defcv:                                 Abstract Objects.
+* deffn:                                 Functions Commands.
+* deffnx:                                deffnx.
+* defindex:                              New Indices.
+* definfoenclose:                        Customized Highlighting.
+* defivar:                               Abstract Objects.
+* defmac:                                Functions Commands.
+* defmethod:                             Abstract Objects.
+* defop:                                 Abstract Objects.
+* defopt:                                Variables Commands.
+* defspec:                               Functions Commands.
+* deftp:                                 Data Types.
+* deftypefn:                             Typed Functions.
+* deftypefun:                            Typed Functions.
+* deftypevar:                            Typed Variables.
+* deftypevr:                             Typed Variables.
+* defun:                                 Functions Commands.
+* defvar:                                Variables Commands.
+* defvr:                                 Variables Commands.
+* dfn:                                   dfn.
+* dircategory:                           Installing Dir Entries.
+* direntry:                              Installing Dir Entries.
+* display:                               display.
+* dmn:                                   dmn.
+* dotaccent:                             Inserting Accents.
+* dotless:                               Inserting Accents.
+* dots:                                  dots.
+* email:                                 email.
+* emph:                                  emph & strong.
+* end <1>:                               Introducing Lists.
+* end:                                   Quotations and Examples.
+* end titlepage:                         end titlepage.
+* enumerate:                             enumerate.
+* evenfooting:                           Custom Headings.
+* evenheading:                           Custom Headings.
+* everyfooting:                          Custom Headings.
+* everyheading:                          Custom Headings.
+* example:                               example.
+* exclamdown:                            Inserting Accents.
+* exdent:                                exdent.
+* file:                                  file.
+* filll:                                 Copyright & Permissions.
+* finalout:                              Overfull hboxes.
+* findex:                                Indexing Commands.
+* flushleft:                             flushleft & flushright.
+* flushright:                            flushleft & flushright.
+* foobar:                                Optional Arguments.
+* footnote:                              Footnotes.
+* footnotestyle:                         Footnote Styles.
+* format:                                format.
+* forward-word:                          Def Cmd Template.
+* ftable:                                ftable vtable.
+* group:                                 group.
+* H:                                     Inserting Accents.
+* heading:                               unnumberedsec appendixsec heading.
+* headings:                              headings on off.
+* html:                                  Raw Formatter Commands.
+* hyphenation:                           - and hyphenation.
+* i (italic font):                       Fonts.
+* ifclear:                               ifset ifclear.
+* ifhtml <1>:                            Raw Formatter Commands.
+* ifhtml:                                Conditional Commands.
+* ifinfo:                                Conditional Commands.
+* ifnothtml:                             Conditional Not Commands.
+* ifnotinfo:                             Conditional Not Commands.
+* ifnottex:                              Conditional Not Commands.
+* ifset:                                 ifset ifclear.
+* iftex:                                 Conditional Commands.
+* ignore:                                Comments.
+* image:                                 Images.
+* include:                               Using Include Files.
+* Info-validate:                         Running Info-Validate.
+* inforef:                               inforef.
+* input (TeX command):                   Minimum.
+* isearch-backward:                      deffnx.
+* isearch-forward:                       deffnx.
+* item <1>:                              Multitable Rows.
+* item <2>:                              table.
+* item:                                  itemize.
+* itemize:                               itemize.
+* itemx:                                 itemx.
+* kbd:                                   kbd.
+* kbdinputstyle:                         kbd.
+* key:                                   key.
+* kindex:                                Indexing Commands.
+* L:                                     Inserting Accents.
+* l:                                     Inserting Accents.
+* lisp:                                  Lisp Example.
+* lowersections:                         Raise/lower sections.
+* macro:                                 Defining Macros.
+* mag (TeX command):                     Cropmarks and Magnification.
+* majorheading:                          majorheading & chapheading.
+* makeinfo-buffer:                       makeinfo in Emacs.
+* makeinfo-kill-job:                     makeinfo in Emacs.
+* makeinfo-recenter-output-buffer:       makeinfo in Emacs.
+* makeinfo-region:                       makeinfo in Emacs.
+* math:                                  math.
+* menu:                                  Menus.
+* minus:                                 minus.
+* multitable:                            Multi-column Tables.
+* need:                                  need.
+* next-error:                            makeinfo in Emacs.
+* noindent:                              noindent.
+* O:                                     Inserting Accents.
+* o:                                     Inserting Accents.
+* occur:                                 Using occur.
+* occur-mode-goto-occurrence:            Showing the Structure.
+* oddfooting:                            Custom Headings.
+* oddheading:                            Custom Headings.
+* OE:                                    Inserting Accents.
+* oe:                                    Inserting Accents.
+* page:                                  page.
+* paragraphindent:                       paragraphindent.
+* pindex:                                Indexing Commands.
+* pounds:                                pounds.
+* printindex:                            Printing Indices & Menus.
+* pxref:                                 pxref.
+* questiondown:                          Inserting Accents.
+* quotation:                             quotation.
+* r (Roman font):                        Fonts.
+* raisesections:                         Raise/lower sections.
+* ref:                                   ref.
+* refill:                                Refilling Paragraphs.
+* ringaccent:                            Inserting Accents.
+* samp:                                  samp.
+* sc (small caps font):                  Smallcaps.
+* section:                               section.
+* set:                                   ifset ifclear.
+* setchapternewpage:                     setchapternewpage.
+* setfilename:                           setfilename.
+* settitle:                              settitle.
+* shortcontents:                         Contents.
+* shorttitlepage:                        titlepage.
+* smallbook:                             smallbook.
+* smallexample:                          smallexample & smalllisp.
+* smalllisp:                             smallexample & smalllisp.
+* sp (line spacing):                     sp.
+* sp (titlepage line spacing):           titlefont center sp.
+* ss:                                    Inserting Accents.
+* strong:                                emph & strong.
+* subheading:                            unnumberedsubsec appendixsubsec subheading.
+* subsection:                            subsection.
+* subsubheading:                         subsubsection.
+* subsubsection:                         subsubsection.
+* subtitle:                              title subtitle author.
+* summarycontents:                       Contents.
+* syncodeindex:                          syncodeindex.
+* synindex:                              synindex.
+* t (typewriter font):                   Fonts.
+* table:                                 Two-column Tables.
+* tex:                                   Raw Formatter Commands.
+* tex (command):                         tex.
+* texinfo-all-menus-update:              Updating Commands.
+* texinfo-every-node-update:             Updating Commands.
+* texinfo-format-buffer <1>:             texinfo-format commands.
+* texinfo-format-buffer:                 Info Formatting.
+* texinfo-format-region <1>:             texinfo-format commands.
+* texinfo-format-region:                 Info Formatting.
+* texinfo-indent-menu-description:       Other Updating Commands.
+* texinfo-insert-@code:                  Inserting.
+* texinfo-insert-@dfn:                   Inserting.
+* texinfo-insert-@end:                   Inserting.
+* texinfo-insert-@example:               Inserting.
+* texinfo-insert-@item:                  Inserting.
+* texinfo-insert-@kbd:                   Inserting.
+* texinfo-insert-@node:                  Inserting.
+* texinfo-insert-@noindent:              Inserting.
+* texinfo-insert-@samp:                  Inserting.
+* texinfo-insert-@table:                 Inserting.
+* texinfo-insert-@var:                   Inserting.
+* texinfo-insert-braces:                 Inserting.
+* texinfo-insert-node-lines:             Other Updating Commands.
+* texinfo-make-menu:                     Updating Commands.
+* texinfo-master-menu:                   Updating Commands.
+* texinfo-multiple-files-update:         texinfo-multiple-files-update.
+* texinfo-multiple-files-update (in brief): Other Updating Commands.
+* texinfo-sequential-node-update:        Other Updating Commands.
+* texinfo-show-structure <1>:            Using texinfo-show-structure.
+* texinfo-show-structure:                Showing the Structure.
+* texinfo-start-menu-description:        Inserting.
+* texinfo-tex-buffer:                    Printing.
+* texinfo-tex-print:                     Printing.
+* texinfo-tex-region:                    Printing.
+* texinfo-update-node:                   Updating Commands.
+* thischapter:                           Custom Headings.
+* thischaptername:                       Custom Headings.
+* thisfile:                              Custom Headings.
+* thispage:                              Custom Headings.
+* thistitle:                             Custom Headings.
+* tieaccent:                             Inserting Accents.
+* tindex:                                Indexing Commands.
+* title:                                 title subtitle author.
+* titlefont:                             titlefont center sp.
+* titlepage:                             titlepage.
+* today:                                 Custom Headings.
+* top (@-command):                       makeinfo top command.
+* u:                                     Inserting Accents.
+* ubaraccent:                            Inserting Accents.
+* udotaccent:                            Inserting Accents.
+* unmacro:                               Defining Macros.
+* unnumbered:                            unnumbered & appendix.
+* unnumberedsec:                         unnumberedsec appendixsec heading.
+* unnumberedsubsec:                      unnumberedsubsec appendixsubsec subheading.
+* unnumberedsubsubsec:                   subsubsection.
+* up-list:                               Inserting.
+* uref:                                  uref.
+* url:                                   url.
+* v:                                     Inserting Accents.
+* value:                                 value.
+* var:                                   var.
+* vindex:                                Indexing Commands.
+* vskip:                                 Copyright & Permissions.
+* vtable:                                ftable vtable.
+* w (prevent line break):                w.
+* xref:                                  xref.
+* { (single {):                          Inserting Braces.
+* } (single }):                          Inserting Braces.
+* ~:                                     Inserting Accents.
+

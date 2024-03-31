@@ -1,0 +1,72 @@
+-*- Text -*-
+This file was generated automatically by the gen-info-dir script.
+This version was generated on Thu Jan 17 17:00:36 JST 2002
+by murakami@murakami-pc1.rd.scei.sony.co.jp for /usr/local/sce/ee/gcc/info
+
+This is the file .../info/dir, which contains the topmost node of the
+Info hierarchy.  The first time you invoke Info you start off
+looking at that node, which is (dir)Top.
+
+File: dir	Node: Top	This is the top of the INFO tree
+  This (the Directory node) gives a menu of major topics. 
+  Typing "d" returns here, "q" exits, "?" lists all INFO commands, "h" 
+  gives a primer for first-timers, "mTexinfo<Return>" visits Texinfo topic,
+  etc.
+  --- PLEASE ADD DOCUMENTATION TO THIS TREE. (See INFO topic first.) ---
+
+* Menu: The list of major topics begins on the next line.
+
+* Info: (info).                 Documentation browsing system.
+
+* send-pr: (send-pr).           Reporting problems--using send-pr
+
+* Gcc: (gcc).                           Using and Porting the GNU C compiler.
+* Cpp: (cpp).		       The GNU C preprocessor.
+
+* Gdb: (gdb).                     The GNU debugger.
+* Gdb-Internals: (gdbint).	The GNU debugger's internals.
+* Stabs: (stabs).                 The "stabs" debugging information format.
+
+* Binutils: (binutils).         The GNU binary utilities.
+* ar: (binutils)ar.               Create, modify, and extract from archives
+* nm: (binutils)nm.               List symbols from object files
+* objcopy: (binutils)objcopy.	  Copy and translate object files
+* objdump: (binutils)objdump.     Display information from object files
+* ranlib: (binutils)ranlib.       Generate index to archive contents
+* readelf: (binutils)readelf.	  Display the contents of ELF format files.
+* size: (binutils)size.           List section sizes and total size
+* strings: (binutils)strings.     List printable strings from files
+* strip: (binutils)strip.         Discard symbols
+* c++filt: (binutils)c++filt.	  Filter to demangle encoded C++ symbols
+* cxxfilt: (binutils)c++filt.     MS-DOS name for c++filt
+* addr2line: (binutils)addr2line. Convert addresses to file and line
+* nlmconv: (binutils)nlmconv.     Converts object code into an NLM
+* windres: (binutils)windres.	  Manipulate Windows resources
+* dlltool: (binutils)dlltool.	  Create files needed to build and use DLLs
+* Ld: (ld).                       The GNU linker.
+* As: (as).                     The GNU assembler.
+
+* DejaGnu: (dejagnu).            The GNU testing framework.
+
+* Make: (make.info).               The GNU make utility.
+* Flex: (flex).         A fast scanner generator.
+* Bison: (bison).		A parser generator.
+* byacc: (byacc).                bYacc: Sketchy Usage Summary
+
+* libc::                        The ANSI C library.
+* iostream: (iostream).                    The C++ input/output facility.
+* libm::                        An ANSI-C conforming mathematical library.
+
+* Bfd: (bfd).                   The Binary File Descriptor library.
+
+* diff: (diff).                   GNU diff, diff3, sdiff, cmp, patch
+
+* configure: (configure).	The GNU configure and build system
+
+* Standards: (standards).        GNU coding standards.
+
+* Cgen: (cgen).                 The Cpu tools GENerator.
+* gasp: (gasp).                     The GNU Assembler Preprocessor
+* info program: (info-stnd).    Standalone Info-reading program.
+* Mmalloc: (mmalloc).		The GNU mapped-malloc package.
+* Embed with GNU: (porting-).         Embed with GNU

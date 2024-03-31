@@ -1,0 +1,9 @@
+# <Sony Computer Entertainment Inc.>
+
+type eth
+-dhcp
+address "192.168.0.1"
+netmask "255.255.255.0"
+route add -net 0.0.0.0 gw 192.168.0.2 netmask 0.0.0.0
+nameserver add 192.168.0.3
+nameserver add 192.168.0.4

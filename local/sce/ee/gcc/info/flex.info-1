@@ -1,0 +1,1462 @@
+This is Info file flex.info, produced by Makeinfo version 1.68 from the
+input file ../../src/flex/flex.texi.
+
+START-INFO-DIR-ENTRY
+* Flex: (flex).         A fast scanner generator.
+END-INFO-DIR-ENTRY
+
+   This file documents Flex.
+
+   Copyright (c) 1990 The Regents of the University of California.  All
+rights reserved.
+
+   This code is derived from software contributed to Berkeley by Vern
+Paxson.
+
+   The United States Government has rights in this work pursuant to
+contract no. DE-AC03-76SF00098 between the United States Department of
+Energy and the University of California.
+
+   Redistribution and use in source and binary forms are permitted
+provided that: (1) source distributions retain this entire copyright
+notice and comment, and (2) distributions including binaries display
+the following acknowledgement:  "This product includes software
+developed by the University of California, Berkeley and its
+contributors" in the documentation or other materials provided with the
+distribution and in all advertising materials mentioning features or
+use of this software.  Neither the name of the University nor the names
+of its contributors may be used to endorse or promote products derived
+from this software without specific prior written permission.
+
+   THIS SOFTWARE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+
+File: flex.info,  Node: Top,  Next: Name,  Prev: (dir),  Up: (dir)
+
+flex
+****
+
+   This manual documents `flex'.  It covers release 2.5.
+
+* Menu:
+
+* Name::                        Name
+* Synopsis::                    Synopsis
+* Overview::                    Overview
+* Description::                 Description
+* Examples::                    Some simple examples
+* Format::                      Format of the input file
+* Patterns::                    Patterns
+* Matching::                    How the input is matched
+* Actions::                     Actions
+* Generated scanner::           The generated scanner
+* Start conditions::            Start conditions
+* Multiple buffers::            Multiple input buffers
+* End-of-file rules::           End-of-file rules
+* Miscellaneous::               Miscellaneous macros
+* User variables::              Values available to the user
+* YACC interface::              Interfacing with `yacc'
+* Options::                     Options
+* Performance::                 Performance considerations
+* C++::                         Generating C++ scanners
+* Incompatibilities::           Incompatibilities with `lex' and POSIX
+* Diagnostics::                 Diagnostics
+* Files::                       Files
+* Deficiencies::                Deficiencies / Bugs
+* See also::                    See also
+* Author::                      Author
+
+
+File: flex.info,  Node: Name,  Next: Synopsis,  Prev: Top,  Up: Top
+
+Name
+====
+
+   flex - fast lexical analyzer generator
+
+
+File: flex.info,  Node: Synopsis,  Next: Overview,  Prev: Name,  Up: Top
+
+Synopsis
+========
+
+     flex [-bcdfhilnpstvwBFILTV78+? -C[aefFmr] -Q[yn] -ooutput -Pprefix -Sskeleton]
+     [--help --version] [FILENAME ...]
+     ^
+
+
+File: flex.info,  Node: Overview,  Next: Description,  Prev: Synopsis,  Up: Top
+
+Overview
+========
+
+   This manual describes `flex', a tool for generating programs that
+perform pattern-matching on text.  The manual includes both tutorial
+and reference sections:
+
+Description
+     a brief overview of the tool
+
+Some Simple Examples
+
+Format Of The Input File
+
+Patterns
+     the extended regular expressions used by flex
+
+How The Input Is Matched
+     the rules for determining what has been matched
+
+Actions
+     how to specify what to do when a pattern is matched
+
+The Generated Scanner
+     details regarding the scanner that flex produces; how to control
+     the input source
+
+Start Conditions
+     introducing context into your scanners, and managing
+     "mini-scanners"
+
+Multiple Input Buffers
+     how to manipulate multiple input sources; how to scan from strings
+     instead of files
+
+End-of-file Rules
+     special rules for matching the end of the input
+
+Miscellaneous Macros
+     a summary of macros available to the actions
+
+Values Available To The User
+     a summary of values available to the actions
+
+Interfacing With Yacc
+     connecting flex scanners together with yacc parsers
+
+Options
+     flex command-line options, and the "%option" directive
+
+Performance Considerations
+     how to make your scanner go as fast as possible
+
+Generating C++ Scanners
+     the (experimental) facility for generating C++ scanner classes
+
+Incompatibilities With Lex And POSIX
+     how flex differs from AT&T lex and the POSIX lex standard
+
+Diagnostics
+     those error messages produced by flex (or scanners it generates)
+     whose meanings might not be apparent
+
+Files
+     files used by flex
+
+Deficiencies / Bugs
+     known problems with flex
+
+See Also
+     other documentation, related tools
+
+Author
+     includes contact information
+
+
+File: flex.info,  Node: Description,  Next: Examples,  Prev: Overview,  Up: Top
+
+Description
+===========
+
+   `flex' is a tool for generating "scanners": programs which
+recognized lexical patterns in text.  `flex' reads the given input
+files, or its standard input if no file names are given, for a
+description of a scanner to generate.  The description is in the form
+of pairs of regular expressions and C code, called "rules". `flex'
+generates as output a C source file, `lex.yy.c', which defines a
+routine `yylex()'.  This file is compiled and linked with the `-lfl'
+library to produce an executable.  When the executable is run, it
+analyzes its input for occurrences of the regular expressions.
+Whenever it finds one, it executes the corresponding C code.
+
+
+File: flex.info,  Node: Examples,  Next: Format,  Prev: Description,  Up: Top
+
+Some simple examples
+====================
+
+   First some simple examples to get the flavor of how one uses `flex'.
+The following `flex' input specifies a scanner which whenever it
+encounters the string "username" will replace it with the user's login
+name:
+
+     %%
+     username    printf( "%s", getlogin() );
+     ^
+
+   By default, any text not matched by a `flex' scanner is copied to
+the output, so the net effect of this scanner is to copy its input file
+to its output with each occurrence of "username" expanded.  In this
+input, there is just one rule.  "username" is the PATTERN and the
+"printf" is the ACTION.  The "%%" marks the beginning of the rules.
+
+   Here's another simple example:
+
+             int num_lines = 0, num_chars = 0;
+     
+     %%
+     \n      ++num_lines; ++num_chars;
+     .       ++num_chars;
+     
+     %%
+     main()
+             {
+             yylex();
+             printf( "# of lines = %d, # of chars = %d\n",
+                     num_lines, num_chars );
+             }
+     ^
+
+   This scanner counts the number of characters and the number of lines
+in its input (it produces no output other than the final report on the
+counts).  The first line declares two globals, "num_lines" and
+"num_chars", which are accessible both inside `yylex()' and in the
+`main()' routine declared after the second "%%".  There are two rules,
+one which matches a newline ("\n") and increments both the line count
+and the character count, and one which matches any character other than
+a newline (indicated by the "."  regular expression).
+
+   A somewhat more complicated example:
+
+     /* scanner for a toy Pascal-like language */
+     
+     %{
+     /* need this for the call to atof() below */
+     #include <math.h>
+     %}
+     
+     DIGIT    [0-9]
+     ID       [a-z][a-z0-9]*
+     
+     %%
+     
+     {DIGIT}+    {
+                 printf( "An integer: %s (%d)\n", yytext,
+                         atoi( yytext ) );
+                 }
+     
+     {DIGIT}+"."{DIGIT}*        {
+                 printf( "A float: %s (%g)\n", yytext,
+                         atof( yytext ) );
+                 }
+     
+     if|then|begin|end|procedure|function        {
+                 printf( "A keyword: %s\n", yytext );
+                 }
+     
+     {ID}        printf( "An identifier: %s\n", yytext );
+     
+     "+"|"-"|"*"|"/"   printf( "An operator: %s\n", yytext );
+     
+     "{"[^}\n]*"}"     /* eat up one-line comments */
+     
+     [ \t\n]+          /* eat up whitespace */
+     
+     .           printf( "Unrecognized character: %s\n", yytext );
+     
+     %%
+     
+     main( argc, argv )
+     int argc;
+     char **argv;
+         {
+         ++argv, --argc;  /* skip over program name */
+         if ( argc > 0 )
+                 yyin = fopen( argv[0], "r" );
+         else
+                 yyin = stdin;
+     
+         yylex();
+         }
+     ^
+
+   This is the beginnings of a simple scanner for a language like
+Pascal.  It identifies different types of TOKENS and reports on what it
+has seen.
+
+   The details of this example will be explained in the following
+sections.
+
+
+File: flex.info,  Node: Format,  Next: Patterns,  Prev: Examples,  Up: Top
+
+Format of the input file
+========================
+
+   The `flex' input file consists of three sections, separated by a
+line with just `%%' in it:
+
+     definitions
+     %%
+     rules
+     %%
+     user code
+     ^
+
+   The "definitions" section contains declarations of simple "name"
+definitions to simplify the scanner specification, and declarations of
+"start conditions", which are explained in a later section.  Name
+definitions have the form:
+
+     name definition
+     ^
+
+   The "name" is a word beginning with a letter or an underscore ('_')
+followed by zero or more letters, digits, '_', or '-' (dash).  The
+definition is taken to begin at the first non-white-space character
+following the name and continuing to the end of the line.  The
+definition can subsequently be referred to using "{name}", which will
+expand to "(definition)".  For example,
+
+     DIGIT    [0-9]
+     ID       [a-z][a-z0-9]*
+     ^
+
+defines "DIGIT" to be a regular expression which matches a single
+digit, and "ID" to be a regular expression which matches a letter
+followed by zero-or-more letters-or-digits.  A subsequent reference to
+
+     {DIGIT}+"."{DIGIT}*
+     ^
+
+is identical to
+
+     ([0-9])+"."([0-9])*
+     ^
+
+and matches one-or-more digits followed by a '.' followed by
+zero-or-more digits.
+
+   The RULES section of the `flex' input contains a series of rules of
+the form:
+
+     pattern   action
+     ^
+
+where the pattern must be unindented and the action must begin on the
+same line.
+
+   See below for a further description of patterns and actions.
+
+   Finally, the user code section is simply copied to `lex.yy.c'
+verbatim.  It is used for companion routines which call or are called
+by the scanner.  The presence of this section is optional; if it is
+missing, the second `%%' in the input file may be skipped, too.
+
+   In the definitions and rules sections, any *indented* text or text
+enclosed in `%{' and `%}' is copied verbatim to the output (with the
+`%{}''s removed).  The `%{}''s must appear unindented on lines by
+themselves.
+
+   In the rules section, any indented or %{} text appearing before the
+first rule may be used to declare variables which are local to the
+scanning routine and (after the declarations) code which is to be
+executed whenever the scanning routine is entered.  Other indented or
+%{} text in the rule section is still copied to the output, but its
+meaning is not well-defined and it may well cause compile-time errors
+(this feature is present for `POSIX' compliance; see below for other
+such features).
+
+   In the definitions section (but not in the rules section), an
+unindented comment (i.e., a line beginning with "/*") is also copied
+verbatim to the output up to the next "*/".
+
+
+File: flex.info,  Node: Patterns,  Next: Matching,  Prev: Format,  Up: Top
+
+Patterns
+========
+
+   The patterns in the input are written using an extended set of
+regular expressions.  These are:
+
+`x'
+     match the character `x'
+
+`.'
+     any character (byte) except newline
+
+`[xyz]'
+     a "character class"; in this case, the pattern matches either an
+     `x', a `y', or a `z'
+
+`[abj-oZ]'
+     a "character class" with a range in it; matches an `a', a `b', any
+     letter from `j' through `o', or a `Z'
+
+`[^A-Z]'
+     a "negated character class", i.e., any character but those in the
+     class.  In this case, any character EXCEPT an uppercase letter.
+
+`[^A-Z\n]'
+     any character EXCEPT an uppercase letter or a newline
+
+`R*'
+     zero or more R's, where R is any regular expression
+
+`R+'
+     one or more R's
+
+`R?'
+     zero or one R's (that is, "an optional R")
+
+`R{2,5}'
+     anywhere from two to five R's
+
+`R{2,}'
+     two or more R's
+
+`R{4}'
+     exactly 4 R's
+
+`{NAME}'
+     the expansion of the "NAME" definition (see above)
+
+`"[xyz]\"foo"'
+     the literal string: `[xyz]"foo'
+
+`\X'
+     if X is an `a', `b', `f', `n', `r', `t', or `v', then the ANSI-C
+     interpretation of \X.  Otherwise, a literal `X' (used to escape
+     operators such as `*')
+
+`\0'
+     a NUL character (ASCII code 0)
+
+`\123'
+     the character with octal value 123
+
+`\x2a'
+     the character with hexadecimal value `2a'
+
+`(R)'
+     match an R; parentheses are used to override precedence (see below)
+
+`RS'
+     the regular expression R followed by the regular expression S;
+     called "concatenation"
+
+`R|S'
+     either an R or an S
+
+`R/S'
+     an R but only if it is followed by an S.  The text matched by S is
+     included when determining whether this rule is the "longest
+     match", but is then returned to the input before the action is
+     executed.  So the action only sees the text matched by R.  This
+     type of pattern is called "trailing context".  (There are some
+     combinations of `R/S' that `flex' cannot match correctly; see
+     notes in the Deficiencies / Bugs section below regarding
+     "dangerous trailing context".)
+
+`^R'
+     an R, but only at the beginning of a line (i.e., which just
+     starting to scan, or right after a newline has been scanned).
+
+`R$'
+     an R, but only at the end of a line (i.e., just before a newline).
+     Equivalent to "R/\n".
+
+     Note that flex's notion of "newline" is exactly whatever the C
+     compiler used to compile flex interprets '\n' as; in particular,
+     on some DOS systems you must either filter out \r's in the input
+     yourself, or explicitly use R/\r\n for "r$".
+
+`<S>R'
+     an R, but only in start condition S (see below for discussion of
+     start conditions) <S1,S2,S3>R same, but in any of start conditions
+     S1, S2, or S3
+
+`<*>R'
+     an R in any start condition, even an exclusive one.
+
+`<<EOF>>'
+     an end-of-file <S1,S2><<EOF>> an end-of-file when in start
+     condition S1 or S2
+
+   Note that inside of a character class, all regular expression
+operators lose their special meaning except escape ('\') and the
+character class operators, '-', ']', and, at the beginning of the
+class, '^'.
+
+   The regular expressions listed above are grouped according to
+precedence, from highest precedence at the top to lowest at the bottom.
+Those grouped together have equal precedence.  For example,
+
+     foo|bar*
+     ^
+
+is the same as
+
+     (foo)|(ba(r*))
+     ^
+
+since the '*' operator has higher precedence than concatenation, and
+concatenation higher than alternation ('|').  This pattern therefore
+matches *either* the string "foo" *or* the string "ba" followed by
+zero-or-more r's.  To match "foo" or zero-or-more "bar"'s, use:
+
+     foo|(bar)*
+     ^
+
+and to match zero-or-more "foo"'s-or-"bar"'s:
+
+     (foo|bar)*
+     ^
+
+   In addition to characters and ranges of characters, character
+classes can also contain character class "expressions".  These are
+expressions enclosed inside `[': and `:'] delimiters (which themselves
+must appear between the '[' and ']' of the character class; other
+elements may occur inside the character class, too).  The valid
+expressions are:
+
+     [:alnum:] [:alpha:] [:blank:]
+     [:cntrl:] [:digit:] [:graph:]
+     [:lower:] [:print:] [:punct:]
+     [:space:] [:upper:] [:xdigit:]
+     ^
+
+   These expressions all designate a set of characters equivalent to
+the corresponding standard C `isXXX' function.  For example,
+`[:alnum:]' designates those characters for which `isalnum()' returns
+true - i.e., any alphabetic or numeric.  Some systems don't provide
+`isblank()', so flex defines `[:blank:]' as a blank or a tab.
+
+   For example, the following character classes are all equivalent:
+
+     [[:alnum:]]
+     [[:alpha:][:digit:]
+     [[:alpha:]0-9]
+     [a-zA-Z0-9]
+     ^
+
+   If your scanner is case-insensitive (the `-i' flag), then
+`[:upper:]' and `[:lower:]' are equivalent to `[:alpha:]'.
+
+   Some notes on patterns:
+
+   - A negated character class such as the example "[^A-Z]" above *will
+     match a newline* unless "\n" (or an equivalent escape sequence) is
+     one of the characters explicitly present in the negated character
+     class (e.g., "[^A-Z\n]").  This is unlike how many other regular
+     expression tools treat negated character classes, but
+     unfortunately the inconsistency is historically entrenched.
+     Matching newlines means that a pattern like [^"]* can match the
+     entire input unless there's another quote in the input.
+
+   - A rule can have at most one instance of trailing context (the '/'
+     operator or the '$' operator).  The start condition, '^', and
+     "<<EOF>>" patterns can only occur at the beginning of a pattern,
+     and, as well as with '/' and '$', cannot be grouped inside
+     parentheses.  A '^' which does not occur at the beginning of a
+     rule or a '$' which does not occur at the end of a rule loses its
+     special properties and is treated as a normal character.
+
+     The following are illegal:
+
+          foo/bar$
+          <sc1>foo<sc2>bar
+          ^
+
+     Note that the first of these, can be written "foo/bar\n".
+
+     The following will result in '$' or '^' being treated as a normal
+     character:
+
+          foo|(bar$)
+          foo|^bar
+          ^
+
+     If what's wanted is a "foo" or a bar-followed-by-a-newline, the
+     following could be used (the special '|' action is explained
+     below):
+
+          foo      |
+          bar$     /* action goes here */
+          ^
+
+     A similar trick will work for matching a foo or a
+     bar-at-the-beginning-of-a-line.
+
+
+File: flex.info,  Node: Matching,  Next: Actions,  Prev: Patterns,  Up: Top
+
+How the input is matched
+========================
+
+   When the generated scanner is run, it analyzes its input looking for
+strings which match any of its patterns.  If it finds more than one
+match, it takes the one matching the most text (for trailing context
+rules, this includes the length of the trailing part, even though it
+will then be returned to the input).  If it finds two or more matches
+of the same length, the rule listed first in the `flex' input file is
+chosen.
+
+   Once the match is determined, the text corresponding to the match
+(called the TOKEN) is made available in the global character pointer
+`yytext', and its length in the global integer `yyleng'.  The ACTION
+corresponding to the matched pattern is then executed (a more detailed
+description of actions follows), and then the remaining input is
+scanned for another match.
+
+   If no match is found, then the "default rule" is executed: the next
+character in the input is considered matched and copied to the standard
+output.  Thus, the simplest legal `flex' input is:
+
+     %%
+     ^
+
+   which generates a scanner that simply copies its input (one
+character at a time) to its output.
+
+   Note that `yytext' can be defined in two different ways: either as a
+character *pointer* or as a character *array*.  You can control which
+definition `flex' uses by including one of the special directives
+`%pointer' or `%array' in the first (definitions) section of your flex
+input.  The default is `%pointer', unless you use the `-l' lex
+compatibility option, in which case `yytext' will be an array.  The
+advantage of using `%pointer' is substantially faster scanning and no
+buffer overflow when matching very large tokens (unless you run out of
+dynamic memory).  The disadvantage is that you are restricted in how
+your actions can modify `yytext' (see the next section), and calls to
+the `unput()' function destroys the present contents of `yytext', which
+can be a considerable porting headache when moving between different
+`lex' versions.
+
+   The advantage of `%array' is that you can then modify `yytext' to
+your heart's content, and calls to `unput()' do not destroy `yytext'
+(see below).  Furthermore, existing `lex' programs sometimes access
+`yytext' externally using declarations of the form:
+     extern char yytext[];
+     ^
+   This definition is erroneous when used with `%pointer', but correct
+for `%array'.
+
+   `%array' defines `yytext' to be an array of `YYLMAX' characters,
+which defaults to a fairly large value.  You can change the size by
+simply #define'ing `YYLMAX' to a different value in the first section
+of your `flex' input.  As mentioned above, with `%pointer' yytext grows
+dynamically to accommodate large tokens.  While this means your
+`%pointer' scanner can accommodate very large tokens (such as matching
+entire blocks of comments), bear in mind that each time the scanner
+must resize `yytext' it also must rescan the entire token from the
+beginning, so matching such tokens can prove slow.  `yytext' presently
+does *not* dynamically grow if a call to `unput()' results in too much
+text being pushed back; instead, a run-time error results.
+
+   Also note that you cannot use `%array' with C++ scanner classes (the
+`c++' option; see below).
+
+
+File: flex.info,  Node: Actions,  Next: Generated scanner,  Prev: Matching,  Up: Top
+
+Actions
+=======
+
+   Each pattern in a rule has a corresponding action, which can be any
+arbitrary C statement.  The pattern ends at the first non-escaped
+whitespace character; the remainder of the line is its action.  If the
+action is empty, then when the pattern is matched the input token is
+simply discarded.  For example, here is the specification for a program
+which deletes all occurrences of "zap me" from its input:
+
+     %%
+     "zap me"
+     ^
+
+   (It will copy all other characters in the input to the output since
+they will be matched by the default rule.)
+
+   Here is a program which compresses multiple blanks and tabs down to
+a single blank, and throws away whitespace found at the end of a line:
+
+     %%
+     [ \t]+        putchar( ' ' );
+     [ \t]+$       /* ignore this token */
+     ^
+
+   If the action contains a '{', then the action spans till the
+balancing '}' is found, and the action may cross multiple lines.
+`flex' knows about C strings and comments and won't be fooled by braces
+found within them, but also allows actions to begin with `%{' and will
+consider the action to be all the text up to the next `%}' (regardless
+of ordinary braces inside the action).
+
+   An action consisting solely of a vertical bar ('|') means "same as
+the action for the next rule." See below for an illustration.
+
+   Actions can include arbitrary C code, including `return' statements
+to return a value to whatever routine called `yylex()'.  Each time
+`yylex()' is called it continues processing tokens from where it last
+left off until it either reaches the end of the file or executes a
+return.
+
+   Actions are free to modify `yytext' except for lengthening it
+(adding characters to its end-these will overwrite later characters in
+the input stream).  This however does not apply when using `%array'
+(see above); in that case, `yytext' may be freely modified in any way.
+
+   Actions are free to modify `yyleng' except they should not do so if
+the action also includes use of `yymore()' (see below).
+
+   There are a number of special directives which can be included
+within an action:
+
+   - `ECHO' copies yytext to the scanner's output.
+
+   - `BEGIN' followed by the name of a start condition places the
+     scanner in the corresponding start condition (see below).
+
+   - `REJECT' directs the scanner to proceed on to the "second best"
+     rule which matched the input (or a prefix of the input).  The rule
+     is chosen as described above in "How the Input is Matched", and
+     `yytext' and `yyleng' set up appropriately.  It may either be one
+     which matched as much text as the originally chosen rule but came
+     later in the `flex' input file, or one which matched less text.
+     For example, the following will both count the words in the input
+     and call the routine special() whenever "frob" is seen:
+
+                  int word_count = 0;
+          %%
+          
+          frob        special(); REJECT;
+          [^ \t\n]+   ++word_count;
+          ^
+
+     Without the `REJECT', any "frob"'s in the input would not be
+     counted as words, since the scanner normally executes only one
+     action per token.  Multiple `REJECT's' are allowed, each one
+     finding the next best choice to the currently active rule.  For
+     example, when the following scanner scans the token "abcd", it
+     will write "abcdabcaba" to the output:
+
+          %%
+          a        |
+          ab       |
+          abc      |
+          abcd     ECHO; REJECT;
+          .|\n     /* eat up any unmatched character */
+          ^
+
+     (The first three rules share the fourth's action since they use
+     the special '|' action.)  `REJECT' is a particularly expensive
+     feature in terms of scanner performance; if it is used in *any* of
+     the scanner's actions it will slow down *all* of the scanner's
+     matching.  Furthermore, `REJECT' cannot be used with the `-Cf' or
+     `-CF' options (see below).
+
+     Note also that unlike the other special actions, `REJECT' is a
+     *branch*; code immediately following it in the action will *not*
+     be executed.
+
+   - `yymore()' tells the scanner that the next time it matches a rule,
+     the corresponding token should be *appended* onto the current
+     value of `yytext' rather than replacing it.  For example, given
+     the input "mega-kludge" the following will write
+     "mega-mega-kludge" to the output:
+
+          %%
+          mega-    ECHO; yymore();
+          kludge   ECHO;
+          ^
+
+     First "mega-" is matched and echoed to the output.  Then "kludge"
+     is matched, but the previous "mega-" is still hanging around at
+     the beginning of `yytext' so the `ECHO' for the "kludge" rule will
+     actually write "mega-kludge".
+
+   Two notes regarding use of `yymore()'.  First, `yymore()' depends on
+the value of `yyleng' correctly reflecting the size of the current
+token, so you must not modify `yyleng' if you are using `yymore()'.
+Second, the presence of `yymore()' in the scanner's action entails a
+minor performance penalty in the scanner's matching speed.
+
+   - `yyless(n)' returns all but the first N characters of the current
+     token back to the input stream, where they will be rescanned when
+     the scanner looks for the next match.  `yytext' and `yyleng' are
+     adjusted appropriately (e.g., `yyleng' will now be equal to N ).
+     For example, on the input "foobar" the following will write out
+     "foobarbar":
+
+          %%
+          foobar    ECHO; yyless(3);
+          [a-z]+    ECHO;
+          ^
+
+     An argument of 0 to `yyless' will cause the entire current input
+     string to be scanned again.  Unless you've changed how the scanner
+     will subsequently process its input (using `BEGIN', for example),
+     this will result in an endless loop.
+
+     Note that `yyless' is a macro and can only be used in the flex
+     input file, not from other source files.
+
+   - `unput(c)' puts the character `c' back onto the input stream.  It
+     will be the next character scanned.  The following action will
+     take the current token and cause it to be rescanned enclosed in
+     parentheses.
+
+          {
+          int i;
+          /* Copy yytext because unput() trashes yytext */
+          char *yycopy = strdup( yytext );
+          unput( ')' );
+          for ( i = yyleng - 1; i >= 0; --i )
+              unput( yycopy[i] );
+          unput( '(' );
+          free( yycopy );
+          }
+          ^
+
+     Note that since each `unput()' puts the given character back at
+     the *beginning* of the input stream, pushing back strings must be
+     done back-to-front.  An important potential problem when using
+     `unput()' is that if you are using `%pointer' (the default), a
+     call to `unput()' *destroys* the contents of `yytext', starting
+     with its rightmost character and devouring one character to the
+     left with each call.  If you need the value of yytext preserved
+     after a call to `unput()' (as in the above example), you must
+     either first copy it elsewhere, or build your scanner using
+     `%array' instead (see How The Input Is Matched).
+
+     Finally, note that you cannot put back `EOF' to attempt to mark
+     the input stream with an end-of-file.
+
+   - `input()' reads the next character from the input stream.  For
+     example, the following is one way to eat up C comments:
+
+          %%
+          "/*"        {
+                      register int c;
+          
+                      for ( ; ; )
+                          {
+                          while ( (c = input()) != '*' &&
+                                  c != EOF )
+                              ;    /* eat up text of comment */
+          
+                          if ( c == '*' )
+                              {
+                              while ( (c = input()) == '*' )
+                                  ;
+                              if ( c == '/' )
+                                  break;    /* found the end */
+                              }
+          
+                          if ( c == EOF )
+                              {
+                              error( "EOF in comment" );
+                              break;
+                              }
+                          }
+                      }
+          ^
+
+     (Note that if the scanner is compiled using `C++', then `input()'
+     is instead referred to as `yyinput()', in order to avoid a name
+     clash with the `C++' stream by the name of `input'.)
+
+   - YY_FLUSH_BUFFER flushes the scanner's internal buffer so that the
+     next time the scanner attempts to match a token, it will first
+     refill the buffer using `YY_INPUT' (see The Generated Scanner,
+     below).  This action is a special case of the more general
+     `yy_flush_buffer()' function, described below in the section
+     Multiple Input Buffers.
+
+   - `yyterminate()' can be used in lieu of a return statement in an
+     action.  It terminates the scanner and returns a 0 to the
+     scanner's caller, indicating "all done".  By default,
+     `yyterminate()' is also called when an end-of-file is encountered.
+     It is a macro and may be redefined.
+
+
+File: flex.info,  Node: Generated scanner,  Next: Start conditions,  Prev: Actions,  Up: Top
+
+The generated scanner
+=====================
+
+   The output of `flex' is the file `lex.yy.c', which contains the
+scanning routine `yylex()', a number of tables used by it for matching
+tokens, and a number of auxiliary routines and macros.  By default,
+`yylex()' is declared as follows:
+
+     int yylex()
+         {
+         ... various definitions and the actions in here ...
+         }
+     ^
+
+   (If your environment supports function prototypes, then it will be
+"int yylex( void  )".)   This  definition  may  be changed by defining
+the "YY_DECL" macro.  For example, you could use:
+
+     #define YY_DECL float lexscan( a, b ) float a, b;
+     ^
+
+   to give the scanning routine the name `lexscan', returning a float,
+and taking two floats as arguments.  Note that if you give arguments to
+the scanning routine using a K&R-style/non-prototyped function
+declaration, you must terminate the definition with a semi-colon (`;').
+
+   Whenever `yylex()' is called, it scans tokens from the global input
+file `yyin' (which defaults to stdin).  It continues until it either
+reaches an end-of-file (at which point it returns the value 0) or one
+of its actions executes a `return' statement.
+
+   If the scanner reaches an end-of-file, subsequent calls are undefined
+unless either `yyin' is pointed at a new input file (in which case
+scanning continues from that file), or `yyrestart()' is called.
+`yyrestart()' takes one argument, a `FILE *' pointer (which can be nil,
+if you've set up `YY_INPUT' to scan from a source other than `yyin'),
+and initializes `yyin' for scanning from that file.  Essentially there
+is no difference between just assigning `yyin' to a new input file or
+using `yyrestart()' to do so; the latter is available for compatibility
+with previous versions of `flex', and because it can be used to switch
+input files in the middle of scanning.  It can also be used to throw
+away the current input buffer, by calling it with an argument of
+`yyin'; but better is to use `YY_FLUSH_BUFFER' (see above).  Note that
+`yyrestart()' does *not* reset the start condition to `INITIAL' (see
+Start Conditions, below).
+
+   If `yylex()' stops scanning due to executing a `return' statement in
+one of the actions, the scanner may then be called again and it will
+resume scanning where it left off.
+
+   By default (and for purposes of efficiency), the scanner uses
+block-reads rather than simple `getc()' calls to read characters from
+`yyin'.  The nature of how it gets its input can be controlled by
+defining the `YY_INPUT' macro.  YY_INPUT's calling sequence is
+"YY_INPUT(buf,result,max_size)".  Its action is to place up to MAX_SIZE
+characters in the character array BUF and return in the integer
+variable RESULT either the number of characters read or the constant
+YY_NULL (0 on Unix systems) to indicate EOF.  The default YY_INPUT
+reads from the global file-pointer "yyin".
+
+   A sample definition of YY_INPUT (in the definitions section of the
+input file):
+
+     %{
+     #define YY_INPUT(buf,result,max_size) \
+         { \
+         int c = getchar(); \
+         result = (c == EOF) ? YY_NULL : (buf[0] = c, 1); \
+         }
+     %}
+     ^
+
+   This definition will change the input processing to occur one
+character at a time.
+
+   When the scanner receives an end-of-file indication from YY_INPUT,
+it then checks the `yywrap()' function.  If `yywrap()' returns false
+(zero), then it is assumed that the function has gone ahead and set up
+`yyin' to point to another input file, and scanning continues.  If it
+returns true (non-zero), then the scanner terminates, returning 0 to
+its caller.  Note that in either case, the start condition remains
+unchanged; it does *not* revert to `INITIAL'.
+
+   If you do not supply your own version of `yywrap()', then you must
+either use `%option noyywrap' (in which case the scanner behaves as
+though `yywrap()' returned 1), or you must link with `-lfl' to obtain
+the default version of the routine, which always returns 1.
+
+   Three routines are available for scanning from in-memory buffers
+rather than files: `yy_scan_string()', `yy_scan_bytes()', and
+`yy_scan_buffer()'.  See the discussion of them below in the section
+Multiple Input Buffers.
+
+   The scanner writes its `ECHO' output to the `yyout' global (default,
+stdout), which may be redefined by the user simply by assigning it to
+some other `FILE' pointer.
+
+
+File: flex.info,  Node: Start conditions,  Next: Multiple buffers,  Prev: Generated scanner,  Up: Top
+
+Start conditions
+================
+
+   `flex' provides a mechanism for conditionally activating rules.  Any
+rule whose pattern is prefixed with "<sc>" will only be active when the
+scanner is in the start condition named "sc".  For example,
+
+     <STRING>[^"]*        { /* eat up the string body ... */
+                 ...
+                 }
+     ^
+
+will be active only when the scanner is in the "STRING" start
+condition, and
+
+     <INITIAL,STRING,QUOTE>\.        { /* handle an escape ... */
+                 ...
+                 }
+     ^
+
+will be active only when the current start condition is either
+"INITIAL", "STRING", or "QUOTE".
+
+   Start conditions are declared in the definitions (first) section of
+the input using unindented lines beginning with either `%s' or `%x'
+followed by a list of names.  The former declares *inclusive* start
+conditions, the latter *exclusive* start conditions.  A start condition
+is activated using the `BEGIN' action.  Until the next `BEGIN' action is
+executed, rules with the given start condition will be active and rules
+with other start conditions will be inactive.  If the start condition
+is *inclusive*, then rules with no start conditions at all will also be
+active.  If it is *exclusive*, then *only* rules qualified with the
+start condition will be active.  A set of rules contingent on the same
+exclusive start condition describe a scanner which is independent of
+any of the other rules in the `flex' input.  Because of this, exclusive
+start conditions make it easy to specify "mini-scanners" which scan
+portions of the input that are syntactically different from the rest
+(e.g., comments).
+
+   If the distinction between inclusive and exclusive start conditions
+is still a little vague, here's a simple example illustrating the
+connection between the two.  The set of rules:
+
+     %s example
+     %%
+     
+     <example>foo   do_something();
+     
+     bar            something_else();
+     ^
+
+is equivalent to
+
+     %x example
+     %%
+     
+     <example>foo   do_something();
+     
+     <INITIAL,example>bar    something_else();
+     ^
+
+   Without the `<INITIAL,example>' qualifier, the `bar' pattern in the
+second example wouldn't be active (i.e., couldn't match) when in start
+condition `example'.  If we just used `<example>' to qualify `bar',
+though, then it would only be active in `example' and not in `INITIAL',
+while in the first example it's active in both, because in the first
+example the `example' starting condition is an *inclusive* (`%s') start
+condition.
+
+   Also note that the special start-condition specifier `<*>' matches
+every start condition.  Thus, the above example could also have been
+written;
+
+     %x example
+     %%
+     
+     <example>foo   do_something();
+     
+     <*>bar    something_else();
+     ^
+
+   The default rule (to `ECHO' any unmatched character) remains active
+in start conditions.  It is equivalent to:
+
+     <*>.|\\n     ECHO;
+     ^
+
+   `BEGIN(0)' returns to the original state where only the rules with
+no start conditions are active.  This state can also be referred to as
+the start-condition "INITIAL", so `BEGIN(INITIAL)' is equivalent to
+`BEGIN(0)'.  (The parentheses around the start condition name are not
+required but are considered good style.)
+
+   `BEGIN' actions can also be given as indented code at the beginning
+of the rules section.  For example, the following will cause the
+scanner to enter the "SPECIAL" start condition whenever `yylex()' is
+called and the global variable `enter_special' is true:
+
+             int enter_special;
+     
+     %x SPECIAL
+     %%
+             if ( enter_special )
+                 BEGIN(SPECIAL);
+     
+     <SPECIAL>blahblahblah
+     ...more rules follow...
+     ^
+
+   To illustrate the uses of start conditions, here is a scanner which
+provides two different interpretations of a string like "123.456".  By
+default it will treat it as as three tokens, the integer "123", a dot
+('.'), and the integer "456".  But if the string is preceded earlier in
+the line by the string "expect-floats" it will treat it as a single
+token, the floating-point number 123.456:
+
+     %{
+     #include <math.h>
+     %}
+     %s expect
+     
+     %%
+     expect-floats        BEGIN(expect);
+     
+     <expect>[0-9]+"."[0-9]+      {
+                 printf( "found a float, = %f\n",
+                         atof( yytext ) );
+                 }
+     <expect>\n           {
+                 /* that's the end of the line, so
+                  * we need another "expect-number"
+                  * before we'll recognize any more
+                  * numbers
+                  */
+                 BEGIN(INITIAL);
+                 }
+     
+     [0-9]+      {
+     
+     Version 2.5               December 1994                        18
+     
+                 printf( "found an integer, = %d\n",
+                         atoi( yytext ) );
+                 }
+     
+     "."         printf( "found a dot\n" );
+     ^
+
+   Here is a scanner which recognizes (and discards) C comments while
+maintaining a count of the current input line.
+
+     %x comment
+     %%
+             int line_num = 1;
+     
+     "/*"         BEGIN(comment);
+     
+     <comment>[^*\n]*        /* eat anything that's not a '*' */
+     <comment>"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
+     <comment>\n             ++line_num;
+     <comment>"*"+"/"        BEGIN(INITIAL);
+     ^
+
+   This scanner goes to a bit of trouble to match as much text as
+possible with each rule.  In general, when attempting to write a
+high-speed scanner try to match as much possible in each rule, as it's
+a big win.
+
+   Note that start-conditions names are really integer values and can
+be stored as such.  Thus, the above could be extended in the following
+fashion:
+
+     %x comment foo
+     %%
+             int line_num = 1;
+             int comment_caller;
+     
+     "/*"         {
+                  comment_caller = INITIAL;
+                  BEGIN(comment);
+                  }
+     
+     ...
+     
+     <foo>"/*"    {
+                  comment_caller = foo;
+                  BEGIN(comment);
+                  }
+     
+     <comment>[^*\n]*        /* eat anything that's not a '*' */
+     <comment>"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
+     <comment>\n             ++line_num;
+     <comment>"*"+"/"        BEGIN(comment_caller);
+     ^
+
+   Furthermore, you can access the current start condition using the
+integer-valued `YY_START' macro.  For example, the above assignments to
+`comment_caller' could instead be written
+
+     comment_caller = YY_START;
+     ^
+
+   Flex provides `YYSTATE' as an alias for `YY_START' (since that is
+what's used by AT&T `lex').
+
+   Note that start conditions do not have their own name-space; %s's
+and %x's declare names in the same fashion as #define's.
+
+   Finally, here's an example of how to match C-style quoted strings
+using exclusive start conditions, including expanded escape sequences
+(but not including checking for a string that's too long):
+
+     %x str
+     
+     %%
+             char string_buf[MAX_STR_CONST];
+             char *string_buf_ptr;
+     
+     \"      string_buf_ptr = string_buf; BEGIN(str);
+     
+     <str>\"        { /* saw closing quote - all done */
+             BEGIN(INITIAL);
+             *string_buf_ptr = '\0';
+             /* return string constant token type and
+              * value to parser
+              */
+             }
+     
+     <str>\n        {
+             /* error - unterminated string constant */
+             /* generate error message */
+             }
+     
+     <str>\\[0-7]{1,3} {
+             /* octal escape sequence */
+             int result;
+     
+             (void) sscanf( yytext + 1, "%o", &result );
+     
+             if ( result > 0xff )
+                     /* error, constant is out-of-bounds */
+     
+             *string_buf_ptr++ = result;
+             }
+     
+     <str>\\[0-9]+ {
+             /* generate error - bad escape sequence; something
+              * like '\48' or '\0777777'
+              */
+             }
+     
+     <str>\\n  *string_buf_ptr++ = '\n';
+     <str>\\t  *string_buf_ptr++ = '\t';
+     <str>\\r  *string_buf_ptr++ = '\r';
+     <str>\\b  *string_buf_ptr++ = '\b';
+     <str>\\f  *string_buf_ptr++ = '\f';
+     
+     <str>\\(.|\n)  *string_buf_ptr++ = yytext[1];
+     
+     <str>[^\\\n\"]+        {
+             char *yptr = yytext;
+     
+             while ( *yptr )
+                     *string_buf_ptr++ = *yptr++;
+             }
+     ^
+
+   Often, such as in some of the examples above, you wind up writing a
+whole bunch of rules all preceded by the same start condition(s).  Flex
+makes this a little easier and cleaner by introducing a notion of start
+condition "scope".  A start condition scope is begun with:
+
+     <SCs>{
+     ^
+
+where SCs is a list of one or more start conditions.  Inside the start
+condition scope, every rule automatically has the prefix `<SCs>'
+applied to it, until a `}' which matches the initial `{'.  So, for
+example,
+
+     <ESC>{
+         "\\n"   return '\n';
+         "\\r"   return '\r';
+         "\\f"   return '\f';
+         "\\0"   return '\0';
+     }
+     ^
+
+is equivalent to:
+
+     <ESC>"\\n"  return '\n';
+     <ESC>"\\r"  return '\r';
+     <ESC>"\\f"  return '\f';
+     <ESC>"\\0"  return '\0';
+     ^
+
+   Start condition scopes may be nested.
+
+   Three routines are available for manipulating stacks of start
+conditions:
+
+`void yy_push_state(int new_state)'
+     pushes the current start condition onto the top of the start
+     condition stack and switches to NEW_STATE as though you had used
+     `BEGIN new_state' (recall that start condition names are also
+     integers).
+
+`void yy_pop_state()'
+     pops the top of the stack and switches to it via `BEGIN'.
+
+`int yy_top_state()'
+     returns the top of the stack without altering the stack's contents.
+
+   The start condition stack grows dynamically and so has no built-in
+size limitation.  If memory is exhausted, program execution aborts.
+
+   To use start condition stacks, your scanner must include a `%option
+stack' directive (see Options below).
+
+
+File: flex.info,  Node: Multiple buffers,  Next: End-of-file rules,  Prev: Start conditions,  Up: Top
+
+Multiple input buffers
+======================
+
+   Some scanners (such as those which support "include" files) require
+reading from several input streams.  As `flex' scanners do a large
+amount of buffering, one cannot control where the next input will be
+read from by simply writing a `YY_INPUT' which is sensitive to the
+scanning context.  `YY_INPUT' is only called when the scanner reaches
+the end of its buffer, which may be a long time after scanning a
+statement such as an "include" which requires switching the input
+source.
+
+   To negotiate these sorts of problems, `flex' provides a mechanism
+for creating and switching between multiple input buffers.  An input
+buffer is created by using:
+
+     YY_BUFFER_STATE yy_create_buffer( FILE *file, int size )
+     ^
+
+which takes a `FILE' pointer and a size and creates a buffer associated
+with the given file and large enough to hold SIZE characters (when in
+doubt, use `YY_BUF_SIZE' for the size).  It returns a `YY_BUFFER_STATE'
+handle, which may then be passed to other routines (see below).  The
+`YY_BUFFER_STATE' type is a pointer to an opaque `struct'
+`yy_buffer_state' structure, so you may safely initialize
+YY_BUFFER_STATE variables to `((YY_BUFFER_STATE) 0)' if you wish, and
+also refer to the opaque structure in order to correctly declare input
+buffers in source files other than that of your scanner.  Note that the
+`FILE' pointer in the call to `yy_create_buffer' is only used as the
+value of `yyin' seen by `YY_INPUT'; if you redefine `YY_INPUT' so it no
+longer uses `yyin', then you can safely pass a nil `FILE' pointer to
+`yy_create_buffer'.  You select a particular buffer to scan from using:
+
+     void yy_switch_to_buffer( YY_BUFFER_STATE new_buffer )
+     ^
+
+   switches the scanner's input buffer so subsequent tokens will come
+from NEW_BUFFER.  Note that `yy_switch_to_buffer()' may be used by
+`yywrap()' to set things up for continued scanning, instead of opening
+a new file and pointing `yyin' at it.  Note also that switching input
+sources via either `yy_switch_to_buffer()' or `yywrap()' does *not*
+change the start condition.
+
+     void yy_delete_buffer( YY_BUFFER_STATE buffer )
+     ^
+
+is used to reclaim the storage associated with a buffer.  You can also
+clear the current contents of a buffer using:
+
+     void yy_flush_buffer( YY_BUFFER_STATE buffer )
+     ^
+
+   This function discards the buffer's contents, so the next time the
+scanner attempts to match a token from the buffer, it will first fill
+the buffer anew using `YY_INPUT'.
+
+   `yy_new_buffer()' is an alias for `yy_create_buffer()', provided for
+compatibility with the C++ use of `new' and `delete' for creating and
+destroying dynamic objects.
+
+   Finally, the `YY_CURRENT_BUFFER' macro returns a `YY_BUFFER_STATE'
+handle to the current buffer.
+
+   Here is an example of using these features for writing a scanner
+which expands include files (the `<<EOF>>' feature is discussed below):
+
+     /* the "incl" state is used for picking up the name
+      * of an include file
+      */
+     %x incl
+     
+     %{
+     #define MAX_INCLUDE_DEPTH 10
+     YY_BUFFER_STATE include_stack[MAX_INCLUDE_DEPTH];
+     int include_stack_ptr = 0;
+     %}
+     
+     %%
+     include             BEGIN(incl);
+     
+     [a-z]+              ECHO;
+     [^a-z\n]*\n?        ECHO;
+     
+     <incl>[ \t]*      /* eat the whitespace */
+     <incl>[^ \t\n]+   { /* got the include file name */
+             if ( include_stack_ptr >= MAX_INCLUDE_DEPTH )
+                 {
+                 fprintf( stderr, "Includes nested too deeply" );
+                 exit( 1 );
+                 }
+     
+             include_stack[include_stack_ptr++] =
+                 YY_CURRENT_BUFFER;
+     
+             yyin = fopen( yytext, "r" );
+     
+             if ( ! yyin )
+                 error( ... );
+     
+             yy_switch_to_buffer(
+                 yy_create_buffer( yyin, YY_BUF_SIZE ) );
+     
+             BEGIN(INITIAL);
+             }
+     
+     <<EOF>> {
+             if ( --include_stack_ptr < 0 )
+                 {
+                 yyterminate();
+                 }
+     
+             else
+                 {
+                 yy_delete_buffer( YY_CURRENT_BUFFER );
+                 yy_switch_to_buffer(
+                      include_stack[include_stack_ptr] );
+                 }
+             }
+     ^
+
+   Three routines are available for setting up input buffers for
+scanning in-memory strings instead of files.  All of them create a new
+input buffer for scanning the string, and return a corresponding
+`YY_BUFFER_STATE' handle (which you should delete with
+`yy_delete_buffer()' when done with it).  They also switch to the new
+buffer using `yy_switch_to_buffer()', so the next call to `yylex()' will
+start scanning the string.
+
+`yy_scan_string(const char *str)'
+     scans a NUL-terminated string.
+
+`yy_scan_bytes(const char *bytes, int len)'
+     scans `len' bytes (including possibly NUL's) starting at location
+     BYTES.
+
+   Note that both of these functions create and scan a *copy* of the
+string or bytes.  (This may be desirable, since `yylex()' modifies the
+contents of the buffer it is scanning.) You can avoid the copy by using:
+
+`yy_scan_buffer(char *base, yy_size_t size)'
+     which scans in place the buffer starting at BASE, consisting of
+     SIZE bytes, the last two bytes of which *must* be
+     `YY_END_OF_BUFFER_CHAR' (ASCII NUL).  These last two bytes are not
+     scanned; thus, scanning consists of `base[0]' through
+     `base[size-2]', inclusive.
+
+     If you fail to set up BASE in this manner (i.e., forget the final
+     two `YY_END_OF_BUFFER_CHAR' bytes), then `yy_scan_buffer()'
+     returns a nil pointer instead of creating a new input buffer.
+
+     The type `yy_size_t' is an integral type to which you can cast an
+     integer expression reflecting the size of the buffer.
+

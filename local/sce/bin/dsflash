@@ -1,0 +1,42 @@
+#!/bin/sh
+#			Copyright (C) 1999 Sony Computer Entertainment
+#			All Right Reserved
+#
+# $Id: dsflash.sh,v 1.12 1999/10/21 18:08:50 mka Exp $
+#
+
+usage(){
+	echo "Usage: dsflash [-d <host>[:<port>]] [option] <fname>"
+	echo " option: dsflash --help"
+	exit 1
+}
+
+target=
+
+if [ $# -eq 0 ]; then usage; fi
+if [ $1 = "-d" ]; then
+	target="-d $2"
+	shift;shift
+fi
+if [ $# -eq 0 ]; then usage; fi
+
+echo "*** Updating Flash ROM ..."
+
+if [ `basename $1` = `basename $1 .coff`.coff ]; then
+   dsreset $target 0 7 && dsistart $target $1 && dsreset $target 0 0
+   exit $?
+else
+   MYPATH=`dirname $0`
+   ROMFLASH=/usr/local/sce/bin/romflash
+   if [ -f ${ROMFLASH} ]; then
+       ROMPROG=${ROMFLASH}
+   elif [ -f $MYPATH/romflash ]; then
+       ROMPROG=$MYPATH/romflash
+   else
+       echo "FlashRom updater program ($ROMFLASH) not found --- abort !!!"
+       exit 1
+   fi
+
+   dsreset $target 0 7 && dsistart $target $ROMPROG $* && dsreset $target 0 0
+   exit $?
+fi

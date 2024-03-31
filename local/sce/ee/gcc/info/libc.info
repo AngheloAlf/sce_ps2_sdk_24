@@ -1,0 +1,216 @@
+This is Info file libc.info, produced by Makeinfo version 1.68 from the
+input file ../../../../src/newlib/libc/libc.texinfo.
+
+START-INFO-DIR-ENTRY
+* libc::                        The ANSI C library.
+END-INFO-DIR-ENTRY
+
+   This file documents the ANSI C library.
+
+   Copyright (C) 1992, 1993 Cygnus Support
+
+   `libc' includes software developed by the University of California,
+Berkeley and its contributors.
+
+   libc includes software developed by Martin Jackson, Graham Haley and
+Steve Chamberlain of Tadpole Technology and released to Cygnus.
+
+   libc uses floating point converstion software developed at AT&T,
+which includes this copyright information:
+
+   The author of this software is David M. Gay.
+
+   Copyright (c) 1991 by AT&T.
+
+   Permission to use, copy, modify, and distribute this software for any
+purpose without fee is hereby granted, provided that this entire notice
+is included in all copies of any software which is or includes a copy
+or modification of this software and in all copies of the supporting
+documentation for such software.
+
+   THIS SOFTWARE IS BEING PROVIDED "AS IS", WITHOUT ANY EXPRESS OR
+IMPLIED  WARRANTY.  IN PARTICULAR, NEITHER THE AUTHOR NOR AT&T MAKES ANY
+REPRESENTATION OR WARRANTY OF ANY KIND CONCERNING THE MERCHANTABILITY
+OF THIS SOFTWARE OR ITS FITNESS FOR ANY PARTICULAR PURPOSE.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, subject to the
+terms of the GNU General Public License, which includes the provision
+that the entire resulting derived work is distributed under the terms
+of a permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions.
+
+
+Indirect:
+libc.info-1: 1971
+libc.info-2: 51360
+libc.info-3: 100348
+libc.info-4: 150016
+libc.info-5: 198324
+
+Tag Table:
+(Indirect)
+Node: Top1971
+Node: Stdlib2246
+Node: abort4033
+Node: abs5053
+Node: assert5666
+Node: atexit6799
+Node: atof8238
+Node: atoi10053
+Node: bsearch10729
+Node: calloc11957
+Node: div12934
+Node: ecvt13674
+Node: gvcvt15600
+Node: ecvtbuf16628
+Node: __env_lock18346
+Node: exit19394
+Node: getenv20456
+Node: labs21254
+Node: ldiv21870
+Node: malloc22634
+Node: mallinfo26730
+Node: __malloc_lock28726
+Node: mblen29799
+Node: mbstowcs31038
+Node: mbtowc32530
+Node: qsort34130
+Node: rand35327
+Node: strtod37033
+Node: strtol39034
+Node: strtoul41876
+Node: system44749
+Node: wcstombs45958
+Node: wctomb47451
+Node: Ctype48757
+Node: isalnum49850
+Node: isalpha50599
+Node: isascii51360
+Node: iscntrl52032
+Node: isdigit52818
+Node: islower53543
+Node: isprint54317
+Node: ispunct55269
+Node: isspace56066
+Node: isupper56877
+Node: isxdigit57629
+Node: toascii58401
+Node: tolower59012
+Node: toupper60166
+Node: Stdio61303
+Node: clearerr64150
+Node: fclose64918
+Node: feof65534
+Node: ferror66037
+Node: fflush66740
+Node: fgetc67491
+Node: fgetpos68417
+Node: fgets69873
+Node: fiprintf70836
+Node: fopen71732
+Node: fdopen74770
+Node: fputc75409
+Node: fputs76433
+Node: fread77129
+Node: freopen77974
+Node: fseek78904
+Node: fsetpos80412
+Node: ftell81547
+Node: fwrite82930
+Node: getc83889
+Node: getchar85118
+Node: gets86275
+Node: getw87606
+Node: iprintf88503
+Node: mktemp89381
+Node: perror91131
+Node: putc92186
+Node: putchar93503
+Node: puts94451
+Node: putw95301
+Node: remove95983
+Node: rename97134
+Node: rewind98260
+Node: setbuf98824
+Node: setvbuf100348
+Node: siprintf102380
+Node: printf103243
+Node: scanf112131
+Node: tmpfile122164
+Node: tmpnam123306
+Node: vprintf125693
+Node: Strings127372
+Node: bcmp128992
+Node: bcopy129654
+Node: bzero130122
+Node: index130681
+Node: memchr131294
+Node: memcmp132006
+Node: memcpy132672
+Node: memmove133248
+Node: memset133872
+Node: rindex134402
+Node: strcasecmp135041
+Node: strcat135895
+Node: strchr136505
+Node: strcmp137104
+Node: strcoll137733
+Node: strcpy138537
+Node: strcspn139029
+Node: strerror139624
+Node: strlen143321
+Node: strlwr143835
+Node: strncasecmp144288
+Node: strncat145207
+Node: strncmp146088
+Node: strncpy146783
+Node: strpbrk147530
+Node: strrchr148132
+Node: strspn148753
+Node: strstr149348
+Node: strtok150016
+Node: strupr151384
+Node: strxfrm151831
+Node: swab153059
+Node: Signals153496
+Node: raise155735
+Node: signal156764
+Node: Timefns159196
+Node: asctime160931
+Node: clock161594
+Node: ctime162308
+Node: difftime162941
+Node: gmtime163480
+Node: localtime164484
+Node: mktime165418
+Node: strftime166210
+Node: time169487
+Node: Locale170148
+Node: setlocale174548
+Node: Reentrancy176778
+Node: Misc180322
+Node: unctrl180612
+Node: Syscalls181297
+Node: Stubs182101
+Node: Reentrant Syscalls188797
+Node: Arglists191601
+Node: Stdarg192117
+Node: va_start192773
+Node: va_arg193529
+Node: va_end194712
+Node: Varargs195120
+Node: va_alist195876
+Node: va_start-trad196546
+Node: va_arg-trad197169
+Node: va_end-trad197830
+Node: Library Index198324
+
+End Tag Table

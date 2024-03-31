@@ -1,0 +1,77 @@
+This is Info file dejagnu.info, produced by Makeinfo version 1.68 from
+the input file ../../../src/dejagnu/doc/dejagnu.texi.
+
+START-INFO-DIR-ENTRY
+* DejaGnu: (dejagnu).            The GNU testing framework.
+END-INFO-DIR-ENTRY
+
+   Copyright (C) 92, 93, 94, 95, 1996 Free Software Foundation, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the entire resulting derived work is distributed under the terms
+of a permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions.
+
+
+Indirect:
+dejagnu.info-1: 868
+dejagnu.info-2: 49701
+dejagnu.info-3: 98823
+
+Tag Table:
+(Indirect)
+Node: Top868
+Node: Overview1592
+Node: What is New3550
+Node: Running Tests4938
+Node: Sample Test8046
+Node: Design Goals9869
+Node: Posix11662
+Node: Future Directions17190
+Node: Tcl and Expect18033
+Node: Invoking runtest18776
+Node: Customizing31911
+Node: Config Values34332
+Node: Master Config File40587
+Node: Local Config File44586
+Node: Personal Config File46834
+Node: Internals47620
+Node: Names49701
+Node: Init Module51216
+Node: DejaGnu Builtins55319
+Node: framework.exp56128
+Node: remote.exp67709
+Node: utils.exp72215
+Node: target.exp75938
+Node: debugger.exp78507
+Node: Target Dependent80038
+Node: Cross Targets83396
+Node: Input Files88696
+Node: Output Files90188
+Node: Summary90806
+Node: Detail92557
+Node: Debug94409
+Node: Tests98375
+Node: Writing98823
+Node: Debugging101282
+Node: Adding103659
+Node: Hints105671
+Node: Variables108469
+Node: Extending109814
+Node: Adding Tools110346
+Node: Adding Targets118981
+Node: Porting121176
+Node: Installation121645
+Node: Configuring DejaGnu122025
+Node: Installing DejaGnu123928
+Node: Index125052
+
+End Tag Table

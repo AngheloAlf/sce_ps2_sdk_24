@@ -1,0 +1,12 @@
+# <Sony Computer Entertainment Inc.>
+
+type ppp
+-dhcp
+auth_name "User ID"
+auth_key "Password"
+peer_name "*"
+want.dns1_nego
+want.dns2_nego
+allow.auth chap/pap
+phone_number0 "03-1234-5678"
+route add -net 0.0.0.0 netmask 0.0.0.0

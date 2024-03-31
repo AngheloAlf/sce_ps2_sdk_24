@@ -1,0 +1,1308 @@
+This is Info file texinfo, produced by Makeinfo version 1.68 from the
+input file texinfo.txi.
+
+INFO-DIR-SECTION Texinfo documentation system
+START-INFO-DIR-ENTRY
+* Texinfo: (texinfo).           The GNU documentation format.
+* install-info: (texinfo)Invoking install-info. Updating info/dir entries.
+* texi2dvi: (texinfo)Format with texi2dvi.      Printing Texinfo documentation.
+* texindex: (texinfo)Format with tex/texindex.  Sorting Texinfo index files.
+* makeinfo: (texinfo)makeinfo Preferred.        Translate Texinfo source.
+END-INFO-DIR-ENTRY
+
+  This file documents Texinfo, a documentation system that can produce
+both on-line information and a printed manual from a single source file.
+
+  Copyright (C) 1988, 90, 91, 92, 93, 95, 96, 97, 98 Free Software
+Foundation, Inc.
+
+  This edition is for Texinfo version 3.12.
+
+  Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+  Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+  Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Free Software Foundation.
+
+
+File: texinfo,  Node: setchapternewpage,  Next: paragraphindent,  Prev: settitle,  Up: Header
+
+`@setchapternewpage'
+--------------------
+
+  In a book or a manual, text is usually printed on both sides of the
+paper, chapters start on right-hand pages, and right-hand pages have
+odd numbers.  But in short reports, text often is printed only on one
+side of the paper.  Also in short reports, chapters sometimes do not
+start on new pages, but are printed on the same page as the end of the
+preceding chapter, after a small amount of vertical whitespace.
+
+  You can use the `@setchapternewpage' command with various arguments
+to specify how TeX should start chapters and whether it should typeset
+pages for printing on one or both sides of the paper (single-sided or
+double-sided printing).
+
+  Write the `@setchapternewpage' command at the beginning of a line
+followed by its argument.
+
+  For example, you would write the following to cause each chapter to
+start on a fresh odd-numbered page:
+
+     @setchapternewpage odd
+
+  You can specify one of three alternatives with the
+`@setchapternewpage' command:
+
+`@setchapternewpage off'
+     Cause TeX to typeset a new chapter on the same page as the last
+     chapter, after skipping some vertical whitespace.  Also, cause TeX
+     to format page headers for single-sided printing. (You can
+     override the headers format with the `@headings double' command;
+     see *Note The `@headings' Command: headings on off.)
+
+`@setchapternewpage on'
+     Cause TeX to start new chapters on new pages and to typeset page
+     headers for single-sided printing.  This is the form most often
+     used for short reports.
+
+     This alternative is the default.
+
+`@setchapternewpage odd'
+     Cause TeX to start new chapters on new, odd-numbered pages
+     (right-handed pages) and to typeset for double-sided printing.
+     This is the form most often used for books and manuals.
+
+Texinfo does not have an `@setchapternewpage even' command.
+
+(You can countermand or modify an `@setchapternewpage' command with an
+`@headings' command.  *Note The `@headings' Command: headings on off.)
+
+  At the beginning of a manual or book, pages are not numbered--for
+example, the title and copyright pages of a book are not numbered.  By
+convention, table of contents pages are numbered with roman numerals
+and not in sequence with the rest of the document.
+
+  Since an Info file does not have pages, the `@setchapternewpage'
+command has no effect on it.
+
+  Usually, you do not write an `@setchapternewpage' command for
+single-sided printing, but accept the default which is to typeset for
+single-sided printing and to start new chapters on new pages.  Usually,
+you write an `@setchapternewpage odd' command for double-sided printing.
+
+
+File: texinfo,  Node: paragraphindent,  Next: End of Header,  Prev: setchapternewpage,  Up: Header
+
+Paragraph Indenting
+-------------------
+
+  The Info formatting commands may insert spaces at the beginning of the
+first line of each paragraph, thereby indenting that paragraph.  You
+can use the `@paragraphindent' command to specify the indentation.
+Write an `@paragraphindent' command at the beginning of a line followed
+by either `asis' or a number.  The template is:
+
+     @paragraphindent INDENT
+
+  The Info formatting commands indent according to the value of INDENT:
+
+   * If the value of INDENT is `asis', the Info formatting commands do
+     not change the existing indentation.
+
+   * If the value of INDENT is zero, the Info formatting commands delete
+     existing indentation.
+
+   * If the value of INDENT is greater than zero, the Info formatting
+     commands indent the paragraph by that number of spaces.
+
+  The default value of INDENT is `asis'.
+
+  Write the `@paragraphindent' command before or shortly after the
+end-of-header line at the beginning of a Texinfo file.  (If you write
+the command between the start-of-header and end-of-header lines, the
+region formatting commands indent paragraphs as specified.)
+
+  A peculiarity of the `texinfo-format-buffer' and
+`texinfo-format-region' commands is that they do not indent (nor fill)
+paragraphs that contain `@w' or `@*' commands.  *Note Refilling
+Paragraphs::, for a detailed description of what goes on.
+
+
+File: texinfo,  Node: End of Header,  Prev: paragraphindent,  Up: Header
+
+End of Header
+-------------
+
+  Follow the header lines with an end-of-header line.  An end-of-header
+line looks like this:
+
+     @c %**end of header
+
+  If you include the `@setchapternewpage' command between the
+start-of-header and end-of-header lines, TeX will typeset a region as
+that command specifies.  Similarly, if you include an `@smallbook'
+command between the start-of-header and end-of-header lines, TeX will
+typeset a region in the "small" book format.
+
+  The reason for the odd string of characters (`%**') is so that the
+`texinfo-tex-region' command does not accidentally find something that
+it should not when it is looking for the header.
+
+  The start-of-header line and the end-of-header line are Texinfo mode
+variables that you can change.
+
+
+File: texinfo,  Node: Info Summary and Permissions,  Next: Titlepage & Copyright Page,  Prev: Header,  Up: Beginning a File
+
+Summary and Copying Permissions for Info
+========================================
+
+  The title page and the copyright page appear only in the printed copy
+of the manual; therefore, the same information must be inserted in a
+section that appears only in the Info file.  This section usually
+contains a brief description of the contents of the Info file, a
+copyright notice, and copying permissions.
+
+  The copyright notice should read:
+
+     Copyright YEAR COPYRIGHT-OWNER
+
+and be put on a line by itself.
+
+  Standard text for the copyright permissions is contained in an
+appendix to this manual; see *Note `ifinfo' Copying Permissions: ifinfo
+Permissions, for the complete text.
+
+  The permissions text appears in an Info file *before* the first node.
+This mean that a reader does *not* see this text when reading the file
+using Info, except when using the advanced Info command `g *'.
+
+
+File: texinfo,  Node: Titlepage & Copyright Page,  Next: The Top Node,  Prev: Info Summary and Permissions,  Up: Beginning a File
+
+The Title and Copyright Pages
+=============================
+
+  A manual's name and author are usually printed on a title page.
+Sometimes copyright information is printed on the title page as well;
+more often, copyright information is printed on the back of the title
+page.
+
+  The title and copyright pages appear in the printed manual, but not
+in the Info file.  Because of this, it is possible to use several
+slightly obscure TeX typesetting commands that cannot be used in an
+Info file.  In addition, this part of the beginning of a Texinfo file
+contains the text of the copying permissions that will appear in the
+printed manual.
+
+  *Note Titlepage Copying Permissions: Titlepage Permissions, for the
+standard text for the copyright permissions.
+
+* Menu:
+
+* titlepage::                   Create a title for the printed document.
+* titlefont center sp::         The `@titlefont', `@center',
+                                  and `@sp' commands.
+* title subtitle author::       The `@title', `@subtitle',
+                                  and `@author' commands.
+* Copyright & Permissions::     How to write the copyright notice and
+                                  include copying permissions.
+* end titlepage::               Turn on page headings after the title and
+                                  copyright pages.
+* headings on off::             An option for turning headings on and off
+                                  and double or single sided printing.
+
+
+File: texinfo,  Node: titlepage,  Next: titlefont center sp,  Prev: Titlepage & Copyright Page,  Up: Titlepage & Copyright Page
+
+`@titlepage'
+------------
+
+  Start the material for the title page and following copyright page
+with `@titlepage' on a line by itself and end it with `@end titlepage'
+on a line by itself.
+
+  The `@end titlepage' command starts a new page and turns on page
+numbering.  (*Note Page Headings: Headings, for details about how to
+generate page headings.)  All the material that you want to appear on
+unnumbered pages should be put between the `@titlepage' and `@end
+titlepage' commands.  By using the `@page' command you can force a page
+break within the region delineated by the `@titlepage' and `@end
+titlepage' commands and thereby create more than one unnumbered page.
+This is how the copyright page is produced.  (The `@titlepage' command
+might perhaps have been better named the `@titleandadditionalpages'
+command, but that would have been rather long!)
+
+  When you write a manual about a computer program, you should write the
+version of the program to which the manual applies on the title page.
+If the manual changes more frequently than the program or is
+independent of it, you should also include an edition number(1) (*note
+titlepage-Footnotes::) for the manual.  This helps readers keep track
+of which manual is for which version of the program.  (The `Top' node
+should also contain this information; see *Note `@top': makeinfo top.)
+
+  Texinfo provides two main methods for creating a title page.  One
+method uses the `@titlefont', `@sp', and `@center' commands to generate
+a title page in which the words on the page are centered.
+
+  The second method uses the `@title', `@subtitle', and `@author'
+commands to create a title page with black rules under the title and
+author lines and the subtitle text set flush to the right hand side of
+the page.  With this method, you do not specify any of the actual
+formatting of the title page.  You specify the text you want, and
+Texinfo does the formatting.  You may use either method.
+
+  For extremely simple applications, Texinfo also provides a command
+`@shorttitlepage' which takes a single argument as the title.  The
+argument is typeset on a page by itself and followed by a blank page.
+
+
+File: texinfo,  Node: titlepage-Footnotes,  Up: titlepage
+
+  (1) We have found that it is helpful to refer to versions of manuals
+as `editions' and versions of programs as `versions'; otherwise, we
+find we are liable to confuse each other in conversation by referring
+to both the documentation and the software with the same words.
+
+
+File: texinfo,  Node: titlefont center sp,  Next: title subtitle author,  Prev: titlepage,  Up: Titlepage & Copyright Page
+
+`@titlefont', `@center', and `@sp'
+----------------------------------
+
+  You can use the `@titlefont', `@sp', and `@center' commands to create
+a title page for a printed document.  (This is the first of the two
+methods for creating a title page in Texinfo.)
+
+  Use the `@titlefont' command to select a large font suitable for the
+title itself.
+
+  For example:
+
+     @titlefont{Texinfo}
+
+  Use the `@center' command at the beginning of a line to center the
+remaining text on that line.  Thus,
+
+     @center @titlefont{Texinfo}
+
+centers the title, which in this example is "Texinfo" printed in the
+title font.
+
+  Use the `@sp' command to insert vertical space.  For example:
+
+     @sp 2
+
+This inserts two blank lines on the printed page.  (*Note `@sp': sp,
+for more information about the `@sp' command.)
+
+  A template for this method looks like this:
+
+     @titlepage
+     @sp 10
+     @center @titlefont{NAME-OF-MANUAL-WHEN-PRINTED}
+     @sp 2
+     @center SUBTITLE-IF-ANY
+     @sp 2
+     @center AUTHOR
+     ...
+     @end titlepage
+
+  The spacing of the example fits an 8 1/2 by 11 inch manual.
+
+
+File: texinfo,  Node: title subtitle author,  Next: Copyright & Permissions,  Prev: titlefont center sp,  Up: Titlepage & Copyright Page
+
+`@title', `@subtitle', and `@author'
+------------------------------------
+
+  You can use the `@title', `@subtitle', and `@author' commands to
+create a title page in which the vertical and horizontal spacing is
+done for you automatically.  This contrasts with the method described in
+the previous section, in which the `@sp' command is needed to adjust
+vertical spacing.
+
+  Write the `@title', `@subtitle', or `@author' commands at the
+beginning of a line followed by the title, subtitle, or author.
+
+  The `@title' command produces a line in which the title is set flush
+to the left-hand side of the page in a larger than normal font.  The
+title is underlined with a black rule.
+
+  The `@subtitle' command sets subtitles in a normal-sized font flush
+to the right-hand side of the page.
+
+  The `@author' command sets the names of the author or authors in a
+middle-sized font flush to the left-hand side of the page on a line
+near the bottom of the title page.  The names are underlined with a
+black rule that is thinner than the rule that underlines the title.
+(The black rule only occurs if the `@author' command line is followed
+by an `@page' command line.)
+
+  There are two ways to use the `@author' command: you can write the
+name or names on the remaining part of the line that starts with an
+`@author' command:
+
+     @author by Jane Smith and John Doe
+
+or you can write the names one above each other by using two (or more)
+`@author' commands:
+
+     @author Jane Smith
+     @author John Doe
+
+(Only the bottom name is underlined with a black rule.)
+
+  A template for this method looks like this:
+
+     @titlepage
+     @title NAME-OF-MANUAL-WHEN-PRINTED
+     @subtitle SUBTITLE-IF-ANY
+     @subtitle SECOND-SUBTITLE
+     @author AUTHOR
+     @page
+     ...
+     @end titlepage
+
+Contrast this form with the form of a title page written using the
+`@sp', `@center', and `@titlefont' commands:
+
+     @titlepage
+     @sp 10
+     @center @titlefont{Name of Manual When Printed}
+     @sp 2
+     @center Subtitle, If Any
+     @sp 1
+     @center Second subtitle
+     @sp 2
+     @center Author
+     @page
+     ...
+     @end titlepage
+
+
+File: texinfo,  Node: Copyright & Permissions,  Next: end titlepage,  Prev: title subtitle author,  Up: Titlepage & Copyright Page
+
+Copyright Page and Permissions
+------------------------------
+
+  By international treaty, the copyright notice for a book should be
+either on the title page or on the back of the title page.  The
+copyright notice should include the year followed by the name of the
+organization or person who owns the copyright.
+
+  When the copyright notice is on the back of the title page, that page
+is customarily not numbered.  Therefore, in Texinfo, the information on
+the copyright page should be within `@titlepage' and `@end titlepage'
+commands.
+
+  Use the `@page' command to cause a page break.  To push the copyright
+notice and the other text on the copyright page towards the bottom of
+the page, you can write a somewhat mysterious line after the `@page'
+command that reads like this:
+
+     @vskip 0pt plus 1filll
+
+This is a TeX command that is not supported by the Info formatting
+commands.  The `@vskip' command inserts whitespace.  The `0pt plus
+1filll' means to put in zero points of mandatory whitespace, and as
+much optional whitespace as needed to push the following text to the
+bottom of the page.  Note the use of three `l's in the word `filll';
+this is the correct usage in TeX.
+
+  In a printed manual, the `@copyright{}' command generates a `c'
+inside a circle.  (In Info, it generates `(C)'.)  The copyright notice
+itself has the following legally defined sequence:
+
+     Copyright (C) YEAR COPYRIGHT-OWNER
+
+  It is customary to put information on how to get a manual after the
+copyright notice, followed by the copying permissions for the manual.
+
+  Note that permissions must be given here as well as in the summary
+segment within `@ifinfo' and `@end ifinfo' that immediately follows the
+header since this text appears only in the printed manual and the
+`ifinfo' text appears only in the Info file.
+
+  *Note Sample Permissions::, for the standard text.
+
+
+File: texinfo,  Node: end titlepage,  Next: headings on off,  Prev: Copyright & Permissions,  Up: Titlepage & Copyright Page
+
+Heading Generation
+------------------
+
+  An `@end titlepage' command on a line by itself not only marks the
+end of the title and copyright pages, but also causes TeX to start
+generating page headings and page numbers.
+
+  To repeat what is said elsewhere,  Texinfo has two standard page
+heading formats, one for documents which are printed on one side of
+each sheet of paper (single-sided printing), and the other for
+documents which are printed on both sides of each sheet (double-sided
+printing).  (*Note `@setchapternewpage': setchapternewpage.)  You can
+specify these formats in different ways:
+
+   * The conventional way is to write an `@setchapternewpage' command
+     before the title page commands, and then have the `@end titlepage'
+     command start generating page headings in the manner desired.
+     (*Note `@setchapternewpage': setchapternewpage.)
+
+   * Alternatively, you can use the `@headings' command to prevent page
+     headings from being generated or to start them for either single or
+     double-sided printing.  (Write an `@headings' command immediately
+     after the `@end titlepage' command.  *Note The `@headings'
+     Command: headings on off, for more information.)
+
+   * Or, you may specify your own page heading and footing format.
+     *Note Page Headings: Headings, for detailed information about page
+     headings and footings.
+
+  Most documents are formatted with the standard single-sided or
+double-sided format, using `@setchapternewpage odd' for double-sided
+printing and no `@setchapternewpage' command for single-sided printing.
+
+
+File: texinfo,  Node: headings on off,  Prev: end titlepage,  Up: Titlepage & Copyright Page
+
+The `@headings' Command
+-----------------------
+
+  The `@headings' command is rarely used.  It specifies what kind of
+page headings and footings to print on each page.  Usually, this is
+controlled by the `@setchapternewpage' command.  You need the
+`@headings' command only if the `@setchapternewpage' command does not
+do what you want, or if you want to turn off pre-defined page headings
+prior to defining your own.  Write an `@headings' command immediately
+after the `@end titlepage' command.
+
+  You can use `@headings' as follows:
+
+`@headings off'
+     Turn off printing of page headings.
+
+`@headings single'
+     Turn on page headings appropriate for single-sided printing.
+
+`@headings double'
+     Turn on page headings appropriate for double-sided printing.  The
+     two commands, `@headings on' and `@headings double', are
+     synonymous.
+
+`@headings singleafter'
+`@headings doubleafter'
+     Turn on `single' or `double' headings, respectively, after the
+     current page is output.
+
+`@headings on'
+     Turn on page headings: `single' if `@setchapternewpage on',
+     `double' otherwise.
+
+  For example, suppose you write `@setchapternewpage off' before the
+`@titlepage' command to tell TeX to start a new chapter on the same
+page as the end of the last chapter.  This command also causes TeX to
+typeset page headers for single-sided printing.  To cause TeX to
+typeset for double sided printing, write `@headings double' after the
+`@end titlepage' command.
+
+  You can stop TeX from generating any page headings at all by writing
+`@headings off' on a line of its own immediately after the line
+containing the `@end titlepage' command, like this:
+
+     @end titlepage
+     @headings off
+
+The `@headings off' command overrides the `@end titlepage' command,
+which would otherwise cause TeX to print page headings.
+
+  You can also specify your own style of page heading and footing.
+*Note Page Headings: Headings, for more information.
+
+
+File: texinfo,  Node: The Top Node,  Next: Software Copying Permissions,  Prev: Titlepage & Copyright Page,  Up: Beginning a File
+
+The `Top' Node and Master Menu
+==============================
+
+  The `Top' node is the node from which you enter an Info file.
+
+  A `Top' node should contain a brief description of the Info file and
+an extensive, master menu for the whole Info file.  This helps the
+reader understand what the Info file is about.  Also, you should write
+the version number of the program to which the Info file applies; or,
+at least, the edition number.
+
+  The contents of the `Top' node should appear only in the Info file;
+none of it should appear in printed output, so enclose it between
+`@ifinfo' and `@end ifinfo' commands.  (TeX does not print either an
+`@node' line or a menu; they appear only in Info; strictly speaking,
+you are not required to enclose these parts between `@ifinfo' and `@end
+ifinfo', but it is simplest to do so.  *Note Conditionally Visible
+Text: Conditionals.)
+
+* Menu:
+
+* Title of Top Node::           Sketch what the file is about.
+* Master Menu Parts::           A master menu has three or more parts.
+
+
+File: texinfo,  Node: Title of Top Node,  Next: Master Menu Parts,  Prev: The Top Node,  Up: The Top Node
+
+`Top' Node Title
+----------------
+
+  Sometimes, you will want to place an `@top' sectioning command line
+containing the title of the document immediately after the `@node Top'
+line (*note The `@top' Sectioning Command: makeinfo top command., for
+more information).
+
+  For example, the beginning of the Top node of this manual contains an
+`@top' sectioning command, a short description, and edition and version
+information.  It looks like this:
+
+     ...
+     @end titlepage
+     
+     @ifinfo
+     @node Top, Copying, , (dir)
+     @top Texinfo
+     
+     Texinfo is a documentation system...
+     
+     This is edition...
+     ...
+     @end ifinfo
+     
+     @menu
+     * Copying::                 Texinfo is freely
+                                   redistributable.
+     * Overview::                What is Texinfo?
+     ...
+     @end menu
+
+  In a `Top' node, the `Previous', and `Up' nodes usually refer to the
+top level directory of the whole Info system, which is called `(dir)'.
+The `Next' node refers to the first node that follows the main or master
+menu, which is usually the copying permissions, introduction, or first
+chapter.
+
+
+File: texinfo,  Node: Master Menu Parts,  Prev: Title of Top Node,  Up: The Top Node
+
+Parts of a Master Menu
+----------------------
+
+  A "master menu" is a detailed main menu listing all the nodes in a
+file.
+
+  A master menu is enclosed in `@menu' and `@end menu' commands and
+does not appear in the printed document.
+
+  Generally, a master menu is divided into parts.
+
+   * The first part contains the major nodes in the Texinfo file: the
+     nodes for the chapters, chapter-like sections, and the appendices.
+
+   * The second part contains nodes for the indices.
+
+   * The third and subsequent parts contain a listing of the other,
+     lower level nodes, often ordered by chapter.  This way, rather
+     than go through an intermediary menu, an inquirer can go directly
+     to a particular node when searching for specific information.
+     These menu items are not required; add them if you think they are a
+     convenience.  If you do use them, put `@detailmenu' before the
+     first one, and `@end detailmenu' after the last; otherwise,
+     `makeinfo' will get confused.
+
+  Each section in the menu can be introduced by a descriptive line.  So
+long as the line does not begin with an asterisk, it will not be
+treated as a menu entry.  (*Note Writing a Menu::, for more
+information.)
+
+  For example, the master menu for this manual looks like the following
+(but has many more entries):
+
+     @menu
+     * Copying::             Texinfo is freely
+                               redistributable.
+     * Overview::            What is Texinfo?
+     * Texinfo Mode::        Special features in GNU Emacs.
+     ...
+     ...
+     * Command and Variable Index::
+                             An entry for each @-command.
+     * Concept Index::       An entry for each concept.
+     
+     @detailmenu
+      --- The Detailed Node Listing ---
+     
+     Overview of Texinfo
+     
+     * Info Files::          What is an Info file?
+     * Printed Manuals::     Characteristics of
+                               a printed manual.
+     ...
+     ...
+     
+     Using Texinfo Mode
+     
+     * Info on a Region::    Formatting part of a file
+                               for Info.
+     ...
+     ...
+     @end detailmenu
+     @end menu
+
+
+File: texinfo,  Node: Software Copying Permissions,  Prev: The Top Node,  Up: Beginning a File
+
+Software Copying Permissions
+============================
+
+  If the Texinfo file has a section containing the "General Public
+License" and the distribution information and a warranty disclaimer for
+the software that is documented, this section usually follows the `Top'
+node.  The General Public License is very important to Project GNU
+software.  It ensures that you and others will continue to have a right
+to use and share the software.
+
+  The copying and distribution information and the disclaimer are
+followed by an introduction or else by the first chapter of the manual.
+
+  Although an introduction is not a required part of a Texinfo file, it
+is very helpful.  Ideally, it should state clearly and concisely what
+the file is about and who would be interested in reading it.  In
+general, an introduction would follow the licensing and distribution
+information, although sometimes people put it earlier in the document.
+Usually, an introduction is put in an `@unnumbered' section.  (*Note
+The `@unnumbered' and `@appendix' Commands: unnumbered & appendix.)
+
+
+File: texinfo,  Node: Ending a File,  Next: Structuring,  Prev: Beginning a File,  Up: Top
+
+Ending a Texinfo File
+*********************
+
+  The end of a Texinfo file should include the commands that create
+indices and generate detailed and summary tables of contents.  And it
+must include the `@bye' command that marks the last line processed by
+TeX.
+
+  For example:
+
+     @node    Concept Index,     , Variables Index, Top
+     @c        node-name,    next, previous,        up
+     @unnumbered Concept Index
+     
+     @printindex cp
+     
+     @contents
+     @bye
+
+* Menu:
+
+* Printing Indices & Menus::    How to print an index in hardcopy and
+                                  generate index menus in Info.
+* Contents::                    How to create a table of contents.
+* File End::                    How to mark the end of a file.
+
+
+File: texinfo,  Node: Printing Indices & Menus,  Next: Contents,  Prev: Ending a File,  Up: Ending a File
+
+Index Menus and Printing an Index
+=================================
+
+  To print an index means to include it as part of a manual or Info
+file.  This does not happen automatically just because you use
+`@cindex' or other index-entry generating commands in the Texinfo file;
+those just cause the raw data for the index to be accumulated.  To
+generate an index, you must include the `@printindex' command at the
+place in the document where you want the index to appear.  Also, as
+part of the process of creating a printed manual, you must run a
+program called `texindex' (*note Format/Print Hardcopy::.) to sort the
+raw data to produce a sorted index file.  The sorted index file is what
+is actually used to print the index.
+
+  Texinfo offers six different types of predefined index: the concept
+index, the function index, the variables index, the keystroke index, the
+program index, and the data type index (*note Predefined Indices::.).
+Each index type has a two-letter name: `cp', `fn', `vr', `ky', `pg',
+and `tp'.  You may merge indices, or put them into separate sections
+(*note Combining Indices::.); or you may define your own indices (*note
+Defining New Indices: New Indices.).
+
+  The `@printindex' command takes a two-letter index name, reads the
+corresponding sorted index file and formats it appropriately into an
+index.
+
+  The `@printindex' command does not generate a chapter heading for the
+index.  Consequently, you should precede the `@printindex' command with
+a suitable section or chapter command (usually `@unnumbered') to supply
+the chapter heading and put the index into the table of contents.
+Precede the `@unnumbered' command with an `@node' line.
+
+  For example:
+
+     @node Variable Index, Concept Index, Function Index, Top
+     @comment    node-name,         next,       previous, up
+     @unnumbered Variable Index
+     
+     @printindex vr
+
+     @node     Concept Index,     , Variable Index, Top
+     @comment      node-name, next,       previous, up
+     @unnumbered Concept Index
+     
+     @printindex cp
+
+     @summarycontents
+     @contents
+     @bye
+
+(Readers often prefer that the concept index come last in a book, since
+that makes it easiest to find.)
+
+
+File: texinfo,  Node: Contents,  Next: File End,  Prev: Printing Indices & Menus,  Up: Ending a File
+
+Generating a Table of Contents
+==============================
+
+  The `@chapter', `@section', and other structuring commands supply the
+information to make up a table of contents, but they do not cause an
+actual table to appear in the manual.  To do this, you must use the
+`@contents' and `@summarycontents' commands:
+
+`@contents'
+     Generate a table of contents in a printed manual, including all
+     chapters, sections, subsections, etc., as well as appendices and
+     unnumbered chapters.  (Headings generated by the `@heading' series
+     of commands do not appear in the table of contents.)  The
+     `@contents' command should be written on a line by itself.
+
+`@shortcontents'
+`@summarycontents'
+     (`@summarycontents' is a synonym for `@shortcontents'; the two
+     commands are exactly the same.)
+
+     Generate a short or summary table of contents that lists only the
+     chapters (and appendices and unnumbered chapters).  Omit sections,
+     subsections and subsubsections.  Only a long manual needs a short
+     table of contents in addition to the full table of contents.
+
+     Write the `@shortcontents' command on a line by itself right
+     *before* the `@contents' command.
+
+  The table of contents commands automatically generate a chapter-like
+heading at the top of the first table of contents page.  Write the table
+of contents commands at the very end of a Texinfo file, just before the
+`@bye' command, following any index sections--anything in the Texinfo
+file after the table of contents commands will be omitted from the
+table of contents.
+
+  When you print a manual with a table of contents, the table of
+contents are printed last and numbered with roman numerals.  You need
+to place those pages in their proper place, after the title page,
+yourself.  (This is the only collating you need to do for a printed
+manual.  The table of contents is printed last because it is generated
+after the rest of the manual is typeset.)
+
+  Here is an example of where to write table of contents commands:
+
+     INDICES...
+     @shortcontents
+     @contents
+     @bye
+
+  Since an Info file uses menus instead of tables of contents, the Info
+formatting commands ignore the `@contents' and `@shortcontents'
+commands.
+
+
+File: texinfo,  Node: File End,  Prev: Contents,  Up: Ending a File
+
+`@bye' File Ending
+==================
+
+  An `@bye' command terminates TeX or Info formatting.  None of the
+formatting commands see any of the file following `@bye'.  The `@bye'
+command should be on a line by itself.
+
+  If you wish, you may follow the `@bye' line with notes. These notes
+will not be formatted and will not appear in either Info or a printed
+manual; it is as if text after `@bye' were within `@ignore' ... `@end
+ignore'.  Also, you may follow the `@bye' line with a local variables
+list.  *Note Using Local Variables and the Compile Command:
+Compile-Command, for more information.
+
+
+File: texinfo,  Node: Structuring,  Next: Nodes,  Prev: Ending a File,  Up: Top
+
+Chapter Structuring
+*******************
+
+  The "chapter structuring" commands divide a document into a hierarchy
+of chapters, sections, subsections, and subsubsections.  These commands
+generate large headings; they also provide information for the table of
+contents of a printed manual (*note Generating a Table of Contents:
+Contents.).
+
+  The chapter structuring commands do not create an Info node structure,
+so normally you should put an `@node' command immediately before each
+chapter structuring command (*note Nodes::.).  The only time you are
+likely to use the chapter structuring commands without using the node
+structuring commands is if you are writing a document that contains no
+cross references and will never be transformed into Info format.
+
+  It is unlikely that you will ever write a Texinfo file that is
+intended only as an Info file and not as a printable document.  If you
+do, you might still use chapter structuring commands to create a
+heading at the top of each node--but you don't need to.
+
+* Menu:
+
+* Tree Structuring::            A manual is like an upside down tree ...
+* Structuring Command Types::   How to divide a manual into parts.
+* makeinfo top::                The `@top' command, part of the `Top' node.
+* chapter::
+* unnumbered & appendix::
+* majorheading & chapheading::
+* section::
+* unnumberedsec appendixsec heading::
+* subsection::
+* unnumberedsubsec appendixsubsec subheading::
+* subsubsection::               Commands for the lowest level sections.
+* Raise/lower sections::        How to change commands' hierarchical level.
+
+
+File: texinfo,  Node: Tree Structuring,  Next: Structuring Command Types,  Prev: Structuring,  Up: Structuring
+
+Tree Structure of Sections
+==========================
+
+  A Texinfo file is usually structured like a book with chapters,
+sections, subsections, and the like.  This structure can be visualized
+as a tree (or rather as an upside-down tree) with the root at the top
+and the levels corresponding to chapters, sections, subsection, and
+subsubsections.
+
+  Here is a diagram that shows a Texinfo file with three chapters, each
+of which has two sections.
+
+                               Top
+                                |
+              -------------------------------------
+             |                  |                  |
+          Chapter 1          Chapter 2          Chapter 3
+             |                  |                  |
+          --------           --------           --------
+         |        |         |        |         |        |
+      Section  Section   Section  Section   Section  Section
+        1.1      1.2       2.1      2.2       3.1      3.2
+
+  In a Texinfo file that has this structure, the beginning of Chapter 2
+looks like this:
+
+     @node    Chapter 2,  Chapter 3, Chapter 1, top
+     @chapter Chapter 2
+
+  The chapter structuring commands are described in the sections that
+follow; the `@node' and `@menu' commands are described in following
+chapters. (*Note Nodes::, and see *Note Menus::.)
+
+
+File: texinfo,  Node: Structuring Command Types,  Next: makeinfo top,  Prev: Tree Structuring,  Up: Structuring
+
+Types of Structuring Commands
+=============================
+
+  The chapter structuring commands fall into four groups or series, each
+of which contains structuring commands corresponding to the
+hierarchical levels of chapters, sections, subsections, and
+subsubsections.
+
+  The four groups are the `@chapter' series, the `@unnumbered' series,
+the `@appendix' series, and the `@heading' series.
+
+  Each command produces titles that have a different appearance on the
+printed page or Info file; only some of the commands produce titles
+that are listed in the table of contents of a printed book or manual.
+
+   * The `@chapter' and `@appendix' series of commands produce numbered
+     or lettered entries both in the body of a printed work and in its
+     table of contents.
+
+   * The `@unnumbered' series of commands produce unnumbered entries
+     both in the body of a printed work and in its table of contents.
+     The `@top' command, which has a special use, is a member of this
+     series (*note `@top': makeinfo top.).
+
+   * The `@heading' series of commands produce unnumbered headings that
+     do not appear in a table of contents.  The heading commands never
+     start a new page.
+
+   * The `@majorheading' command produces results similar to using the
+     `@chapheading' command but generates a larger vertical whitespace
+     before the heading.
+
+   * When an `@setchapternewpage' command says to do so, the
+     `@chapter', `@unnumbered', and `@appendix' commands start new
+     pages in the printed manual; the `@heading' commands do not.
+
+  Here are the four groups of chapter structuring commands:
+
+                                                            No new pages
+     Numbered       Unnumbered       Lettered and numbered  Unnumbered
+     In contents    In contents          In contents        Not in contents
+     
+                    @top                                    @majorheading
+     @chapter       @unnumbered          @appendix          @chapheading
+     @section       @unnumberedsec       @appendixsec       @heading
+     @subsection    @unnumberedsubsec    @appendixsubsec    @subheading
+     @subsubsection @unnumberedsubsubsec @appendixsubsubsec @subsubheading
+
+
+File: texinfo,  Node: makeinfo top,  Next: chapter,  Prev: Structuring Command Types,  Up: Structuring
+
+`@top'
+======
+
+  The `@top' command is a special sectioning command that you use only
+after an `@node Top' line at the beginning of a Texinfo file.  The
+`@top' command tells the `makeinfo' formatter which node is the `Top'
+node.  It has the same typesetting effect as `@unnumbered' (*note
+`@unnumbered': (`@appendix')unnumbered & appendix.).  For detailed
+information, see *Note The `@top' Command: makeinfo top command.
+
+
+File: texinfo,  Node: chapter,  Next: unnumbered & appendix,  Prev: makeinfo top,  Up: Structuring
+
+`@chapter'
+==========
+
+  `@chapter' identifies a chapter in the document.  Write the command
+at the beginning of a line and follow it on the same line by the title
+of the chapter.
+
+  For example, this chapter in this manual is entitled "Chapter
+Structuring"; the `@chapter' line looks like this:
+
+     @chapter Chapter Structuring
+
+  In TeX, the `@chapter' command creates a chapter in the document,
+specifying the chapter title.  The chapter is numbered automatically.
+
+  In Info, the `@chapter' command causes the title to appear on a line
+by itself, with a line of asterisks inserted underneath.  Thus, in
+Info, the above example produces the following output:
+
+     Chapter Structuring
+     *******************
+
+  Texinfo also provides a command `@centerchap', which is analogous to
+`@unnumbered', but centers its argument in the printed output.  This
+kind of stylistic choice is not usually offered by Texinfo.
+
+
+File: texinfo,  Node: unnumbered & appendix,  Next: majorheading & chapheading,  Prev: chapter,  Up: Structuring
+
+`@unnumbered', `@appendix'
+==========================
+
+  Use the `@unnumbered' command to create a chapter that appears in a
+printed manual without chapter numbers of any kind.  Use the
+`@appendix' command to create an appendix in a printed manual that is
+labelled by letter instead of by number.
+
+  For Info file output, the `@unnumbered' and `@appendix' commands are
+equivalent to `@chapter': the title is printed on a line by itself with
+a line of asterisks underneath.  (*Note `@chapter': chapter.)
+
+  To create an appendix or an unnumbered chapter, write an `@appendix'
+or `@unnumbered' command at the beginning of a line and follow it on
+the same line by the title, as you would if you were creating a chapter.
+
+
+File: texinfo,  Node: majorheading & chapheading,  Next: section,  Prev: unnumbered & appendix,  Up: Structuring
+
+`@majorheading', `@chapheading'
+===============================
+
+  The `@majorheading' and `@chapheading' commands put chapter-like
+headings in the body of a document.
+
+  However, neither command causes TeX to produce a numbered heading or
+an entry in the table of contents; and neither command causes TeX to
+start a new page in a printed manual.
+
+  In TeX, an `@majorheading' command generates a larger vertical
+whitespace before the heading than an `@chapheading' command but is
+otherwise the same.
+
+  In Info, the `@majorheading' and `@chapheading' commands are
+equivalent to `@chapter': the title is printed on a line by itself with
+a line of asterisks underneath.  (*Note `@chapter': chapter.)
+
+
+File: texinfo,  Node: section,  Next: unnumberedsec appendixsec heading,  Prev: majorheading & chapheading,  Up: Structuring
+
+`@section'
+==========
+
+  In a printed manual, an `@section' command identifies a numbered
+section within a chapter.  The section title appears in the table of
+contents.  In Info, an `@section' command provides a title for a
+segment of text, underlined with `='.
+
+  This section is headed with an `@section' command and looks like this
+in the Texinfo file:
+
+     @section @code{@@section}
+
+  To create a section, write the `@section' command at the beginning of
+a line and follow it on the same line by the section title.
+
+  Thus,
+
+     @section This is a section
+
+produces
+
+     This is a section
+     =================
+
+in Info.
+
+
+File: texinfo,  Node: unnumberedsec appendixsec heading,  Next: subsection,  Prev: section,  Up: Structuring
+
+`@unnumberedsec', `@appendixsec', `@heading'
+============================================
+
+  The `@unnumberedsec', `@appendixsec', and `@heading' commands are,
+respectively, the unnumbered, appendix-like, and heading-like
+equivalents of the `@section' command.  (*Note `@section': section.)
+
+`@unnumberedsec'
+     The `@unnumberedsec' command may be used within an unnumbered
+     chapter or within a regular chapter or appendix to provide an
+     unnumbered section.
+
+`@appendixsec'
+`@appendixsection'
+     `@appendixsection' is a longer spelling of the `@appendixsec'
+     command; the two are synonymous.
+
+     Conventionally, the `@appendixsec' or `@appendixsection' command
+     is used only within appendices.
+
+`@heading'
+     You may use the `@heading' command anywhere you wish for a
+     section-style heading that will not appear in the table of
+     contents.
+
+
+File: texinfo,  Node: subsection,  Next: unnumberedsubsec appendixsubsec subheading,  Prev: unnumberedsec appendixsec heading,  Up: Structuring
+
+The `@subsection' Command
+=========================
+
+  Subsections are to sections as sections are to chapters.  (*Note
+`@section': section.)  In Info, subsection titles are underlined with
+`-'.  For example,
+
+     @subsection This is a subsection
+
+produces
+
+     This is a subsection
+     --------------------
+
+  In a printed manual, subsections are listed in the table of contents
+and are numbered three levels deep.
+
+
+File: texinfo,  Node: unnumberedsubsec appendixsubsec subheading,  Next: subsubsection,  Prev: subsection,  Up: Structuring
+
+The `@subsection'-like Commands
+===============================
+
+  The `@unnumberedsubsec', `@appendixsubsec', and `@subheading'
+commands are, respectively, the unnumbered, appendix-like, and
+heading-like equivalents of the `@subsection' command.  (*Note
+`@subsection': subsection.)
+
+  In Info, the `@subsection'-like commands generate a title underlined
+with hyphens.  In a printed manual, an `@subheading' command produces a
+heading like that of a subsection except that it is not numbered and
+does not appear in the table of contents.  Similarly, an
+`@unnumberedsubsec' command produces an unnumbered heading like that of
+a subsection and an `@appendixsubsec' command produces a
+subsection-like heading labelled with a letter and numbers; both of
+these commands produce headings that appear in the table of contents.
+
+
+File: texinfo,  Node: subsubsection,  Next: Raise/lower sections,  Prev: unnumberedsubsec appendixsubsec subheading,  Up: Structuring
+
+The `subsub' Commands
+=====================
+
+  The fourth and lowest level sectioning commands in Texinfo are the
+`subsub' commands.  They are:
+
+`@subsubsection'
+     Subsubsections are to subsections as subsections are to sections.
+     (*Note `@subsection': subsection.)  In a printed manual,
+     subsubsection titles appear in the table of contents and are
+     numbered four levels deep.
+
+`@unnumberedsubsubsec'
+     Unnumbered subsubsection titles appear in the table of contents of
+     a printed manual, but lack numbers.  Otherwise, unnumbered
+     subsubsections are the same as subsubsections.  In Info, unnumbered
+     subsubsections look exactly like ordinary subsubsections.
+
+`@appendixsubsubsec'
+     Conventionally, appendix commands are used only for appendices and
+     are lettered and numbered appropriately in a printed manual.  They
+     also appear in the table of contents.  In Info, appendix
+     subsubsections look exactly like ordinary subsubsections.
+
+`@subsubheading'
+     The `@subsubheading' command may be used anywhere that you need a
+     small heading that will not appear in the table of contents.  In
+     Info, subsubheadings look exactly like ordinary subsubsection
+     headings.
+
+  In Info,  `subsub' titles are underlined with periods.  For example,
+
+     @subsubsection This is a subsubsection
+
+produces
+
+     This is a subsubsection
+     .......................
+
+
+File: texinfo,  Node: Raise/lower sections,  Prev: subsubsection,  Up: Structuring
+
+`@raisesections' and `@lowersections'
+=====================================
+
+  The `@raisesections' and `@lowersections' commands raise and lower
+the hierarchical level of chapters, sections, subsections and the like.
+The `@raisesections' command changes sections to chapters, subsections
+to sections, and so on.  The `@lowersections' command changes chapters
+to sections, sections to subsections, and so on.
+
+  An `@lowersections' command is useful if you wish to include text
+that is written as an outer or standalone Texinfo file in another
+Texinfo file as an inner, included file.  If you write the command at
+the beginning of the file, all your `@chapter' commands are formatted
+as if they were `@section' commands, all your `@section' command are
+formatted as if they were `@subsection' commands, and so on.
+
+  `@raisesections' raises a command one level in the chapter
+structuring hierarchy:
+
+       Change           To
+     
+     @subsection     @section,
+     @section        @chapter,
+     @heading        @chapheading,
+               etc.
+
+  `@lowersections' lowers a command one level in the chapter
+structuring hierarchy:
+
+       Change           To
+     
+     @chapter        @section,
+     @subsection     @subsubsection,
+     @heading        @subheading,
+               etc.
+
+  An `@raisesections' or `@lowersections' command changes only those
+structuring commands that follow the command in the Texinfo file.
+Write an `@raisesections' or `@lowersections' command on a line of its
+own.
+
+  An `@lowersections' command cancels an `@raisesections' command, and
+vice versa.  Typically, the commands are used like this:
+
+     @lowersections
+     @include somefile.texi
+     @raisesections
+
+  Without the `@raisesections', all the subsequent sections in your
+document will be lowered.
+
+  Repeated use of the commands continue to raise or lower the
+hierarchical level a step at a time.
+
+  An attempt to raise above `chapters' reproduces chapter commands; an
+attempt to lower below `subsubsections' reproduces subsubsection
+commands.
+
+
+File: texinfo,  Node: Nodes,  Next: Menus,  Prev: Structuring,  Up: Top
+
+Nodes
+*****
+
+  "Nodes" are the primary segments of a Texinfo file.  They do not
+themselves impose a hierarchic or any other kind of structure on a file.
+Nodes contain "node pointers" that name other nodes, and can contain
+"menus" which are lists of nodes.  In Info, the movement commands can
+carry you to a pointed-to node or to a node listed in a menu.  Node
+pointers and menus provide structure for Info files just as chapters,
+sections, subsections, and the like, provide structure for printed
+books.
+
+* Menu:
+
+* Two Paths::                   Different commands to structure
+                                  Info output and printed output.
+* Node Menu Illustration::      A diagram, and sample nodes and menus.
+* node::                        How to write a node, in detail.
+* makeinfo Pointer Creation::   How to create node pointers with `makeinfo'.
+
+
+File: texinfo,  Node: Two Paths,  Next: Node Menu Illustration,  Prev: Nodes,  Up: Nodes
+
+Two Paths
+=========
+
+  The node and menu commands and the chapter structuring commands are
+independent of each other:
+
+   * In Info, node and menu commands provide structure.  The chapter
+     structuring commands generate headings with different kinds of
+     underlining--asterisks for chapters, hyphens for sections, and so
+     on; they do nothing else.
+
+   * In TeX, the chapter structuring commands generate chapter and
+     section numbers and tables of contents.  The node and menu
+     commands provide information for cross references; they do nothing
+     else.
+
+  You can use node pointers and menus to structure an Info file any way
+you want; and you can write a Texinfo file so that its Info output has a
+different structure than its printed output.  However, most Texinfo
+files are written such that the structure for the Info output
+corresponds to the structure for the printed output.  It is not
+convenient to do otherwise.
+
+  Generally, printed output is structured in a tree-like hierarchy in
+which the chapters are the major limbs from which the sections branch
+out.  Similarly, node pointers and menus are organized to create a
+matching structure in the Info output.
+

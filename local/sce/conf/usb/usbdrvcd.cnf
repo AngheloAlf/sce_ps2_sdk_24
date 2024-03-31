@@ -1,0 +1,40 @@
+######################################################
+#                                                    #
+#               USB module auto loader               #
+#                    Config file                     #
+#                                                    #
+######################################################
+
+DeviceName "標準 USB マウス(CD)"  # SJIS
+	Use      1
+	Class    03
+	SubClass 01
+	Protocol 02
+	Category Mouse
+	DriverPath   "cdrom0:\USBMOUSE.IRX;1"
+
+DeviceName "標準 USB キーボード(CD)"  # SJIS
+	Use      1
+	Class    03
+	SubClass 01
+	Protocol 01
+	Category Keyboard
+	DriverPath   "cdrom0:\USBKEYBD.IRX;1"
+
+DeviceName "標準 USB マウス(HOST)"  # SJIS
+	Use      0
+	Class    03
+	SubClass 01
+	Protocol 02
+	Category Mouse
+	DriverPath   "host1:/usr/local/sce/iop/sample/usb/usbmouse/usbmouse.irx"
+
+DeviceName "標準 USB キーボード(HOST)"  # SJIS
+	Use      0
+	Class    03
+	SubClass 01
+	Protocol 01
+	Category Keyboard
+	DriverPath   "host1:/usr/local/sce/iop/sample/usb/usbkeybd/usbkeybd.irx"
+
+end

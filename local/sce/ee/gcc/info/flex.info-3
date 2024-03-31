@@ -1,0 +1,446 @@
+This is Info file flex.info, produced by Makeinfo version 1.68 from the
+input file ../../src/flex/flex.texi.
+
+START-INFO-DIR-ENTRY
+* Flex: (flex).         A fast scanner generator.
+END-INFO-DIR-ENTRY
+
+   This file documents Flex.
+
+   Copyright (c) 1990 The Regents of the University of California.  All
+rights reserved.
+
+   This code is derived from software contributed to Berkeley by Vern
+Paxson.
+
+   The United States Government has rights in this work pursuant to
+contract no. DE-AC03-76SF00098 between the United States Department of
+Energy and the University of California.
+
+   Redistribution and use in source and binary forms are permitted
+provided that: (1) source distributions retain this entire copyright
+notice and comment, and (2) distributions including binaries display
+the following acknowledgement:  "This product includes software
+developed by the University of California, Berkeley and its
+contributors" in the documentation or other materials provided with the
+distribution and in all advertising materials mentioning features or
+use of this software.  Neither the name of the University nor the names
+of its contributors may be used to endorse or promote products derived
+from this software without specific prior written permission.
+
+   THIS SOFTWARE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+
+File: flex.info,  Node: Incompatibilities,  Next: Diagnostics,  Prev: C++,  Up: Top
+
+Incompatibilities with `lex' and POSIX
+======================================
+
+   `flex' is a rewrite of the AT&T Unix `lex' tool (the two
+implementations do not share any code, though), with some extensions
+and incompatibilities, both of which are of concern to those who wish
+to write scanners acceptable to either implementation.  Flex is fully
+compliant with the POSIX `lex' specification, except that when using
+`%pointer' (the default), a call to `unput()' destroys the contents of
+`yytext', which is counter to the POSIX specification.
+
+   In this section we discuss all of the known areas of incompatibility
+between flex, AT&T lex, and the POSIX specification.
+
+   `flex's' `-l' option turns on maximum compatibility with the
+original AT&T `lex' implementation, at the cost of a major loss in the
+generated scanner's performance.  We note below which incompatibilities
+can be overcome using the `-l' option.
+
+   `flex' is fully compatible with `lex' with the following exceptions:
+
+   - The undocumented `lex' scanner internal variable `yylineno' is not
+     supported unless `-l' or `%option yylineno' is used.  `yylineno'
+     should be maintained on a per-buffer basis, rather than a
+     per-scanner (single global variable) basis.  `yylineno' is not
+     part of the POSIX specification.
+
+   - The `input()' routine is not redefinable, though it may be called
+     to read characters following whatever has been matched by a rule.
+     If `input()' encounters an end-of-file the normal `yywrap()'
+     processing is done.  A "real" end-of-file is returned by `input()'
+     as `EOF'.
+
+     Input is instead controlled by defining the `YY_INPUT' macro.
+
+     The `flex' restriction that `input()' cannot be redefined is in
+     accordance with the POSIX specification, which simply does not
+     specify any way of controlling the scanner's input other than by
+     making an initial assignment to `yyin'.
+
+   - The `unput()' routine is not redefinable.  This restriction is in
+     accordance with POSIX.
+
+   - `flex' scanners are not as reentrant as `lex' scanners.  In
+     particular, if you have an interactive scanner and an interrupt
+     handler which long-jumps out of the scanner, and the scanner is
+     subsequently called again, you may get the following message:
+
+          fatal flex scanner internal error--end of buffer missed
+          ^
+
+     To reenter the scanner, first use
+
+          yyrestart( yyin );
+          ^
+
+     Note that this call will throw away any buffered input; usually
+     this isn't a problem with an interactive scanner.
+
+     Also note that flex C++ scanner classes *are* reentrant, so if
+     using C++ is an option for you, you should use them instead.  See
+     "Generating C++ Scanners" above for details.
+
+   - `output()' is not supported.  Output from the `ECHO' macro is done
+     to the file-pointer `yyout' (default `stdout').
+
+     `output()' is not part of the POSIX specification.
+
+   - `lex' does not support exclusive start conditions (%x), though
+     they are in the POSIX specification.
+
+   - When definitions are expanded, `flex' encloses them in
+     parentheses.  With lex, the following:
+
+          NAME    [A-Z][A-Z0-9]*
+          %%
+          foo{NAME}?      printf( "Found it\n" );
+          %%
+          ^
+
+     will not match the string "foo" because when the macro is expanded
+     the rule is equivalent to "foo[A-Z][A-Z0-9]*?" and the precedence
+     is such that the '?' is associated with "[A-Z0-9]*".  With `flex',
+     the rule will be expanded to "foo([A-Z][A-Z0-9]*)?" and so the
+     string "foo" will match.
+
+     Note that if the definition begins with `^' or ends with `$' then
+     it is *not* expanded with parentheses, to allow these operators to
+     appear in definitions without losing their special meanings.  But
+     the `<s>, /', and `<<EOF>>' operators cannot be used in a `flex'
+     definition.
+
+     Using `-l' results in the `lex' behavior of no parentheses around
+     the definition.
+
+     The POSIX specification is that the definition be enclosed in
+     parentheses.
+
+   - Some implementations of `lex' allow a rule's action to begin on a
+     separate line, if the rule's pattern has trailing whitespace:
+
+          %%
+          foo|bar<space here>
+            { foobar_action(); }
+          ^
+
+     `flex' does not support this feature.
+
+   - The `lex' `%r' (generate a Ratfor scanner) option is not
+     supported.  It is not part of the POSIX specification.
+
+   - After a call to `unput()', `yytext' is undefined until the next
+     token is matched, unless the scanner was built using `%array'.
+     This is not the case with `lex' or the POSIX specification.  The
+     `-l' option does away with this incompatibility.
+
+   - The precedence of the `{}' (numeric range) operator is different.
+     `lex' interprets "abc{1,3}" as "match one, two, or three
+     occurrences of 'abc'", whereas `flex' interprets it as "match 'ab'
+     followed by one, two, or three occurrences of 'c'".  The latter is
+     in agreement with the POSIX specification.
+
+   - The precedence of the `^' operator is different.  `lex' interprets
+     "^foo|bar" as "match either 'foo' at the beginning of a line, or
+     'bar' anywhere", whereas `flex' interprets it as "match either
+     'foo' or 'bar' if they come at the beginning of a line".  The
+     latter is in agreement with the POSIX specification.
+
+   - The special table-size declarations such as `%a' supported by
+     `lex' are not required by `flex' scanners; `flex' ignores them.
+
+   - The name FLEX_SCANNER is #define'd so scanners may be written for
+     use with either `flex' or `lex'.  Scanners also include
+     `YY_FLEX_MAJOR_VERSION' and `YY_FLEX_MINOR_VERSION' indicating
+     which version of `flex' generated the scanner (for example, for the
+     2.5 release, these defines would be 2 and 5 respectively).
+
+   The following `flex' features are not included in `lex' or the POSIX
+specification:
+
+     C++ scanners
+     %option
+     start condition scopes
+     start condition stacks
+     interactive/non-interactive scanners
+     yy_scan_string() and friends
+     yyterminate()
+     yy_set_interactive()
+     yy_set_bol()
+     YY_AT_BOL()
+     <<EOF>>
+     <*>
+     YY_DECL
+     YY_START
+     YY_USER_ACTION
+     YY_USER_INIT
+     #line directives
+     %{}'s around actions
+     multiple actions on a line
+     ^
+
+plus almost all of the flex flags.  The last feature in the list refers
+to the fact that with `flex' you can put multiple actions on the same
+line, separated with semicolons, while with `lex', the following
+
+     foo    handle_foo(); ++num_foos_seen;
+     ^
+
+is (rather surprisingly) truncated to
+
+     foo    handle_foo();
+     ^
+
+   `flex' does not truncate the action.  Actions that are not enclosed
+in braces are simply terminated at the end of the line.
+
+
+File: flex.info,  Node: Diagnostics,  Next: Files,  Prev: Incompatibilities,  Up: Top
+
+Diagnostics
+===========
+
+`warning, rule cannot be matched'
+     indicates that the given rule cannot be matched because it follows
+     other rules that will always match the same text as it.  For
+     example, in the following "foo" cannot be matched because it comes
+     after an identifier "catch-all" rule:
+
+          [a-z]+    got_identifier();
+          foo       got_foo();
+          ^
+
+     Using `REJECT' in a scanner suppresses this warning.
+
+`warning, -s option given but default rule can be matched'
+     means that it is possible (perhaps only in a particular start
+     condition) that the default rule (match any single character) is
+     the only one that will match a particular input.  Since `-s' was
+     given, presumably this is not intended.
+
+`reject_used_but_not_detected undefined'
+`yymore_used_but_not_detected undefined'
+     These errors can occur at compile time.  They indicate that the
+     scanner uses `REJECT' or `yymore()' but that `flex' failed to
+     notice the fact, meaning that `flex' scanned the first two sections
+     looking for occurrences of these actions and failed to find any,
+     but somehow you snuck some in (via a #include file, for example).
+     Use `%option reject' or `%option yymore' to indicate to flex that
+     you really do use these features.
+
+`flex scanner jammed'
+     a scanner compiled with `-s' has encountered an input string which
+     wasn't matched by any of its rules.  This error can also occur due
+     to internal problems.
+
+`token too large, exceeds YYLMAX'
+     your scanner uses `%array' and one of its rules matched a string
+     longer than the `YYL-' `MAX' constant (8K bytes by default).  You
+     can increase the value by #define'ing `YYLMAX' in the definitions
+     section of your `flex' input.
+
+`scanner requires -8 flag to use the character 'X''
+     Your scanner specification includes recognizing the 8-bit
+     character X and you did not specify the -8 flag, and your scanner
+     defaulted to 7-bit because you used the `-Cf' or `-CF' table
+     compression options.  See the discussion of the `-7' flag for
+     details.
+
+`flex scanner push-back overflow'
+     you used `unput()' to push back so much text that the scanner's
+     buffer could not hold both the pushed-back text and the current
+     token in `yytext'.  Ideally the scanner should dynamically resize
+     the buffer in this case, but at present it does not.
+
+`input buffer overflow, can't enlarge buffer because scanner uses REJECT'
+     the scanner was working on matching an extremely large token and
+     needed to expand the input buffer.  This doesn't work with
+     scanners that use `REJECT'.
+
+`fatal flex scanner internal error--end of buffer missed'
+     This can occur in an scanner which is reentered after a long-jump
+     has jumped out (or over) the scanner's activation frame.  Before
+     reentering the scanner, use:
+
+          yyrestart( yyin );
+          ^
+
+     or, as noted above, switch to using the C++ scanner class.
+
+`too many start conditions in <> construct!'
+     you listed more start conditions in a <> construct than exist (so
+     you must have listed at least one of them twice).
+
+
+File: flex.info,  Node: Files,  Next: Deficiencies,  Prev: Diagnostics,  Up: Top
+
+Files
+=====
+
+`-lfl'
+     library with which scanners must be linked.
+
+`lex.yy.c'
+     generated scanner (called `lexyy.c' on some systems).
+
+`lex.yy.cc'
+     generated C++ scanner class, when using `-+'.
+
+`<FlexLexer.h>'
+     header file defining the C++ scanner base class, `FlexLexer', and
+     its derived class, `yyFlexLexer'.
+
+`flex.skl'
+     skeleton scanner.  This file is only used when building flex, not
+     when flex executes.
+
+`lex.backup'
+     backing-up information for `-b' flag (called `lex.bck' on some
+     systems).
+
+
+File: flex.info,  Node: Deficiencies,  Next: See also,  Prev: Files,  Up: Top
+
+Deficiencies / Bugs
+===================
+
+   Some trailing context patterns cannot be properly matched and
+generate warning messages ("dangerous trailing context").  These are
+patterns where the ending of the first part of the rule matches the
+beginning of the second part, such as "zx*/xy*", where the 'x*' matches
+the 'x' at the beginning of the trailing context.  (Note that the POSIX
+draft states that the text matched by such patterns is undefined.)
+
+   For some trailing context rules, parts which are actually
+fixed-length are not recognized as such, leading to the abovementioned
+performance loss.  In particular, parts using '|' or {n} (such as
+"foo{3}") are always considered variable-length.
+
+   Combining trailing context with the special '|' action can result in
+*fixed* trailing context being turned into the more expensive VARIABLE
+trailing context.  For example, in the following:
+
+     %%
+     abc      |
+     xyz/def
+     ^
+
+   Use of `unput()' invalidates yytext and yyleng, unless the `%array'
+directive or the `-l' option has been used.
+
+   Pattern-matching of NUL's is substantially slower than matching
+other characters.
+
+   Dynamic resizing of the input buffer is slow, as it entails
+rescanning all the text matched so far by the current (generally huge)
+token.
+
+   Due to both buffering of input and read-ahead, you cannot intermix
+calls to <stdio.h> routines, such as, for example, `getchar()', with
+`flex' rules and expect it to work.  Call `input()' instead.
+
+   The total table entries listed by the `-v' flag excludes the number
+of table entries needed to determine what rule has been matched.  The
+number of entries is equal to the number of DFA states if the scanner
+does not use `REJECT', and somewhat greater than the number of states
+if it does.
+
+   `REJECT' cannot be used with the `-f' or `-F' options.
+
+   The `flex' internal algorithms need documentation.
+
+
+File: flex.info,  Node: See also,  Next: Author,  Prev: Deficiencies,  Up: Top
+
+See also
+========
+
+   `lex'(1), `yacc'(1), `sed'(1), `awk'(1).
+
+   John Levine, Tony Mason, and Doug Brown: Lex & Yacc; O'Reilly and
+Associates.  Be sure to get the 2nd edition.
+
+   M. E. Lesk and E. Schmidt, LEX - Lexical Analyzer Generator.
+
+   Alfred Aho, Ravi Sethi and Jeffrey Ullman: Compilers: Principles,
+Techniques and Tools; Addison-Wesley (1986).  Describes the
+pattern-matching techniques used by `flex' (deterministic finite
+automata).
+
+
+File: flex.info,  Node: Author,  Prev: See also,  Up: Top
+
+Author
+======
+
+   Vern Paxson, with the help of many ideas and much inspiration from
+Van Jacobson.  Original version by Jef Poskanzer.  The fast table
+representation is a partial implementation of a design done by Van
+Jacobson.  The implementation was done by Kevin Gong and Vern Paxson.
+
+   Thanks to the many `flex' beta-testers, feedbackers, and
+contributors, especially Francois Pinard, Casey Leedom, Stan Adermann,
+Terry Allen, David Barker-Plummer, John Basrai, Nelson H.F. Beebe,
+`benson@odi.com', Karl Berry, Peter A. Bigot, Simon Blanchard, Keith
+Bostic, Frederic Brehm, Ian Brockbank, Kin Cho, Nick Christopher, Brian
+Clapper, J.T. Conklin, Jason Coughlin, Bill Cox, Nick Cropper, Dave
+Curtis, Scott David Daniels, Chris G. Demetriou, Theo Deraadt, Mike
+Donahue, Chuck Doucette, Tom Epperly, Leo Eskin, Chris Faylor, Chris
+Flatters, Jon Forrest, Joe Gayda, Kaveh R. Ghazi, Eric Goldman,
+Christopher M.  Gould, Ulrich Grepel, Peer Griebel, Jan Hajic, Charles
+Hemphill, NORO Hideo, Jarkko Hietaniemi, Scott Hofmann, Jeff Honig,
+Dana Hudes, Eric Hughes, John Interrante, Ceriel Jacobs, Michal
+Jaegermann, Sakari Jalovaara, Jeffrey R. Jones, Henry Juengst, Klaus
+Kaempf, Jonathan I. Kamens, Terrence O Kane, Amir Katz,
+`ken@ken.hilco.com', Kevin B. Kenny, Steve Kirsch, Winfried Koenig,
+Marq Kole, Ronald Lamprecht, Greg Lee, Rohan Lenard, Craig Leres, John
+Levine, Steve Liddle, Mike Long, Mohamed el Lozy, Brian Madsen, Malte,
+Joe Marshall, Bengt Martensson, Chris Metcalf, Luke Mewburn, Jim
+Meyering, R.  Alexander Milowski, Erik Naggum, G.T. Nicol, Landon Noll,
+James Nordby, Marc Nozell, Richard Ohnemus, Karsten Pahnke, Sven Panne,
+Roland Pesch, Walter Pelissero, Gaumond Pierre, Esmond Pitt, Jef
+Poskanzer, Joe Rahmeh, Jarmo Raiha, Frederic Raimbault, Pat Rankin,
+Rick Richardson, Kevin Rodgers, Kai Uwe Rommel, Jim Roskind, Alberto
+Santini, Andreas Scherer, Darrell Schiebel, Raf Schietekat, Doug
+Schmidt, Philippe Schnoebelen, Andreas Schwab, Alex Siegel, Eckehard
+Stolz, Jan-Erik Strvmquist, Mike Stump, Paul Stuart, Dave Tallman, Ian
+Lance Taylor, Chris Thewalt, Richard M. Timoney, Jodi Tsai, Paul
+Tuinenga, Gary Weik, Frank Whaley, Gerhard Wilhelms, Kent Williams, Ken
+Yap, Ron Zellar, Nathan Zelle, David Zuhn, and those whose names have
+slipped my marginal mail-archiving skills but whose contributions are
+appreciated all the same.
+
+   Thanks to Keith Bostic, Jon Forrest, Noah Friedman, John Gilmore,
+Craig Leres, John Levine, Bob Mulcahy, G.T.  Nicol, Francois Pinard,
+Rich Salz, and Richard Stallman for help with various distribution
+headaches.
+
+   Thanks to Esmond Pitt and Earle Horton for 8-bit character support;
+to Benson Margulies and Fred Burke for C++ support; to Kent Williams
+and Tom Epperly for C++ class support; to Ove Ewerlid for support of
+NUL's; and to Eric Hughes for support of multiple buffers.
+
+   This work was primarily done when I was with the Real Time Systems
+Group at the Lawrence Berkeley Laboratory in Berkeley, CA.  Many thanks
+to all there for the support I received.
+
+   Send comments to `vern@ee.lbl.gov'.
+
+

@@ -1,0 +1,54 @@
+[SCE CONFIDENTIAL DOCUMENT]
+"PlayStation 2" Programmer Tool Runtime Library Release 2.5
+                   Copyright (C) 2002 Sony Computer Entertainment Inc.
+                                                   All Rights Reserved
+                                                             Mar. 2002
+======================================================================
+Release 2.5 package structure is as follows:
+
+/
+|--t10000-rel250.bin		Flash ROM
++--sce
+   |--1st_read
+   |    |--setup.txt		Development environment setup guide
+   |    |--notice.txt		Notes on hardware, known bugs
+   |    |--libchg.txt		Library change history
+   |    |--smpchg.txt		Sample program change history
+   |    |--docchg.txt		Document change history
+   |    |--243docchg.txt      Release2.4-2.4.3 document change history
+   |    |--dirlst.txt		Package structure
+   |    +--doclst.txt		Document list
+   |--rpm
+   |    +--dsnet-1.2.0-1.i386.rpm  rpm package
+   |--bin			ds commands
+   |--common
+   |    +--include		Common headers for EE/IOP
+   |--conf			Configuration File
+   |--data			Various types of data
+   |    |--kanji
+   |    |--movie
+   |    +--sound
+   |--doc			Various documents
+   |    |--html
+   |    |--text
+   |--driver			Device driver
+   |    |--dsnet
+   |    +--psnet
+   |--ee
+   |    |--include		ee library include files
+   |    |--lib			ee libraries
+   |    |--sample		ee sample codes
+   |    +--src			ee library source codes
+   |--iop
+   |    |--install
+   |    |    |--include		iop library include files
+   |    |    +--lib		iop libraries
+   |    |--modules		iop modules
+   |    |--sample		iop sample codes
+   |    |--src			iop library source codes
+   |    +--util	
+   |         +--inet		inet utility
+   +--tools
+        |--ps2str.tgz		Stream converter
+        +--viewer.tgz		3D icon viewer for MEMORY CARD (PS2)
+

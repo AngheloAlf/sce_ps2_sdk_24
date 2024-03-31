@@ -1,0 +1,282 @@
+[SCE CONFIDENTIAL DOCUMENT]
+"PlayStation 2" Programmer Tool Runtime Library Release 2.5.1
+                  Copyright (C) 2002 Sony Computer Entertainment Inc.
+                                                 All Rights Reserved
+                                                           Apr. 2002
+
+----------------------------------------------------------------------
+Notes on Hardware
+----------------------------------------------------------------------
+EE and GS chips mounted on DTL-T10000 and DTL-H10000 have the following
+restrictions.  Take note for the use of the following features.
+
+For the latest information, please refer to the Developer Support Website.
+
+----------------------------------------------------------------------
+* Restrictions on EE 
+----------------------------------------------------------------------
+1. Improper VIF0/VIF1-Related INTC Interrupts by the i Bit of VIFcode
+
+   Unnecessary VIF0/VIF1-related INTC interrupts by the i bit of VIFcode 
+   may occur under specific conditions. 
+
+   [Workaround]
+    When using an interrupt by the i bit of VIFcode, please take the steps 
+    below.
+    - SYNC instructions (MSCALL, MSCNT, FLUSH, FLUSHE, and FLUSHA) must be 
+      directly followed by a NOP instruction.
+    - Instructions with the i bit set must be directly preceded by a NOP 
+      instruction.
+
+2. Problem with the VU1 Microinstruction XGKICK
+
+   When the E bit is set in the Upper instruction field of XGKICK, 
+   the VIFcode FLUSH that waits for the end of the transfer may be 
+   cancelled at unexpected timing.  
+   
+   [Workaround]
+    Please do not set the E bit in the Upper instruction field of XGKICK.
+    (This problem is avoidable by inserting a NOP instruction to move 
+     the E bit.)
+
+3. Debugging Functions (Hardware Breakpoint etc.)
+
+    The following indefinite points and restrictions have been found.
+  
+    - In the strict sense, the data value breakpoint of the hardware
+      breakpoint and the performance counter do not always stop at
+      the accurate position in the Program Counter. 
+
+    -  There are cases that the program does not function properly 
+       when the address breakpoint of the hardware breakpoint is
+       set to the sync instruction. 
+       There is also a case that hardware breakpoint exception
+       occurs in the data value breakpoint even though the condition
+       differs from the setting.
+
+4. Setting Drain Channel of MFIFO
+
+    If the ring buffer address of the MFIFO is changed during DMA
+    operation via the Drain Channel of the MFIFO, the operation
+    becomes unstable occasionally. Therefore, do not change the
+    ring buffer address while data is being transferred via the
+    Drain Channel. 
+
+5. DMA-tag Mismatch Error in VIF
+
+    A DMA mismatch error may occur in the setting of VIFn_ERR.ME0=
+    0 (DAM-tag mismatch error mask disable), even if a correct packet
+    is sent to the VIF.
+
+    < Action >
+	Set as VIFn_ERR.ME0 = 1.
+	
+6. Simultaneous Transfer of ch1 and ch9 of DMAC
+
+    Transfer may stall if the toSPR and toVPU1 source chain modes are
+    executed simultaneously, in the case of TTE of toSPR = 0 and
+    TTE of toVPU1 = 1.
+    
+
+    < Action >
+	Avoid activating the above conditioned DMAs at the same time.
+
+7. Divide Instructions of COP1 (FPU) and COP2 (VU0) 
+
+    The following problems occur due to the FDIV (floating-point
+    divider) malfunction of the inner EE.
+    
+    With the following instructions, the incorrect value may be 
+    returned in some cases:
+
+    COP1 (FPU) divide instructions   DIV.S, SQRT.S, RSQRT.S
+    COP2 (VU0) divide instructions   DIV, SQRT, RSQRT, VDIV, VSQRT, VRSQRT
+    
+    < Action >
+    The above problem can be avoided by not locating the divide 
+    instructions in the following points:
+
+       1. Two steps of the branch destination instructions
+       2. Three steps following the branch instruction (including
+	  the branch delay slot)
+       3. One step instruction immediately after the SYNC.P 
+       4. The first two steps of the VU0 micro code
+
+    < Countermeasures >
+       
+       Software:
+       For the C/C++ program:
+       As for developing with the C/C++ language, we are currently fixing
+       GNU tools to generate the code which avoids hardware malfunctions.
+
+       For the assembler:
+       Please take the above action to avoid restrictions remained in the
+       program with developing with assemblers.
+
+8. Initialization of DMAC
+     
+       When executing DMA transfer with normal mode or interleave mode,
+       if DMA is kicked (set to Dn_CHCR.STR =1) in a state of Dn_QWC = 0
+       is 0, the transfer is not performed properly.
+       That is:
+	
+       // the following codes are not operated properly
+       // (the operation becomes unstable depending on the condition)
+
+
+    // Normal Mode 
+    Dn_CHCR.MOD = 0;	// Normal Mode
+    Dn_QWC      = 0;	// Number of transfer word = 0
+    Dn_CHCR.STR = 1;	// Starts DMA transfer 
+
+    // Interleave Mode 
+    Dn_CHCR.MOD = 2;	// Interleave Mode
+    Dn_QWC      = 0;	// Number of transfer word = 0
+    Dn_CHCR.STR = 1;	// Starts DMA transfer
+
+    < Action >
+    Do not activate DMA in the Dn_QWC = 0 setting.
+
+    This limitation remains in the final specification.
+
+9. Short Loop of 5 Steps or Less 
+
+     The branch prediction may be incorrect with the very short loop
+     which is 5 steps or less (6 steps or less including the branch
+     instruction).  For example, if there is no hazard in l0-a, l1-a,
+     l0-b and l1-b of the following loops (a WAIT cycle occurrence due
+     to a cache error etc.), the branch condition becomes incorrect
+     in rare cases. 
+     
+
+     label:    l0-a			// Instruction of l0 pipe
+	       l1-a			// Instruction of l1 pipe
+	       l0-b			// Instruction of l0 pipe
+	       l1-b			// Instruction of l1 pipe
+	       branch taget=label	// Branch to label address
+	       l1-c			// Instruction of l1 pipe
+
+     Example:
+               addiu	$a1,$a1,1
+	       addiu	$v1,$v1,4
+	       addu	$s0,$s0,$a1
+	       slti	$v0,$a1,80
+	       bnez	$v0,20 <c+0x20>
+	       sw	$s0,0($v1)
+    
+    < Action >
+      For the C/C++ program:
+      ee-as has been fixed in Release 1.3. to add the appropriate
+      number of nop immediately before the conditional branch
+      instruction when necessary.
+
+      For the assembler:
+      Do not use the loop of 5 steps or less (6 steps including the
+      branch instruction - including the branch delay slot)
+
+10. Access to VU Mem Mapped to Main Memory Space
+
+     The feature enabling the EE Core to access the VU Mem mapped in
+     main memory space is provided only for debugging purposes.
+     Therefore, its operation is not guaranteed for accesses made while
+     the VU is operating.
+
+     If data written to VU Mem by the store instruction of the EE Core
+     is used by a VU macroinstruction (COP2 instruction) immediately,
+     there is no guarantee that the write operation is completed by 
+     the time the macroinstruction is issued, because the store
+     instruction writes the data via the write buffer.  In this case,
+     the access is made while the VU is operating (macro instruction)
+     and may result in malfunction.
+
+     This problem is avoidable by inserting the sync.I instruction
+     between the store instruction and the macroinstruction.
+
+11. EE Memory Controller Bug with DTL-T10000(H)
+
+    In extremely rare circumstances, memory may not be accessed 
+    normally on the DTL-T10000(H).  This problem will not occur either 
+    on the debugging station or on an actual unit.
+    Although it is difficult to avoid this problem at the application 
+    level, the bug can be avoided by switching the workaround ON 
+    on dsedb.  However, the memory access / DMA transfer performance for 
+    memory beyond 32M bytes is generally reduced, when the workaround is 
+    switched ON.  Therefore, the workaround is switched OFF in default 
+    setting.
+
+       (How to switch the workaround ON)
+      - Reset the EE parameter (set to "1") using the dsedb reset command.
+          dsedb> reset 1 0
+      - Specify the -ebootp option when starting dsedb from the shell
+          % dsedb -ebootp 1 -r run prog.elf
+
+----------------------------------------------------------------------
+* Restrictions on GS
+----------------------------------------------------------------------
+1. Depth Test
+
+    When the ZTE which controls the depth test is ON/OFF switched,
+    the test may not be performed properly in some conditions.
+
+    Therefore, if you are not executing the depth test nor using the 
+    Z buffer, do not set as ZTE=0 but set as ZTE=1 and ZTST=01(Always).
+    At the same time, set the ZBUF register as ZMSK=1.
+    The GS internal operation in this state is equivalent to the ZTE=0
+    state.
+
+2.The Interrupt from the GS to the EE
+ 
+    SIGNAL, FINISH, HSync and VSync are various causes of interrupt
+    from the GS to the EE.  While the interrupt handler is in the
+    process for the interrupt from the GS, if additional interrupt
+    from the GS occurs, the EE may fail to receive the second and
+    the following interrupts depending on the description of the
+    interrupt handler.  
+    
+    < Measures >
+
+    To prevent this from happening, the GS interrupt mask register 
+    is to be in the masked state while the GS interrupt is being handled.
+
+	u_long UserIMR;
+
+	// Masks all interrupts.
+	UserIMR = sceGsPutIMR(0xff00);
+
+	// Branches according to the individual cause of interrupts
+
+	// Clears causes of interrupts
+
+	// Processes corresponding to interrupts
+
+	// Cancels the interrupt mask 
+	sceGsPutIMR(UserIMR);
+
+    The above process is unnecessary for the interrupts of start  
+    and termination of V-Blank since they are input to the EE as 
+    different interrupts from the GS interrupt described above.
+
+3. Texture Width
+
+    When transferring textures to GS local memory, expand the restriction
+    on texture width corresponding to the texel format in use, as shown 
+    below.
+
+        Texel Format           		Texture Width
+
+	PSMCT32                		Multiple of 2 Pixels
+	PSMCT24		       		Multiple of 8 Pixels
+	PSMCT16, 16S           		Multiple of 4 Pixels
+	PSMT8, 8H, PSMT4, 4HH, 4HL	Multiple of 8 Pixels
+
+    If a transfer is performed without meeting the above restrictions,
+    a part of the data may not be written correctly in some rare cases due 
+    to GS incompatibility. The value that had been previously written 
+    remains in the PIXEL where the data writing failed. (between 1 to 
+    several pixels, in general). There will be no offset of the transfer 
+    position due to the writing failure.
+
+    < Measures >
+
+    When transferring textures to GS local memory, always execute 
+    the transfer using a format that satisfies the above restrictions.

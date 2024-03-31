@@ -1,0 +1,96 @@
+#!/bin/sh
+#			Copyright (C) 1998 Sony Computer Entertainment
+#			All Right Reserved
+#
+# $Id: mrp.sh,v 1.3 1999/03/04 09:33:40 mka Exp $
+#
+
+myname=`basename $0`
+
+if [ "`uname -s`" != "Linux" ]; then
+	echo ${myname}: Only supported for Linux
+	exit 1
+fi
+
+if [ "`id -nu`" != "root" ]; then
+	echo ${myname}: Must be root for loading/unloading driver
+	exit 1
+fi
+
+if [ -n "`/sbin/lsmod | grep mrp`" ]; then
+	echo "Unloading mrp driver"
+	/sbin/rmmod mrp
+fi
+for minor in 0 1 2 3 ; do
+	rm -f /dev/mrp${minor} /dev/mrp${minor}c
+done
+
+XSNET=dsnet
+case "$1" in
+start|stop)
+	;;
+deci1|psnet)
+	XSNET=psnet
+	shift
+	;;
+deci2|dsnet)
+	XSNET=dsnet
+	shift
+	;;
+esac
+
+case "$1" in
+start)
+	if [ -n "$2" ]; then
+		MODULE=$2
+	else
+		MODULE=/usr/local/sce/driver/${XSNET}/`uname -r`/mrp.o
+		if [ ! -f ${MODULE} ]; then
+			echo "${myname}: ${MODULE} not found"
+			exit 1
+		fi
+	fi
+	echo "Loading mrp driver ( ${MODULE} )"
+	/sbin/insmod ${MODULE}
+	if [ $? != 0 ]; then
+		echo
+		echo "******************"
+		echo "* Loading failed *"
+		echo "******************"
+		echo
+		exit 2
+	fi
+	;;
+stop)
+	exit 0
+	;;
+*)
+	echo "Usage: ${myname} [deci1|deci2] {start|stop} [<object_file>]"
+	exit 1
+esac
+
+major=`grep mrp /proc/devices | sed -e 's/ .*//'`
+if [ -z "$major" ]; then
+	echo
+	echo "************************************************************"
+	echo "* Loading failed by unknown reason (maybe board not found) *"
+	echo "************************************************************"
+	echo
+	if [ -n "`/sbin/lsmod | grep mrp`" ]; then
+		echo "Unloading mrp driver"
+	 	/sbin/rmmod mrp
+	fi
+	exit 2
+else
+	echo "Creating device files for mrp driver"
+	for minor in 0 1 2 3 ; do
+		if [ "${rm_only}" != "yes" ]; then
+			mknod /dev/mrp${minor} c ${major} ${minor}
+			chmod 666 /dev/mrp${minor}
+			mknod /dev/mrp${minor}c c ${major} `expr ${minor} + 64`
+			chmod 666 /dev/mrp${minor}c
+		fi
+	done
+fi
+
+exit 0

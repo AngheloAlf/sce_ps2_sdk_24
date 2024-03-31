@@ -1,0 +1,1138 @@
+[SCE CONFIDENTIAL DOCUMENT]
+"PlayStation 2" Programmer Tool Runtime Library Release 2.5
+                     Copyright (C) 2002 Sony Computer Entertainment Inc.
+                                                     All Rights Reserved
+                                                               Mar. 2002
+
+                                      Document Changes and New Additions
+========================================================================
+This file contains brief descriptions of the changes and additions to
+the documents from Release 2.4.3 to Release 2.5.  For the changes and 
+additions to the documents from Release 2.4 to Release 2.4.3, see 
+243docchg.txt.  For details, refer to the respective documents.
+
+In the reference, only the implemented functions are described.
+For viewing the pdf documents, please use the Adobe Acrobat Reader 4.0 or
+later. 
+The Adobe Acrobat Reader 4.0 can be downloaded in the web site
+at http://www.adobe.com.
+
+========================================================================
+Precautions
+------------------------------------------------------------------------
+Note that the following files are available only in the formats below.
+
+HTML format
+===========
+- From this release, the index has been divided into "Index by Categories" 
+  and "Index by Fields of Development".  Please refer to them according to 
+  the purpose.  It is possible to refer to the "Index by Categories" via 
+  the document directory structure in the same way as the Index up to and 
+  including Release 2.4.3.  As for the "Index by Fields of Development", 
+  necessary manuals are linked by the development field. 
+
+- An alphabetical index for the structures and functions is available. 
+  It is a complete list of EE/IOP structures and functions.  Please use it 
+  when searching a function. 
+
+- The change history of the documents is applicable only when referring to 
+  the documents in Release 2.4.3 or later version.
+
+- The following files released in the PDF format can be referred to by 
+  selecting them out of the following directories for the HTML version. 
+    tips/gsknhow.pdf 
+    tips/analog.pdf
+    tips/usbkb.pdf
+
+- Technical information as of March 20, '02 is provided. 
+
+- Since the HTML version documents have been created with JavaScript,
+  be sure to enable JavaScript of the browser.  It is enabled in default 
+  setting.
+
+- The recommended browser environments are as follows:
+    Internet Explorer 5.0 or later
+    Netscape Navigator 4.7 or later
+
+TEXT format
+===========
+- Documents in both the TEXT and HTML formats have been converted from
+  the WORD version.  Therefore, figures are not reflected in the TEXT 
+  version.
+
+- The documents in the format directory are not available in the TEXT 
+  version since they have many figures.
+
+Documents in the PDF format are not included in the Release 2.5 package.
+
+The following are document changes, new additions, and known bugs since
+Release 2.4.
+========================================================================
+Documents Added/Deleted
+------------------------------------------------------------------------
+- This package does not include the common network configuration GUI 
+  library document.
+  It will be released around the end of March with the common network 
+  configuration GUI library 2 as a "NETGUI library package".
+  This document is included in the index in the HTML version currently.  
+  However, please be aware that a link has not been established yet.
+  You will be able to refer to the document via the index after 
+  installing the "NETGUI library package". 
+
+- The contents of "Your Network Configuration File Usage Rule" have been 
+  revised, and the file name has been changed from usrntcnf to yncf.
+ 
+  Version is added to the documents from this release, and the requirements 
+  from the "Network" section of TRC are applied. 
+
+- The documents for the common network configuration interface library 
+  have been added. 
+      ee/overview/network/netcnfif
+      ee/libref/network/ntcif_rf
+
+- The documents for Libnet have been added. 
+     ee/overview/network/libnet
+     ee/libref/network/lint_rf
+
+- Graphics Tips have been added.  The descriptions of the graphics have 
+  been moved from the Programming Tips. 
+      tips/graphtips
+
+<Release 2.4.3>
+- The "Your Network Configuration File Creation Standards" document has 
+  been added.  Due to this addition, "Guidelines for Creating a Network 
+  Configuration Application" (setapp_r) has been deleted.
+      general/usrntcnf
+
+<Release 2.4.2>
+- HTTP library documents have been added.
+      ee/overview/network/libhttp
+      ee/libref/network/http_rf
+
+- General-purpose network wrapper API documents have been added.
+      ee/overview/network/ntglue
+      ee/libref/network/ntglue_rf
+
+<Release 2.4.1>
+- Basic graphics library documents have been added.
+      ee/overview/graphics/libgp
+      ee/libref/graphics/gp_rf
+
+The following are document changes since Release 2.4.3.
+==========================================================================
+- The following corrections have been made to each of EE/IOP library 
+  reference documents.  For details, please refer to the respective 
+  library reference documents. 
+
+    * In "Calling Conditions", calling conditions have been added. 
+    * In "Return Value", details of the return values and error codes 
+      returned from functions have been added. 
+
+------------------------------------------------------------------------
+Development Environment Setup Guide (setup)
+------------------------------------------------------------------------
+- In the installation of "Package" of "Precautions on Setting up 
+  DTL-T10000" of "1. Hardware Setup", a precaution has been added. 
+
+- In "dsnet Update" of "2. Software Setup", a description on the error 
+  with ftp has been added. 
+
+------------------------------------------------------------------------
+Development Tool Overview (systool)
+------------------------------------------------------------------------
+- The section of "1. This Document" has been added. 
+
+- In "2. Programmer Tool", the following items have been added. 
+     "System Manual"
+     ""PlayStation 2" FAQ Document"
+
+- In "4. Sound Artist Tool", the following items have been added. 
+     "Sample Data for JAM"
+     "GM Phoneme Data"
+
+- Notes have been added in the item of ""PlayStation 2" Master Disc 
+  Checker" of "5. Other Common Tools". 
+
+- Notes have been added in the item of "Artist Tool Monitor" of 
+  "5. Other Common Tools". 
+
+- In "5. Other Common Tools", the following items have been added. 
+    "Development Seminar Material"
+    "Character-Code Conversion Library"
+
+- The section of "6. Sample Programs" has been added. 
+
+- The section of "7. TRC (Technical Requirements Checklist)" has been added. 
+
+- The section of "8. English Contents" has been added. 
+
+- The chapter of "9. Tools Provided by Tools & Middleware Licensees" has 
+  been added. 
+
+------------------------------------------------------------------------
+Hardware Architecture Overview (syshard)
+------------------------------------------------------------------------
+- In "IOP" of "1. Architecture", a figure showing the block diagram of 
+  IOP has been added. 
+
+- In "Data Flow of the Sound Data" of "2. Data Flow", notes on the 
+  monaural sound have been added. 
+
+------------------------------------------------------------------------
+Library Overview (syssoft)
+------------------------------------------------------------------------
+- In "1. Fundamentals of Software Architecture", the following items have 
+  been added. 
+    "Necessary Processes when Starting an Application"
+    "Argument Passed when Starting Application"
+
+- In "EE Library Network Related" of "3. Features of Libraries", 
+  descriptions of the following libraries have been added. 
+    Network Library, Libnet
+    Common Network Configuration Interface Library, netcnfif
+
+- In "EE Library Network Related" of "3. Features of Libraries", 
+  the description of Common Network Setting GUI Library has been deleted. 
+
+------------------------------------------------------------------------
+Hard Disk Drive Operation Rule (hdd_rule)
+------------------------------------------------------------------------
+- In "2. Installing an Application", notes on installation have been 
+  added.
+ 
+- In "2. Installing an Application", the item of "Checking the Hard Disk 
+  Drive" has been added. 
+
+- In "Creating a Partition" of "2. Installing an Application", 
+  a description of installation by overwriting has been added. 
+
+--------------------------------------------------------------------------
+EE Kernel Library
+--------------------------------------------------------------------------
+[libref]
+- In "Description" of the following functions, a description of 
+  the value of the interrupt handler gp to be called has been added. 
+      AddDmacHandler()
+      AddDmacHandler2()
+      AddIntcHandler()
+      AddIntcHandler2()
+      SetAlarm/iSetAlarm()
+
+--------------------------------------------------------------------------
+Standard I/O Service Function
+--------------------------------------------------------------------------
+[libref]
+- In "Argument" of sceDevctl() and sceIoctl2(), the const declaration has 
+  been added to the argument arg. 
+
+- In "Calling Condition" of scePrintf(), the description of the condition 
+  has been changed as follows: 
+    Can be called from the thread. 
+    Multithread-safe (independent of the interrupt disabled/enabled state). 
+
+  Due to the condition change, the description in "Description" has been 
+  changed. 
+
+--------------------------------------------------------------------------
+Standard IOP Service
+--------------------------------------------------------------------------
+[libref]
+- Descriptions of the following functions have been added. 
+    sceSifQueryMemSize()
+    sceSifQueryMaxFreeMemSize()
+    sceSifQueryTotalFreeMemSize()
+    sceSifQueryBlockSize()
+    sceSifQueryBlockTopAddress()
+
+--------------------------------------------------------------------------
+Multi-Thread SIF RPC (ee)
+--------------------------------------------------------------------------
+[libref]
+- In the structure sceSifMClientData, descriptions of the following members 
+  have been added. 
+    buffersize
+    stacksize
+    prio
+
+--------------------------------------------------------------------------
+Hard Disk Library
+--------------------------------------------------------------------------
+[libref]
+- A description of HDIOC_IDLEIMM has been added to the devctl command. 
+
+--------------------------------------------------------------------------
+PlayStation File System
+--------------------------------------------------------------------------
+[libref]
+- In "Return Value" of sceLseek() and lseek(), a description on error code 
+  of EFBIG has been added. 
+
+[overview]
+- In "Power-Off Process" of "5. Notes", a description of the power-off 
+  process of an external hard disk drive (for PlayStation 2) with network 
+  adaptor (PC CARD type) has been added.
+ 
+- In "Error Handling" of "5. Notes", a note on the time of hard disk 
+  trouble has been added. 
+
+- In "5. Notes", the following items have been added. 
+    "Implementation of Software Reset Function"
+    "Confirmation of Free Space"
+
+--------------------------------------------------------------------------
+CD(DVD)-ROM Library
+--------------------------------------------------------------------------
+[libref]
+- Descriptions of the following functions have been added.
+    sceCdLayerSearchFile()
+    sceCdReadDvdDualInfo()
+
+- In "Member" of the structure sceCdRMode, a description of SCECdSpinDvdDL0 
+  has been added to the member spindlctrl.
+ 
+- In "Member" of the structure sceCdRMode, the descriptions of 
+  SCECdSecS2328 and SCECdSecS2340 have been deleted from the member 
+  datapattern. 
+
+- In "Return Value" of sceCdGetError(), SCECdErIPI and SCECdErILI have 
+  been added. 
+
+- In the "Return Value" of the following, SCECdErEOM has been deleted. 
+    sceCdGetError()
+    CDIOC_GETERROR
+
+- In "Description" of sceCdStStart(), a description of SCECdSpinStm has 
+  been added. 
+
+- The following command has been added to the devctl command. 
+    CDIOC_READDVDDUALINFO
+    CDIOC_INIT
+
+[overview]
+- In "Spinning Speed and Data Transfer Speed" of "2. CD(DVD)-ROM 
+  Specifications", a description on the spinning speed controlling 
+  method has been added. 
+
+- In "Media Type Specification" of "3. Access to CD(DVD)-ROM", a 
+  description on the method of using Standard I/O has been added. 
+
+- In "4. Notes", the following items have been added. 
+     Note when Using DVD_Dual_Layer
+     Disk Exchanging
+
+- "5. Requirements from TRC" has been added. 
+
+--------------------------------------------------------------------------
+Memory Card Library
+--------------------------------------------------------------------------
+[libref]
+- In "Remarks" of sceMcGetInfo(), a note has been added. 
+
+- The following description has been added: 
+  If the directory entry of the memory card has been damaged, sceMcGetDir() 
+  returns sceMcResNotEmpty(-6). 
+
+- An explanation has been added to the unformatted memory card detection 
+  method of sceMcGetInfo(). 
+
+- In "Structure" of the structure sceMcTblGetDir, sceStDateTime has been 
+  corrected to sceMcStDateTime. 
+
+[overview]
+- "2. Compatibility among Memory Cards" has been changed to "2. 
+   Compatibility among Memory Card Devices". in 
+
+- Notes have been added in the item of "Calculating Necessary Capacity" 
+  of "2. Compatibility among Memory Card Devices". 
+
+- Notes have been added in the item of "Confirming Insertion of Memory 
+  Card (PS2)" of "6. Procedural Overview for Using Memory Card (PS2)". 
+
+- Notes have been added in the item of "Free Space Check" of 
+  "6. Procedural Overview for Using Memory Card (PS2)". 
+
+- The following items have been added to "6. Procedural Overview for 
+  Using Memory Card (PS2)".
+        "Save Process"
+        "Auto Save Process"
+
+- Notes have been added in the item of "Formatting" of "6. Procedural 
+  Overview for Using Memory Card (PS2)". 
+
+- Notes have been added in the item of "Judging and Handling a Damage 
+  to a File" of "6. Procedural Overview for Using Memory Card (PS2)". 
+
+- The following items have been added in "7. Notes". 
+    "Actions against Insertion/Removal"
+    "Error Handling"
+    "Indication Related to Memory Card"
+
+- "8. Requirements from TRC" has been added.
+
+------------------------------------------------------------------------
+PDA Library
+------------------------------------------------------------------------
+[overview]
+- "6. Requirements from TRC" has been added.
+
+------------------------------------------------------------------------
+Controller Library
+------------------------------------------------------------------------
+[overview]
+- In "Procedure for Operating the Actuator" of "2. Procedure for Using", 
+  notes on the use of vibration function have been added.
+ 
+- In "Output Message" of "4. Notes", the description of "padman: Over 
+  Consumpt Max [port][slot]" has been added. 
+
+- In "4. Notes", the following items have been added.
+     "Restrictions on the Analog Controller"
+     "Judgment when a Button is Pressed"  
+     "Actions against Insertion/Removal of the Controller"  
+     "Actions against Mode Change"  
+     "Calibration Function"
+
+- "5. Requirements from TRC" has been added.
+
+------------------------------------------------------------------------
+Controller Library 2
+------------------------------------------------------------------------
+[overview]
+- "5. Notes" has been added.
+
+- "6. Requirements from TRC" has been added.
+
+--------------------------------------------------------------------------
+Vibration Library
+--------------------------------------------------------------------------
+[libref]
+- "Description" of sceVibSetActParam(), Bite has been corrected to Bit. 
+
+[overview]
+- The following sections have been added.
+    "4. Notes"
+    "5. Requirements from TRC"
+
+------------------------------------------------------------------------
+Multitap Library
+------------------------------------------------------------------------
+[overview]
+- In "3. Notes", an item of "Actions against Insertion/Removal" has been 
+  added.
+
+- "4. Requirements from TRC" has been added.
+
+--------------------------------------------------------------------------
+GS Basic Library (libgraph)
+--------------------------------------------------------------------------
+[libref]
+- In the third argument omode of sceGsResetGraph(), the description on 
+  setting DTV480P has been added.
+ 
+- In "Calling Condition" of sceGsGetGParam(), the error in the condition 
+  has been corrected. 
+    (Wrong) Not Multithread Safe
+    (Correct) Multithread Safe
+
+- In "Argument" of sceGsSetDefTexEnv(), the description of the argument 
+  tfx has been changed. 
+
+[overview]
+- "4. Requirements from TRC" has been added.
+
+--------------------------------------------------------------------------
+Basic Graphics Library (libgp)
+--------------------------------------------------------------------------
+[libref]
+- Descriptions of the following functions have been added.
+    sceGpSetZ32()
+    sceGpSetDefaultZ32()
+    sceGpSetXyz32()
+
+[overview]
+- In "3. Drawing Procedure", the description of "Specification of the 
+  Register (XYZF2/XYZ2) for storing the Vertex Coordinates of a Drawing 
+  Packet" has been added. 
+
+- In "4. Packet Type and the Special Function List", a description of 
+  "Data Sequence List of a Drawing Packet" has been added. 
+
+--------------------------------------------------------------------------
+High Level Graphics Library (libhig)
+--------------------------------------------------------------------------
+[libref]
+- In "Description" of sceHiMakeDataBlk(), a description that memory is 
+  released with sceHiMemFree() has been added. 
+
+--------------------------------------------------------------------------
+High Level Graphics Library Service Function <DMA Packet Control Service>
+--------------------------------------------------------------------------
+[libref]
+- A description of sceHiDMAMake_ExecMicroAddr() has been added.
+
+- In "Description" of sceHiDMADel_Chain(), the description has been 
+  changed.
+
+- In "Description" of sceHiDMAGet_BufferPtr(), the description has been 
+  changed.
+
+- In "Description" of sceHiDMAGet_ChainAddr(), the description has been 
+  changed.
+
+--------------------------------------------------------------------------
+High Level Graphics Plugin Library (libhip)
+--------------------------------------------------------------------------
+[libref]
+- The descriptions of the following structures have been changed.
+    sceHiPlugClipHead_t
+    sceHiPlugClipData_t
+
+- Descriptions of the following functions have been added.
+    sceHiPlugClip()
+    sceHiPlugClipGetHead()
+    sceHiPlugClipGetData()
+
+[overview]
+- In "Overview" of "1. Library Overview", a description of clip plugin 
+  has been added.
+ 
+- "ShadowMap Plugin" and "LightMap Plugin" of "2. Functional Overview of 
+  Each Plugin", a description on the data written with the plugin has been 
+  added. 
+
+- In "2. Functional Overview of Each Plugin", an item of "Clip Plugin" has 
+  been added. 
+
+--------------------------------------------------------------------------
+Low Level Sound Library (libsdr)
+--------------------------------------------------------------------------
+[libref]
+- In sceSdRemote(), descriptions on rSdSetEffectMode and 
+  rSdSetEffectModeParams have been added. 
+
+[overview]
+- In "libsd Function List" of "2. Description on Features", descriptions 
+  of the following functions have been added. 
+    sceSdStopTrans()
+    sceSdSetEffectMode()
+    sceSdSetEffectModeParams()
+    sceSdCleanEffectWorkArea()
+
+- "4. Requirements from TRC" has been added.
+
+--------------------------------------------------------------------------
+Standard Kit/Sound System
+--------------------------------------------------------------------------
+[libref]
+- Descriptions of the following functions have been added.
+    sceSkSsExcludeVoice()
+    sceSkSsGetExcludedVoice()
+
+--------------------------------------------------------------------------
+USB Keyboard Library
+--------------------------------------------------------------------------
+[libref]
+- In the following functions, the name of the sructure USBKBINFO_t was 
+  incorrect.  It has been corrected.
+    sceUsbKbGetInfo()
+    sceUsbKbRead()
+    sceUsbKbSetCodeType()
+    sceUsbKbSetLEDStatus()
+    sceUsbKbSetReadMode()
+
+--------------------------------------------------------------------------
+Network Socket Library
+--------------------------------------------------------------------------
+[libref]
+- A description of the following structure has been added.
+      sceInsockIpMreq
+
+- Descriptions of the following functions have been added.
+      sceInsockGetsockopt()
+      sceInsockSetsockopt()
+
+- An error code list has been added.
+
+- In "Reurn Value" of each function, error code has been added.
+
+- In "Syntax" of sceInsockInetAton(), an error in argument types has been 
+  corrected. 
+
+------------------------------------------------------------------------
+HTTP Library
+------------------------------------------------------------------------
+[libref]
+- With the structure sceHTTPClient_t, descriptions of the following 
+  members have been added.
+    t_hash
+    t_hash_opt
+    hashbytes
+    t_sent
+    fd
+    writef
+
+- With the structure sceHTTPResponse_t, a description of the following 
+  member has been added.
+    content_length
+
+- With the structure sceHTTPResponse_t, the type of the member length has 
+  been changed.
+ 
+- Descriptions of the following functions have been added.
+    sceHTTPGetContentLength()
+    sceHTTPGetTransferedBytes()
+    sceHTTPVerifyAuthInfo()
+
+- With sceHTTPCreate(), "Remarks" has been added.
+
+- In "Description" of sceHTTPFindAbsoluteURI(), notes have been added.
+
+- In "Description" of sceHTTPGetOption(), descriptions of the following 
+  options have been added.
+    sceHTTPO_HashCB
+    sceHTTPO_HashSize
+    sceHTTPO_LocalFile
+    sceHTTPO_KeepAlive
+    sceHTTPO_FileWriteFunction
+
+- In "Description" of sceHTTPGetOption(), the descriptions of the following 
+  options have been changed.
+    sceHTTPO_EndOfTransactionCB
+    sceHTTPO_ReceiveChunkCB
+
+- With sceHTTPGetResponse(), "Remarks" has been added.
+
+- In "Remarks" of sceHTTPRequest(), notes have been added.
+
+- In "Description" of sceHTTPSetBasicAuth(), notes have been added.
+
+- With sceHTTPSetCookie(), "Remarks" has been added.
+
+- In "Description" of sceHTTPSetOption(), descriptions of the following 
+  options have been added.
+    sceHTTPO_DelRequestHeader
+    sceHTTPO_HashCB
+    sceHTTPO_HashSize
+    sceHTTPO_LocalFile
+    sceHTTPO_FileWriteFunction
+
+- In "Description" of sceHTTPSetOption(), the descriptions of 
+  the following options have been changed.
+    sceHTTPO_RequestHeaders
+    sceHTTPO_EndOfTransactionCB
+    sceHTTPO_ReceiveChunkCB
+
+- In "Description" of sceHTTPGetClientError(), definitions of 
+  the following error macros have been added.
+    sceHTTPError_PROXY
+    sceHTTPError_BUSY
+    sceHTTPError_WRITEF
+
+- In "Description" of sceHTTPUnparseURI, notes have been added.
+
+- Descriptions of the following definitions have been added to 
+  sceHTTPOption_t. 
+    sceHTTPO_HashCB
+    sceHTTPO_HashSize
+    sceHTTPO_LocalFile
+    sceHTTPO_FileWriteFunction
+    sceHTTPO_DelRequestHeader
+
+[overview]
+- In "Addition of Option Header" of "2. Feature and Code Flow",
+  the description of the code for "Specifying the Cookie via 
+  sceHTTPSetCookie()" has been corrected. 
+
+- In "Cookie Control" of "2. Feature and Code Flow", notes have been 
+  added. 
+
+- In "2. Feature and Code Flow", an item of "Reception with a File" 
+  has been added. 
+
+- In "Error Code" of "3. Notes", a description on the acquisition of 
+  an error cause has been added.
+ 
+- In "3. Notes", the following item has been added.
+    "Thread Generation in the libhttp Library"
+
+--------------------------------------------------------------------------
+General-Purpose Network Wrapper API (netglue)
+--------------------------------------------------------------------------
+[libref]
+- In "Syntax" of the following functions, the function type has been 
+  corrected from size_t to ssize_t. 
+       sceNetGlueRecv()
+       sceNetGlueRecvFrom()
+       sceNetGlueSend()
+       sceNetGlueSendTo() 
+
+- In "Syntax" of sceNetGlueSocket(), the function type has been corrected 
+  from size_t to int. 
+
+--------------------------------------------------------------------------
+DMA Library
+--------------------------------------------------------------------------
+[libref]
+- The description of the unnecessary function sceDmaDebug() has been 
+  deleted. 
+
+[overview]
+- "2. Requirements from TRC" has been added.
+
+------------------------------------------------------------------------
+Performance Counter Library
+------------------------------------------------------------------------
+[overview]
+- In "1. Library Overview", an item of "Note on Use" has been added. 
+
+--------------------------------------------------------------------------
+IOP Kernel
+--------------------------------------------------------------------------
+[libref]
+- Descriptions of the following scratchpad control functions have been 
+  added. 
+      AllocScratchPad()
+      FreeScratchPad()
+
+- A description of the following module control function has been added. 
+      SetModuleFlags()
+
+- Descriptions of the following thread control functions have been added.
+      GetThreadCurrentPriority()
+      ReferThreadRunStatus()
+      GetThreadStackFreeSize()
+      GetSystemTimeLow()
+      ReferSystemStatus()
+      GetThreadmanIdList()
+
+- The descriptions of the following functions have been deleted. 
+      CpuDisableIntr()
+      CpuEnableIntr()
+
+- In "Description" of CpuSuspendIntr(), the description has been changed. 
+
+- With ReferThreadRunStatus(), the descriptions in "Argument" and 
+  "Description" have been changed. 
+
+- With CheckThreadStack(), the description in "Description" has been 
+  changed. 
+
+- With CreatThread(), the description in "Argument" has been changed. 
+
+--------------------------------------------------------------------------
+USB Driver Library
+--------------------------------------------------------------------------
+[libref]
+- With the following functions, notes have been added.
+    sceUsbdMultiIsochronousTransfer()
+    sceUsbdTransferPipe()
+
+--------------------------------------------------------------------------
+Driver Library for i.LINK
+--------------------------------------------------------------------------
+[libref]
+- An "Error Code" list has been added. 
+
+--------------------------------------------------------------------------
+Socket Library for i.LINK
+--------------------------------------------------------------------------
+[libref]
+- An "Error Code" list has been added. 
+
+--------------------------------------------------------------------------
+Low Level Sound Library (libsd)
+--------------------------------------------------------------------------
+[libref]
+- Descriptions on the following functions have been added. 
+    sceSdCleanEffectWorkArea()
+    sceSdSetEffectMode(),
+    sceSdSetEffectModeParams()
+
+- In "Description" of the structure sceSdEffectAttr, descriptions on 
+  clearing process and transfer channel specification have been added. 
+
+- In "Description" of sceSdSpu2IntrHandler(), descriptions of SPU2 
+  interrupt settings and SPU2 interrupt address settings have been added. 
+
+[overview]
+- In "Internal Signals/Feature Connections" of "4. SPU2 Overview and 
+  Difference from SPU", an error of OUTX in the figure showing the 
+  connections inside the core has been corrected. 
+
+--------------------------------------------------------------------------
+CSL MIDI Sequencer (modmidi)
+--------------------------------------------------------------------------
+[libref]
+- With the structure sceMidiEnv, the following members have been added.
+    markCallBack
+    markCallBackPrivateData
+
+- A description of sceMidi_Unload() has been added.
+
+- A description of markCallBack() has been added.
+
+[overview]
+- A description of mark callback has been added in the item of "MIDI 
+  Message Filter Callback" of "2. Usage"
+
+- In "3. Functional Overview", a description on marking feature has been 
+  added. 
+
+--------------------------------------------------------------------------
+CSL Hardware Synthesizer (modhsyn)
+--------------------------------------------------------------------------
+[libref]
+- Descriptions of the following functions have been added.
+   sceHSyn_Unload()
+   sceHSyn_GetOutputMode()
+
+[overview]
+- The item of "Debugging Support" has been deleted from "3. Functional 
+  Overview". 
+
+--------------------------------------------------------------------------
+CSL MIDI Stream Generation (modmsin)
+--------------------------------------------------------------------------
+[libref]
+- A description of sceMSIn_BankSelect() has been added.
+ 
+--------------------------------------------------------------------------
+Network (INET) Library
+--------------------------------------------------------------------------
+[libref]
+- Corrections have been made in "Description" of sceInetSend() and 
+  sceInetRecv().
+ 
+- The following structure has been added.
+	sceInetIP_MREQ_t
+
+- Descriptions of the following control codes for controlling connections 
+  have been added.
+ 	sceINETC_CODE_SET_MULTICAST_IF
+	sceINETC_CODE_GET_MULTICAST_IF
+	sceINETC_CODE_SET_MULTICAST_TTL
+	sceINETC_CODE_GET_MULTICAST_TTL
+	sceINETC_CODE_SET_MULTICAST_LOOP
+	sceINETC_CODE_GET_MULTICAST_LOOP
+	sceINETC_CODE_ADD_MEMBERSHIP
+	sceINETC_CODE_DROP_MEMBERSHIP
+
+- Descriptions of the following control code for the INET layer have been 
+  added.
+        sceInetCC_GetIP_RxPackets
+        sceInetCC_GetIP_TxPackets
+        sceInetCC_GetIP_RxDropped
+        sceInetCC_GetIP_TxDropped
+        sceInetCC_GetTCP_RxPackets
+        sceInetCC_GetTCP_TxPackets
+        sceInetCC_GetTCP_RxDropped
+        sceInetCC_GetTCP_TxDropped
+        sceInetCC_GetUDP_RxPackets
+        sceInetCC_GetUDP_TxPackets
+        sceInetCC_GetUDP_RxDropped
+        sceInetCC_GetUDP_TxDropped
+        sceInetCC_GetMemFreeCurrent
+        sceInetCC_GetMemFreeMinimum
+
+--------------------------------------------------------------------------
+Network (INET) Configuration Library
+--------------------------------------------------------------------------
+[libref]
+- A description of sceInetCtlGetConfiguration() has been added.
+
+- The descriptions of the return values form the following functions 
+  have been corrected. 
+    sceInetCtlDownInterface()
+    sceInetCtlGetState()
+    sceInetCtlSetConfiguration()
+    sceInetCtlUpInterface()
+
+[overview]
+- In "Timeout Judgment" of "3. Procedure for Operation Settings", 
+  the description on the time normally required when establishing 
+  an Ethernet connection (using DHCP) has been changed. 
+
+------------------------------------------------------------------------
+Library for Modem Driver Development
+------------------------------------------------------------------------
+[overview]
+- In the item of "Procedure for Checking Operations" of "4. Drivers for 
+  Reference", "NETCNF" has been corrected to "Sony Computer 
+  Entertainment Inc". 
+
+--------------------------------------------------------------------------
+Common Network Configuration Library (NETCNF)
+--------------------------------------------------------------------------
+[libref]
+- The following functions have been added.
+    sceNetCnfConvA2S()
+    sceNetCnfConvS2A()
+- The names used for Your Network Configuration file have been corrected 
+  as follows. 
+
+	[Wrong]		          [Correct]
+	Connection Environment	->Combination
+        Setting File
+	Connection Setting File	->Internet Service Provider setting
+	Modem Setting File	->Hardware settings
+
+- In "Description" of the sceNetCnfList structure, a comparison table 
+  between the names in Your Network Configuration file and in Common 
+  Network Configuration file has been added. 
+
+- The following members of the sceNetCnfInterface structure have been 
+  added. 
+    lcp_max_configure
+    lcp_max_terminate
+    ipcp_max_configure
+    ipcp_max_terminate
+    auth_timeout
+    auth_max_failure
+
+- The data types of the following members of the sceNetCnfInterface 
+  structure have been corrected. 
+    allow.mru	number2
+    allow.accm	number4
+
+- In "Description" of the sceNetCnfInterface structure, a description of  
+  the value specified to the Boolean-type member has been added.
+
+- A description on the case where no settings are made is added to the 
+  descriptions of the number1 and number2 types of the sceNetCnfInterface 
+  structure.
+ 
+- In "Description" of sceNetCnfInitIFC(), notes have been added. 
+
+- In "Description" of the sceNetCnfInterface structure, the following 
+  correction has been made. 
+    Wrong: 	sceNetCnf_BOOL_DEAFULT
+    Correct: 	sceNetCnf_BOOL_DEFAULT
+
+- In "Return Value" of sceNetCnfName2Address(), an error of the return 
+  value has been corrected. 
+
+- In "Return Value" of sceNetCnfAddress2String(), an error of the return 
+  value has been corrected. 
+
+- In "Return Value" of each function, an error in the result of 
+  sceNETCNF_CAPACITY_ERROR has been corrected. 
+
+- In "Return Value" of sceNetCnfDeleteEntry(), descriptions on 
+  the following errors have been added. 
+    sceNETCNF_CAPACITY_ERROR
+    sceNETCNF_REMOVE_ERROR 
+
+- In "Description" of sceNetCnfDeleteEntry(), an error in the description  
+  has been corrected. 
+
+- In "Return Value" of sceNetCnfSetLatestEntry(), an error of the return 
+  value has been corrected.
+ 
+- In "Description" of sceNetCnfSetLatestEntry(), the notes on title 
+  applications have been deleted. 
+
+[overview]
+- "1. NETCNF Application Overview" has been changed to "1. Overview". 
+
+- In "5. Keywords of ATTACH_CNF", the following items have been added.. 
+    lcp_max_configure
+    lcp_max_terminate
+    ipcp_max_configure
+    ipcp_max_terminate
+    auth_timeout
+    auth_max_failure
+
+--------------------------------------------------------------------------
+Network Device
+--------------------------------------------------------------------------
+[libref]
+- The following NETDEV layer Ethernet interface dependent code has been 
+  added. 
+    sceInetNDCC_GET_NEGO_STATUS
+
+- The following NETDEV layer common codes have been added. 
+    sceInetNDCC_GET_RX_BROADCAST_PACKETS
+    sceInetNDCC_GET_TX_BROADCAST_PACKETS
+    sceInetNDCC_GET_RX_BROADCAST_BYTES
+    sceInetNDCC_GET_TX_BROADCAST_BYTES
+    sceInetNDCC_GET_RX_MULTICAST_PACKETS
+    sceInetNDCC_GET_TX_MULTICAST_PACKETS
+    sceInetNDCC_GET_RX_MULTICAST_BYTES
+    sceInetNDCC_GET_TX_MULTICAST_BYTES
+
+- The description of the following NETDEV layer Ethernet I/F dependent 
+  code has been changed. 
+    sceInetNDCC_GET_LINK_STATUS
+
+[overview]
+- Description of the following codes have been added in the item of 
+  "NETDEV Layer Common Control Codes" of "5. Control Functions and 
+  Control Codes". 
+    sceInetNDCC_GET_RX_BROADCAST_PACKETS
+    sceInetNDCC_GET_TX_BROADCAST_PACKETS
+    sceInetNDCC_GET_RX_BROADCAST_BYTES
+    sceInetNDCC_GET_TX_BROADCAST_BYTES
+    sceInetNDCC_GET_RX_MULTICAST_PACKETS
+    sceInetNDCC_GET_TX_MULTICAST_PACKETS
+    sceInetNDCC_GET_RX_MULTICAST_BYTES
+    sceInetNDCC_GET_TX_MULTICAST_BYTES
+
+- In the item of "Ethernet Interface Dependence Settings" of "5. Control 
+  Functions and Control Codes", the description of 
+  sceInetNDCC_GET_NEGO_STATUS has been added. 
+
+--------------------------------------------------------------------------
+DSNET Reference
+--------------------------------------------------------------------------
+[dsnet_rf]
+- In "Command List", a correction has been made due to the addition and 
+  change of the following commands.
+ 
+In "5. Command Details", a description of the luntil command has been added. 
+
+- In the reset command of "5. Command Details", an error of the option 
+  has been corrected. 
+
+--------------------------------------------------------------------------
+EE Programmming Tool
+--------------------------------------------------------------------------
+- In "In-line Assembler" of "8. ee-gcc", the description of the "Keyword 
+  volatile" has been changed. 
+
+- In "8. ee-gcc", an item of "Handling of Shifted JIS Code" item has been 
+  added. 
+
+- In "Notes and Restrictions" of "9. ee-gdb", a note has been added. 
+
+--------------------------------------------------------------------------
+Programming TIPS
+--------------------------------------------------------------------------
+- In "3. Effective Use of Scratchpad (SPR)", "Use as a Stack Area" has been 
+  added. 
+
+- In "9. Precautions on VU programming", "Termination of XGKICK" has been 
+  changed to "Transfer Timing by XGKICK", and a description has been added. 
+
+- In "Memory Access from the EE Core" of "9. Precautions on VU Programming, 
+  a description of DMA transfers between VU Mem and main memory has been 
+  added. 
+
+- The following sections have been deleted.
+  The deleted descriptions are included in the newly added "Graphics TIPS". 
+  "10. GS-Related Tuning"
+  "11. Fundamentals of 3-D Graphics"
+
+--------------------------------------------------------------------------
+Your Network Configuration File Rules
+--------------------------------------------------------------------------
+- Errors in the keywords of "Obtaining a DNS Server Address Automatically" 
+  have been corrected as follows: 
+    Wrong:	want.dns1_nego on
+    Correct*	want.dns1_nego
+
+    Wrong:	want.dns2_nego on
+    Correct:	want.dns2_nego
+
+- Errors in the keywords of "Operation Mode of Ethernet Hardware" have been 
+  corrected as follows: 
+    Wrong:	phy_config 100
+    Correct:	phy_config tx
+
+    Wrong:	phy_config 100_fd
+    Correct:	phy_config tx_fd
+
+- In "Save to Memory Card (PS2)" and "Save to Hard Disk Drive" of 
+  "4. Standards for Creating a Networking Configuration Application 
+   (Write)", a description about the necessity of free space checking 
+   even when deleting Your Network Configuration file has been added. 
+
+- In "Displaying and Selecting Hardware Settings" of "3. Standards for 
+  Creating a Networking Configuration Application (Read)", a description 
+  on reading an "AT Command" has been added. "
+
+- In "Adding, Editing, and Deleting Hardware Setting" of "4. Standards 
+  for Creating a Networking Configuration Application (Write)", a 
+  description on writing "AT Command" has been added. "
+
+------------------------------------------------------------------------
+Graphics Format
+------------------------------------------------------------------------
+- In "4. HiP Plugin Data Format", errors have been corrected as follows: 
+    Wrong) SCE_HIP_PLUGIN_STATUS -> (Correct) SCE_HIG_PLUGIN_STATUS
+    Wrong) SCE_HIP_DATA_STATUS -> (Correct) SCE_HIG_DATA_STATUS
+
+- In Shape Plugin Block <with Texture> of "Data Structure of Shape 
+  Plugin", "4. HiP Plugin Data Format", errors have been corrected as 
+  follows: 
+    Wrong) .word	0, 0, Shape Plugin Packet Size
+    Correct) .word	0, 0, 0
+
+- In the - Key Frame - <Hermitian interpolation> of "Animation Plugin 
+  Data Structure" of "4. HiP Plugin Data Format", the following errors 
+  have been corrected. 
+   (Wrong)   Data is arranged in the order of the starting point, tangent 
+             vector from the starting point, tangent vector from the 
+             endpoint, and endpoint.
+   (Correct) Data is arranged in the order of the starting point, endpoint, 
+             tangent vector from the starting point, tangent vector from 
+             the endpoint.
+
+- In "Data Structure of TIM2 Plugin" of "Data Structure of Share Plugin" 
+  of "4. HiP Plugin Data Format", errors have been corrected as follows:
+      Wrong)	.word	SCE_HIP_TIM2_DATA | (SCE_HIP_REVISION<<24), 
+           	TIM2 data block address, 0
+      Correct)	.word	SCE_HIP_TIM2_DATA | (SCE_HIP_REVISION<<24), 0, 
+             	TIM2 data block address
+
+------------------------------------------------------------------------
+deci2
+------------------------------------------------------------------------
+[drfp]
+- In Request/Reply Code of "2. Message Format", a request/reply code has 
+  been added.  
+
+- In "Result" of all items of "3. Messages", notes on an error occurrence
+  has been added. 
+
+- In flag of "DRFP_CODE_OPEN" of "3. Messages", a description of 
+  DRFP_APPEND has been added. 
+
+- In "DRFP_CODE_OPEN" of "3. Messages", a description of Mode has been 
+  added. 
+
+- In Result of "DRFP_CODE_SEEKR" of "3. Messages", an error code has been 
+  added. 
+
+- In "3. Messages", the following items have been added. 
+    DRFP_CODE_REMOVE
+    DRFP_CODE_REMOVER
+    DRFP_CODE_MKDIR
+    DRFP_CODE_MKDIRR
+    DRFP_CODE_RMDIR
+    DRFP_CODE_RMDIRR
+    DRFP_CODE_DOPEN
+    DRFP_CODE_DOPENR
+    DRFP_CODE_DCLOSE
+    DRFP_CODE_DCLOSER
+    DRFP_CODE_DREAD
+    DRFP_CODE_DREADR
+    DRFP_CODE_GETSTAT
+    DRFP_CODE_GETSTATR
+    DRFP_CODE_CHSTAT
+    DRFP_CODE_CHSTATR
+    DRFP_CODE_RENAME
+    DRFP_CODE_RENAMER
+    DRFP_CODE_CHDIR
+    DRFP_CODE_CHDIRR
+    DRFP_CODE_SEEK64
+    DRFP_CODE_SEEK64R
+    DRFP_CODE_SYMLINK
+    DRFP_CODE_SYMLINKR
+    DRFP_CODE_READLINK
+    DRFP_CODE_READLINKR
+
+- "4. sce_stat Structure" has been added. 
+
+- "5. Error Code" has been added. 
+
+

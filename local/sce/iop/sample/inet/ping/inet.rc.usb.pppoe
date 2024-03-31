@@ -1,0 +1,21 @@
+#
+# inet.rc - INET start up sample for dsidb
+#
+# $Id: inet.rc.usb.pppoe,v 1.2 2001/05/23 09:23:16 komaki Exp $
+#
+
+reset
+
+mstart /usr/local/sce/iop/modules/inet.irx
+
+mstart /usr/local/sce/iop/modules/netcnf.irx icon=host1:../../../../ee/sample/inet/setapp/SYS_NET.ICO iconsys=host1:../../../../ee/sample/inet/setapp/icon.sys
+
+mstart /usr/local/sce/iop/modules/inetctl.irx -no_decode host1:/usr/local/sce/conf/net/net004.cnf
+
+mstart /usr/local/sce/iop/modules/usbd.irx
+
+mstart /usr/local/sce/iop/modules/an986.irx
+
+mstart /usr/local/sce/iop/modules/ppp.irx
+
+mstart /usr/local/sce/iop/modules/pppoe.irx

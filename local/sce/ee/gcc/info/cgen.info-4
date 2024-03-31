@@ -1,0 +1,1494 @@
+This is Info file cgen.info, produced by Makeinfo version 1.68 from the
+input file ../../../src/cgen/doc/cgen.texi.
+
+START-INFO-DIR-ENTRY
+* Cgen: (cgen).                 The Cpu tools GENerator.
+END-INFO-DIR-ENTRY
+
+   Copyright (C) 2000 Red Hat, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the entire resulting derived work is distributed under the terms
+of a permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions.
+
+
+File: cgen.info,  Node: Using define-pmacro,  Next: Interactive development,  Prev: Writing define-macro-insn,  Up: Writing a CPU description file
+
+Using define-pmacro
+-------------------
+
+   When a group of entries, say instructions, share similar
+information, a macro (in the C preprocessor sense) can be used to
+simplify the description.  This can be used to save a lot of typing,
+which also improves readability since often 1 page of code is easier to
+understand than 4.
+
+   Here is an example from the M32R port.
+
+     (define-pmacro (bin-op mnemonic op2-op sem-op imm-prefix imm)
+       (begin
+          (dni mnemonic
+     	  (.str mnemonic " reg/reg")
+     	  ()
+     	  (.str mnemonic " $dr,$sr")
+     	  (+ OP1_0 op2-op dr sr)
+     	  (set dr (sem-op dr sr))
+     	  ()
+          )
+          (dni (.sym mnemonic "3")
+     	  (.str mnemonic " reg/" imm)
+     	  ()
+     	  (.str mnemonic "3 $dr,$sr," imm-prefix "$" imm)
+     	  (+ OP1_8 op2-op dr sr imm)
+     	  (set dr (sem-op sr imm))
+     	  ()
+          )
+        )
+     )
+     (bin-op add OP2_10 add "$hash" slo16)
+     (bin-op and OP2_12 and ""      uimm16)
+     (bin-op or  OP2_14 or  "$hash" ulo16)
+     (bin-op xor OP2_13 xor ""      uimm16)
+
+   `.sym/.str' are short for Scheme's `symbol-append' and
+`string-append' operations and are conceptually the same as the C
+preprocessor's `##' concatenation operator.  *Note Symbol
+concatenation:: and *Note String concatenation:: for details.
+
+
+File: cgen.info,  Node: Interactive development,  Prev: Using define-pmacro,  Up: Writing a CPU description file
+
+Interactive development
+-----------------------
+
+   The normal way(1) of writing a CPU description file involves
+starting Guile and developing the .CPU file interactively.  The basic
+steps are
+
+  1. Run `guile'.
+
+  2. `(load "dev.scm")'
+
+  3. Load application, e.g. `(load-opc)' or `(load-sim)'
+
+  4. Load CPU description file, e.g. `(cload #:arch "m32r")'
+
+  5. Run generators until output looks reasonable, e.g. `(cgen-opc.c)'
+
+   To assist in the development process and to cut down on some typing,
+`dev.scm' looks for `$HOME/.cgenrc' and, if present, loads it.  Typical
+things that `.cgenrc' contains are definitions of procedures that
+combine steps 3 and 4 above.
+
+   Example:
+
+     (define (m32r-opc)
+       (load-opc)
+       (cload #:arch "m32r")
+     )
+     (define (m32r-sim)
+       (load-sim)
+       (cload #:arch "m32r" #:options "with-scache with-profile=fn")
+     )
+     (define (m32rbf-sim)
+       (load-sim)
+       (cload #:arch "m32r" #:machs "m32r" #:options "with-scache with-profile=fn")
+     )
+     (define (m32rxf-sim)
+       (load-sim)
+       (cload #:arch "m32r" #:machs "m32rx" #:options "with-scache with-profile=fn")
+     )
+
+   CPU description files are loaded into an interactive guile session
+with `cload'.  The syntax is:
+
+     (cload #:arch arch
+            [#:machs "mach-list"]
+            [#:isas "isa-list"]
+            [#:options "option-list"])
+
+   Only the `#:arch' argument is mandatory.
+
+   `mach-list' is a comma separated string of machines to keep.
+
+   `isa-list' is a comma separated string of isas to keep.
+
+   `options' is a space separated string of options for the application.
+
+   ---------- Footnotes ----------
+
+   (1) Normal for me anyway, certainly each person will have their own
+preference
+
+
+File: cgen.info,  Node: Doing an opcodes port,  Next: Doing a GAS port,  Prev: Writing a CPU description file,  Up: Porting
+
+Doing an opcodes port
+=====================
+
+   The best way to begin a port is to take an existing one (preferably
+one that is similar to the new port) and use it as a template.
+
+  1. Run `guile'.
+
+  2. `(load "dev.scm")'. This loads in a set of interactive development
+     routines.
+
+  3. `(load-opc)'. Load the opcodes support.
+
+  4. Edit your `<arch>.cpu' and `<arch>.opc' files.
+        * The `.cpu' file is the main description file.  	
+
+        * The `.opc' file provides additional C support code.
+
+  5. `(cload #:arch "<arch>")'
+
+  6. Run each of:
+        * `(cgen-desc.h)'
+
+        * `(cgen-desc.c)'
+
+        * `(cgen-opc.h)' 	
+
+        * `(cgen-opc.c)' 	
+
+        * `(cgen-ibld.in)' 	
+
+        * `(cgen-asm.in)' 	
+
+        * `(cgen-dis.in)' 	
+
+        * `(cgen-opinst.c)' - [optional]
+
+  7. Repeat steps 4, 5 and 6 until the output looks reasonable.
+
+  8. Add dependencies to `opcodes/Makefile.am' to generate the eight
+     opcodes files (use the M32R port as an example).
+
+  9. Run `make dep' from the `opcodes' build directory.
+
+ 10. Run `make all-opcodes' from the top level build directory.
+
+   Note that Guile is not currently shipped with Binutils, etc.  Until
+Guile is shipped with Binutils, etc. or a C implementation of CGEN is
+done, the generated files are installed in the source directory and
+checked into CVS.
+
+
+File: cgen.info,  Node: Doing a GAS port,  Next: Building a GAS test suite,  Prev: Doing an opcodes port,  Up: Porting
+
+Doing a GAS port
+================
+
+   A GAS CGEN port is essentially no different than a normal port except
+that the CGEN opcode table is used, and there are extra supporting
+routines available in `gas/cgen.[ch]'.  As always, a good way to get
+started is to take the M32R port as a template and go from there.
+
+   The important CGEN-specific things to keep in mind are:
+
+   * Several support routines are provided by `gas/cgen.c'.  Some must
+     be used, others are available to use if you want to (in general
+     they should be used unless it's not possible).
+
+        * `gas_cgen_init_parse'
+             - Call from `md_assemble' before doing anything
+                           else.
+
+             - Must be used.
+
+        * `gas_cgen_record_fixup'
+             - Cover function to `fix_new'.
+
+        * `gas_cgen_record_fixup_exp'
+             - Cover function to `fix_new_exp'.
+
+        * `gas_cgen_parse_operand'
+             - Callback for opcode table based parser, set in
+                            `md_begin'.
+
+        * `gas_cgen_finish_insn'
+             - After parsing an instruction, call this to add the
+                                instruction to the frag and queue any
+               fixups.
+
+        * `gas_cgen_md_apply_fix3'
+             - Provides basic `md_apply_fix3' support.
+
+             - `#define md_apply_fix3
+               gas_cgen_md_apply_fix3' if you're able to use
+                           it.
+
+        * `gas_cgen_tc_gen_reloc'
+               	
+
+             - Provides basic `tc_gen_reloc' support in function.
+
+             - `#define tc_gen_reloc gas_cgen_tc_gen_reloc'
+                          if you're able to use it.
+
+   * `md_begin' should contain the following (plus anything else you
+     want of course):
+
+            /* Set the machine number and endianness.  */
+            gas_cgen_opcode_desc =
+              <arch>_cgen_opcode_open (CGEN_CPU_OPEN_MACHS,
+                                       0 /* mach number */,
+                                       CGEN_CPU_OPEN_ENDIAN,
+                                       (target_big_endian
+                                        ? CGEN_ENDIAN_BIG
+                                        : CGEN_ENDIAN_LITTLE),
+                                       CGEN_CPU_OPEN_END);
+          
+            <arch>_cgen_init_asm (gas_cgen_opcode_desc);
+          
+            /* This is a callback from cgen to gas to parse operands.  */
+            cgen_set_parse_operand_fn (gas_cgen_opcode_desc, gas_cgen_parse_operand);
+
+   * `md_assemble' should contain the following basic framework:
+
+          {
+            const CGEN_INSN *insn;
+            char *errmsg;
+            CGEN_FIELDS fields;
+          #if CGEN_INT_INSN_P
+            cgen_insn_t buffer[CGEN_MAX_INSN_SIZE / sizeof (CGEN_INSN_INT)];
+          #else
+            char buffer[CGEN_MAX_INSN_SIZE];
+          #endif
+          
+            gas_cgen_init_parse ();
+          
+            insn = m32r_cgen_assemble_insn (gas_cgen_opcode_desc, str,
+                                            &fields, buffer, &errmsg);
+          
+            if (! insn)
+              {
+                as_bad (errmsg);
+                return;
+              }
+          
+            gas_cgen_finish_insn (insn, buffer, CGEN_FIELDS_BITSIZE (&fields),
+               relax_p, /* non-zero to allow relaxable insns */
+               result); /* non-null if results needed for later */
+          }
+
+
+File: cgen.info,  Node: Building a GAS test suite,  Next: Doing a simulator port,  Prev: Doing a GAS port,  Up: Porting
+
+Building a GAS test suite
+=========================
+
+   CGEN can also build the template for test cases for all
+instructions.  In some cases it can also generate the actual
+instructions.  The result is then assembled, disassembled, verified,
+and checked into CVS.  Further changes are usually done by hand as it's
+easier.  The goal here is to save the enormous amount of initial typing
+that is required.
+
+  1. `cd' to the CGEN build directory
+
+  2. `make gas-test'
+
+     At this point two files have been created in the CGEN build
+     directory: `gas-allinsn.exp' and `gas-build.sh'.
+
+  3. Copy `gas-allinsn.exp' to
+     `devo/gas/testsuite/gas/<arch>/allinsn.exp'.
+
+  4. `sh gas-build.sh $build/gas'
+
+     At this point directory tmpdir contains two files: `allinsn.s' and
+     `allinsn.d'.  File `allinsn.d' usually needs a bit of massaging.
+
+  5. Copy `tmpdir/allinsn.[sd]' to `devo/gas/testsuite/gas/<arch>'
+
+  6. Run `make check' in the `gas' build directory and massage things
+     until you're satisfied the files are correct.
+
+  7. Check files into CVS.
+
+   At this point further additions/modifications are usually done by
+hand.
+
+
+File: cgen.info,  Node: Doing a simulator port,  Next: Building a simulator test suite,  Prev: Building a GAS test suite,  Up: Porting
+
+Doing a simulator port
+======================
+
+   The same basic procedure for opcodes porting applies here.
+
+  1. Run `guile'.
+
+  2. `(load "dev.scm")'
+
+  3. `(load-sim)'
+
+  4. Edit your `<arch>.cpu' file.
+
+  5. `(cload #:arch "<arch>")'
+
+  6. Run each of:
+          	
+
+        * `(cgen-arch.h)' 	
+
+        * `(cgen-arch.c)' 	
+
+        * `(cgen-cpuall.h)'
+
+  7. Repeat steps 4,5,6 until the output looks reasonable.
+
+  8. Edit your <arch>.cpu file.
+
+  9. `(cload #:arch "<arch>" #:machs "mach1[,mach2[,...]]")'
+
+ 10. Run each of:
+          	
+
+        * `(cgen-cpu.h)' 	
+
+        * `(cgen-cpu.c)' 	
+
+        * `(cgen-decode.h)' 	
+
+        * `(cgen-decode.c)' 	
+
+        * `(cgen-semantics.c)' 	
+
+        * `(cgen-sem-switch.c)' - only if using a switch()
+            version of semantics.  	
+
+        * `(cgen-model.c)'
+
+ 11. Repeat steps 8, 9 and 10 until the output looks reasonable.
+
+   The following additional files are also needed. These live in the
+`sim/<arch>' directory. Administrivia files like `configure.in' and
+`Makefile.in' are omitted.
+
+   * `sim-main.h'
+
+     Main include file required by the "common" (`sim/common') support,
+     and by each target's `.c' file.  This file includes the relevant
+     other headers.  The order is fairly important.  `m32r/sim-main.h'
+     is a good starting point.
+
+     `sim-main.h' also defines several types:
+
+        - `_sim_cpu' - a struct containing all state for a particular
+          CPU.
+
+        - `sim_state' - contains all state of the simulator.  A
+          `SIM_DESC' (which is the result of sim_open and is akin to a
+          file descriptor) points to one of these.
+
+        - `sim_cia' - type of an instruction address.  For CGEN this is
+          generally "word mode", in GCC parlance.
+
+     `sim-main.h' also defines several macros:
+
+        - `CIA_GET(cpu)' - return "cia" of the CPU
+
+        - `CIA_SET(cpu,cia)' - set the "cia" of the CPU
+
+     "cia" is short for "current instruction address".
+
+     The definition of `sim_state' is fairly simple.  Just copy the M32R
+     case.  The definition of `_sim_cpu' is not simple, so pay
+     attention.  The complexity comes from trying to create a "derived
+     class" of `sim_cpu' for each CPU family.  What is done is define a
+     different version of `sim_cpu' in each CPU family's set of files,
+     with a common "base class" structure "leading part" for each
+     `sim_cpu' definition used by non-CPU-family specific files.  The
+     way this is done is by defining `WANT_CPU_<CPU-FAMILY-NAME>' at the
+     top of CPU family specific files. The definition of `_sim_cpu' is
+     then:
+
+          	struct _sim_cpu {
+          	  /* sim/common CPU base */
+          	  sim_cpu_base base;
+          	  /* Static parts of CGEN.  */
+          	  CGEN_CPU cgen_CPU;
+          	#if defined (WANT_CPU_CPUFAM1)
+          	  CPUFAM1_CPU_DATA CPU_data;
+          	#elif defined (WANT_CPU_CPUFAM2)
+          	  CPUFAM2_CPU_DATA CPU_data;
+          	#endif
+          	};
+
+   * `tconfig.in'
+
+     This file predates `sim-main.h' and was/is intended to contain
+     macros that configure the simulator sources.
+
+        * `SIM_HAVE_MODEL' - enable `common/sim-model.[ch]' support.
+
+        * `SIM_HANDLES_LMA' - makes `sim-hload.c' do the right thing.
+
+        * `WITH_SCACHE_PBB' - define this to 1 if using pbb scaching.
+
+   * `<arch>-sim.h'
+
+     This file predates `sim-main.h' and contains miscellaneous macros
+     and definitions used by the simulator.
+
+   * `mloop.in'
+
+     This file contains code to implement the fetch/execute process.
+     There are various ways to do this, and several are supported.
+     Which one to choose depends on the environment in which the CPU
+     will be used.  For example when executing a program in a
+     single-CPU environment without devices, most or all available
+     cycles can be devoted to simulation of the atarget CPU.  However,
+     in an environment with devices or multiple cpus, one may wish the
+     CPU to execute one instruction then relinquish control so a device
+     operation may be done or an instruction can be simulated on a
+     second cpu.  Efficient techniques for the former aren't
+     necessarily the best for the latter.
+
+     Three versions are currently supported:
+
+       1. simple - fetch/decode/execute one insn
+
+       2. scache - same as simple but results of decoding are cached
+
+       3. pbb - same as scache but several insns are handled each
+          iteration pbb stands for pseudo basic block.
+
+     This file is processed by `common/genmloop.sh' at build time. The
+     result is two files: `mloop.c' and `eng.h'.
+
+   * `sim-if.c'
+
+     By convention this file contains `sim_open', `sim_close',
+     `sim_create_inferior', `sim_do_command'.  These functions can live
+     in any file of course.  They're here because they're the parts of
+     the `remote-sim.h' interface that aren't provided by the common
+     directory.
+
+   * `<cpufam>.c'
+
+     By convention this file contains register access and model support
+     functions for a CPU family (the name of this file is misnamed in
+     the M32R case).  The register access functions implement the
+     `sim_fetch_register' and `sim_store_register' interface functions
+     (named `<cpufam>_{fetch,store}_register'), and support code for
+     register get/set rtl.  The model support functions implement the
+     before/after handlers (functions that handle tracing/profiling) and
+     timing for each function unit.
+
+   * Other files
+
+     The M32R port has two other handwritten files: `devices.c' and
+     `traps.c'.  How you wish to organize this is up to you.
+
+
+File: cgen.info,  Node: Building a simulator test suite,  Prev: Doing a simulator port,  Up: Porting
+
+Building a simulator test suite
+===============================
+
+   CGEN can also build the template for test cases for all
+instructions.  In some cases it can also generate the actual
+instructions (1).  The result is then verified and checked into CVS.
+Further changes are usually done by hand as it's easier.  The goal here
+is to save the enormous amount of initial typing that is required.
+
+  1. `cd' to the CGEN build directory
+
+  2. `make sim-test'
+
+     At this point two files have been created in the CGEN build
+     directory: `sim-allinsn.exp' and `sim-build.sh'.
+
+  3. Copy `sim-allinsn.exp' to
+     `devo/sim/testsuite/sim/<arch>/allinsn.exp'.
+
+  4. `sh sim-build.sh'
+
+     At this point a new subdirectory called `tmpdir' will be created
+     and will contain one test case for each instruction.  The
+     framework has been filled in but not the actual test case.  It's
+     handy to write an "include file" containing assembler macros that
+     simplify writing test cases.  See
+     `devo/sim/testsuite/sim/m32r/testutils.inc' for an example.
+
+  5. write testutils.inc
+
+  6. finish each test case
+
+  7. copy `tmpdir/*.cgs' to `devo/sim/testsuite/sim/<arch>'
+
+  8. run `make check' in the sim build directory and massage things
+     until you're satisfied the files are correct
+
+  9. Check files into CVS.
+
+At this point further additions/modifications are usually done by hand.
+
+   ---------- Footnotes ----------
+
+   (1) Although this hasn't been implemented yet.
+
+
+File: cgen.info,  Node: Opcodes,  Next: Simulation,  Prev: Porting,  Up: Top
+
+Opcodes support
+***************
+
+   Opcodes support comes in the form of machine generated opcode tables
+as well as supporting routines.
+
+* Menu:
+
+* Generated files::                 List of generated files
+* The .opc file::                   Target specific C code
+* Special assembler parsing needs::
+
+
+File: cgen.info,  Node: Generated files,  Next: The .opc file,  Up: Opcodes
+
+Generated files
+===============
+
+   The basic interface is defined by `include/opcode/cgen.h' which is
+included by the machine generated `<arch>-desc.h'.  `opcode/cgen.h' can
+stand on its own for the target independent stuff, but to get target
+specific parts of the interface use `<arch>-desc.h'.
+
+   The generated files are:
+
+`<arch>-desc.h'
+     Defines macros, enums, and types used to describe the chip.
+
+`<arch>-desc.c'
+     Tables of various things describing the chip.  This does not
+     include assembler syntax nor semantic information.
+
+`<arch>-ibld.c'
+     Routines for constructing and deconstructing instructions.
+
+`<arch>-opc.h'
+     Declarations necessary for assembly/disassembly that aren't used
+     elsewhere and thus left out of `<arch>-desc.h'.
+
+`<arch>-opc.c'
+     Assembler syntax tables.
+
+`<arch>-asm.c'
+     Assembler support routines.
+
+`<arch>-dis.c'
+     Disassembler support routines.
+
+`<arch>-opinst.c'
+     Operand instance tables.  These describe which hardware elements
+     are read and which are written for each instruction.  This file
+     isn't generated for all architectures, only ones that can make use
+     of the data.  For example the M32R uses them to emit warnings if
+     the output of one parallel instruction is the input of another,
+     and to control creating parallel instructions during optimizing
+     assembly.
+
+
+File: cgen.info,  Node: The .opc file,  Next: Special assembler parsing needs,  Prev: Generated files,  Up: Opcodes
+
+The .opc file
+=============
+
+   Files with suffix `.opc' (e.g. `m32r.opc') contain target specific C
+code that accompanies the cpu description file.  The `.opc' file is
+split into 4 sections:
+
+   - opc.h
+
+     This section contains additions to the generated `$target-opc.h'
+     file.
+
+     Typically defined here are these macros:
+
+        * #define CGEN_DIS_HASH_SIZE N
+
+          Specifies the size of the hash table to use during
+          disassembly.  A hash table is built of the selected mach's
+          instructions in order to speed up disassembly.
+
+        * #define CGEN_DIS_HASH(buffer, value)
+
+          Given BUFFER, a pointer to the instruction being disassembled
+          and VALUE, the value of the instruction as a host integer,
+          return an index into the hash chain for the instruction.  The
+          result must be in the range 0 to CGEN_DIS_HASH_SIZE-1.
+
+          VALUE is only usable if all instructions fit in a portable
+          integer (32 bits).
+
+          N.B. The result must depend on opcode portions of the
+          instruction only.  Normally one wants to use between 6 and 8
+          bits of opcode info for the hash table.  However, some
+          instruction sets don't use the same set of bits for all
+          insns.  Certainly they'll have at least one opcode bit in
+          common with all insns, but beyond that it can vary.  Here's a
+          possible definition for sparc.
+
+               #undef CGEN_DIS_HASH_SIZE
+               #define CGEN_DIS_HASH_SIZE 256
+               #undef CGEN_DIS_HASH
+               extern const unsigned int sparc_cgen_opcode_bits[];
+               #define CGEN_DIS_HASH(buffer, insn) \
+               ((((insn) >> 24) & 0xc0) \
+                | (((insn) & sparc_cgen_opcode_bits[((insn) >> 30) & 3]) >> 19))
+
+          `sparc_cgen_opcode_bits' would be defined in the `asm.c'
+          section as
+
+               /* It is important that we only look at insn code bits
+                  as that is how the opcode table is hashed.
+                  OPCODE_BITS is a table of valid bits for each of the
+                  main types (0,1,2,3).  */
+               const unsigned int sparc_cgen_opcode_bits[4] = {
+                 0x01c00000, 0x0, 0x01f80000, 0x01f80000
+               };
+
+   - opc.c
+
+   - asm.c
+
+     This section contains additions to the generated `$target-asm.c'
+     file.  Typically defined here are functions used by operands with
+     a `parse' define-operand handler spec.
+
+   - dis.c
+
+     This section contains additions to the generated `$target-dis.c'
+     file.
+
+     Typically defined here these macros:
+
+        * #define CGEN_PRINT_NORMAL(cd, info, value, attrs, pc, length)
+
+        * #define CGEN_PRINT_ADDRESS(cd, info, value, attrs, pc, length)
+
+        * #define CGEN_PRINT_INSN function_name
+
+        * #define CGEN_BFD_ARCH bfd_arch_<name>
+
+        * #define CGEN_COMPUTE_ISA(info)
+
+
+File: cgen.info,  Node: Special assembler parsing needs,  Prev: The .opc file,  Up: Opcodes
+
+Special assembler parsing needs
+===============================
+
+   Often parsing of assembly instructions requires more than what a
+program-generated assembler can handle.  For example one version of an
+instruction may only accept certain registers, rather than the entire
+set.
+
+   Here's an example taken from the `m32r' architecture.
+
+   32 bit addresses are built up with a two instruction sequence: one to
+load the high 16 bits of a register, and another to `or'-in the lower
+16 bits.
+
+     seth r0,high(some_symbol)
+     or3  r0,r0,low(some_symbol)
+
+   When assembling, special code must be called to recognize the `high'
+and `low' pseudo-ops and generate the appropriate relocations.  This is
+indicated by specifying a "parse handler" for the operand in question.
+Here is the `define-operand' for the lower 16 bit operand.
+
+     (define-operand
+       (name ulo16)
+       (comment "16 bit unsigned immediate, for low()")
+       (attrs)
+       (type h-ulo16)
+       (index f-uimm16)
+       (handlers (parse "ulo16"))
+     )
+
+   The generated parser will call a function named `parse_ulo16' for
+the immediate operand of the `or3' instruction.  The name of the
+function is constructed by prepended "parse_" to the argument of the
+`parse' spec.
+
+     errmsg = parse_ulo16 (cd, strp, M32R_OPERAND_ULO16, &fields->f_uimm16);
+
+   But where does one put the `parse_ulo16' function?  Answer: in the
+`asm.c' section of `m32r.opc'.
+
+
+File: cgen.info,  Node: Simulation,  Next: Writing an application,  Prev: Opcodes,  Up: Top
+
+Simulation support
+******************
+
+   Simulator support comes in the form of machine generated the
+decoder/executer as well as the structure that records CPU state
+information (ie. registers).
+
+   There are 3 architecture-wide generated files:
+
+`arch.h'
+     Definitions and declarations common to the entire architecture.
+
+`arch.c'
+     Tables and code common to the entire architecture, but which can't
+     be put in the common area.
+
+`cpuall.h'
+     Pseudo base classes of various structures.
+
+   Each "CPU family" has its own set of the following files:
+
+`cpu.h'
+     Definitions and declarations specific to a particular CPU family.
+
+`cpu.c'
+     Tables and code specific to a particular CPU family.
+
+`decode.h'
+     Decoder definitions and declarations.
+
+`decode.c'
+     Decoder tables and code.
+
+`model.c'
+     Tables and code for each model in the CPU family.
+
+`semantics.c'
+     Code to perform each instruction.
+
+`sem-switch.c'
+     Same as `semantics.c' but as one giant `switch' statement.
+
+   A "CPU family" is an artificial creation to sort architecture
+variants along whatever lines seem useful.  Additional hand-written
+files must be provided.  *Note Porting:: for details.
+
+
+File: cgen.info,  Node: Writing an application,  Next: Glossary,  Prev: Simulation,  Up: Top
+
+Writing an application
+**********************
+
+   This chapter contains information for those wishing to write their
+own CGEN application.
+
+* Menu:
+
+* File Layout::                 Organization of source files
+* File Generation Process::     Workflow in cgen
+* Coding Conventions::          Coding conventions
+* Accessing Loaded Data::       Reading data from loaded .cpu files
+* Name References::             Architecture names in generated code
+* String Building::             Building long strings and writing them out
+* COS::                         Cgen's Object System
+
+
+File: cgen.info,  Node: File Layout,  Next: File Generation Process,  Up: Writing an application
+
+File Layout
+===========
+
+   Source files in cgen are organized in a very specific way.(1)  It
+makes it easy to find things.
+
+   * top level file is cgen-<app>.scm The best way to create this file
+     is to copy an existing application's file (e.g. cgen-opc.scm) and
+     modify to suit.
+
+   * file <app>.scm contains general app-specific utilities
+
+   * other files are <app>-foo.scm
+
+   * add entry to dev.scm (load-<app>)
+
+   ---------- Footnotes ----------
+
+   (1) As the number of source files grows the entire layout may be
+changed, but until then this is how things are.
+
+
+File: cgen.info,  Node: File Generation Process,  Next: Coding Conventions,  Prev: File Layout,  Up: Writing an application
+
+File Generation Process
+=======================
+
+   This is an overview of cgen workflow.
+
+   * cgen is started with list of files to generate and code generation
+     options
+
+   * source code is loaded
+
+        - application independent code is loaded if not compiled in
+
+        - application specific code is loaded
+
+          Currently app-specific code is never compiled in.
+             - doesn't affect speed as much as application independent
+               stuff
+
+             - subject to more frequent changes
+
+             - makes it easier to do application development if changes
+               to .scm files are "ready to use"
+
+   * ultimately procedure `cpu-load' is called which is the main driver
+     for loading .cpu files
+
+   * various data structures are initialized
+
+   * data files are loaded
+
+        - main <arch>.cpu file is loaded
+
+          There is a #include-like mechanism for loading other files so
+          big architectures can be broken up into several files.
+
+          While the architecture description is being loaded, entries
+          not requested are discarded.  This happens, for example, when
+          building a simulator: there's no point in keeping
+          instructions specific to a machine that is not being
+          generated.  What to keep is based on the MACH and ISA
+          attributes.
+
+        - application specific data files are loaded
+
+          e.g. <arch>.sim
+
+   * builtin elements are created
+
+   * each requested file is generated by calling cgen-<file> generator
+
+     The output is written to the output file with
+     `with-output-to-file' so the code must write to
+     `(current-output-port)'.
+
+     Some files require heavy duty processing of the cpu description.
+     For example the simulator computes the instruction formats from the
+     instruction field lists of each instruction.  This computation is
+     defered to each cgen-<file> procedure that needs it and must be
+     explicitly requested by them.  The results are cached so this is
+     only done once of course.
+
+   * additional processing for some opcodes files
+
+     Several opcodes files are built from three sources.
+
+        - generated code
+
+        - section in <arch>.opc file
+
+          It's not appropriate to put large amounts of C (or perhaps
+          any C) in cgen description files, yet some things are best
+          expressed in some other language (e.g. assembler/disassembler
+          operand parsing/printing).
+
+        - foo.in file
+
+          It seems cleaner to put large amounts of
+          non-machine-generated C in separate files from code generator.
+
+
+File: cgen.info,  Node: Coding Conventions,  Next: Accessing Loaded Data,  Prev: File Generation Process,  Up: Writing an application
+
+Coding Conventions
+==================
+
+   * unless definition occupies one line, final trailing parenthesis is
+     on a line by itself beginning in column one
+
+   * definitions internal to a source file begin with '-'
+
+   * global state variables are named *foo-bar* [FIXME: current code
+     needs updating]
+
+   * avoid uppercase (except for ???)
+
+   * procedures that return a boolean result end in '?'
+
+   * procedures that modify something end in '!'
+
+   * classes are named <name>
+
+
+File: cgen.info,  Node: Accessing Loaded Data,  Next: Name References,  Prev: Coding Conventions,  Up: Writing an application
+
+Accessing Loaded Data
+=====================
+
+   Each kind of description file entry (defined with `define-foo') is
+recorded in an object of class <foo>.(1) All the data is collected
+together in an object of class <system>.(2) (3)
+
+   Data for the currently selected architecture is obtained with several
+access functions.
+
+       (current-arch-name)
+       - return symbol that is the name of the arch
+       - this is the name specified with `define-arch'
+     
+       (current-arch-comment)
+       - return the comment specified with `define-arch'
+     
+       (current-arch-atlist)
+       - return the attributes specified with `define-arch'
+     
+       (current-arch-default-alignment)
+       - return a symbol indicated the default aligment
+         - one of aligned, unaligned, forced
+     
+       (current-arch-insn-lsb0?)
+       - return a #t if the least significant bit in a word is numbered 0
+       - return a #f if the most significant bit in a word is numbered 0
+     
+       (current-arch-mach-name-list)
+       - return a list of names (as symbols) of all machs in the architecture
+     
+       (current-arch-isa-name-list)
+       - return a list of names (as symbols) of all isas in the architecture
+     
+       - for most of the remaining elements, there are three main accessors
+         [foo is sometimes abbreviated]
+         - current-foo-list - returns list of <foo> objects in the architecture
+         - current-foo-add! - add a <foo> object to the architecture
+         - current-foo-lookup - lookup the <foo> object based on its name
+     
+       <atlist>
+       (current-attr-list)
+       (current-attr-add!)
+       (current-attr-lookup)
+     
+       <enum>
+       (current-enum-list)
+       (current-enum-add!)
+       (current-enum-lookup)
+     
+       <keyword>
+       (current-kw-list)
+       (current-kw-add!)
+       (current-kw-lookup)
+     
+       <isa>
+       (current-isa-list)
+       (current-isa-add!)
+       (current-isa-lookup)
+     
+       <cpu>
+       (current-cpu-list)
+       (current-cpu-add!)
+       (current-cpu-lookup)
+     
+       <mach>
+       (current-mach-list)
+       (current-mach-add!)
+       (current-mach-lookup)
+     
+       <model>
+       (current-model-list)
+       (current-model-add!)
+       (current-model-lookup)
+     
+       <hardware>
+       (current-hw-list)
+       (current-hw-add!)
+       (current-hw-lookup)
+     
+       <ifield>
+       (current-ifld-list)
+       (current-ifld-add!)
+       (current-ifld-lookup)
+     
+       <operand>
+       (current-op-list)
+       (current-op-add!)
+       (current-op-lookup)
+     
+       <insn>
+       (current-insn-list)
+       (current-insn-add!)
+       (current-insn-lookup)
+     
+       <macro-insn>
+       (current-minsn-list)
+       (current-minsn-add!)
+       (current-minsn-lookup)
+     
+       (current-ifmt-list)
+       - return list of computed <iformat> objects
+     
+       (current-sfmt-list)
+       - return list of computed <sformat> objects
+     
+       [there are a few more to be documented, not sure they'll remain as is]
+
+   ---------- Footnotes ----------
+
+   (1) not true for <arch> but will be RSN
+
+   (2) got a better name?
+
+   (3) modes aren't recorded here, should they be?
+
+
+File: cgen.info,  Node: Name References,  Next: String Building,  Prev: Accessing Loaded Data,  Up: Writing an application
+
+Name References
+===============
+
+   To simplify writing code generators, system names can be specified
+with fixed strings rather than having to compute them.  The output is
+post-processed to convert the strings to the actual names.  Upper and
+lower case names are supported.
+
+   * For the architecture name use @arch@, @ARCH@.
+
+   * For the cpu family name use @cpu@, @CPU@.
+
+   * For the prefix use @prefix@, @PREFIX@.
+
+   The `prefix' notion is to segregate different code for the same cpu
+family.  For example, this is used to segregate the ARM ISA from the
+Thumb ISA.
+
+
+File: cgen.info,  Node: String Building,  Next: COS,  Prev: Name References,  Up: Writing an application
+
+String Building
+===============
+
+   Output generation uses a combination of writing text out as it is
+computed and building text for later writing out.
+
+   The top level file generator uses `string-write'.  It takes
+string-lists and thunks as arguments and writes each argument in turn
+to stdout.  String-lists are lists of strings (nested arbitrarily
+deep).  It's cheaper to `cons' long strings together than to use
+`string-append'.  Thunks return string-lists to write out, but isn't
+computed until all preceeding arguments to `string-write' have been
+written out.  This allows defering building up of large amounts of text
+until it needs to be.
+
+   The main procedures for building strings and writing them out are:
+
+   * (string-write string-list-or-thunk1 string-list-or-thunk2 ...)
+
+     Loops over arguments writing them out in turn.
+
+   * (string-write-map proc string-list-or-thunk-list)
+
+     Apply proc to each element in string-list-or-thunk-list and write
+     out the result.
+
+   * (string-list arg1 arg2 ...)
+
+     Return list of arguments.  This is identical to `list' except it
+     is intended to take string-lists as arguments.
+
+   * (string-list-map proc arg-list)
+
+     Return list of `proc' applied to each element of `arg-list'.  This
+     is identical to `map' except it is intended to take strings as
+     arguments.
+
+   * (string-append string1 string2 ...)
+
+     For small arguments it's just as well to use `string-append'.
+     This is a standard Scheme procedure.  The output is also easier to
+     read when developing interactively.  And some subroutines are used
+     in multiple contexts including some where strings are required.
+
+
+File: cgen.info,  Node: COS,  Prev: String Building,  Up: Writing an application
+
+COS
+===
+
+   COS is Cgen's Object System.  It's a simple OO system for Guile that
+was written to provide something useful until Guile had its own.  COS
+will be replaced with GOOPs if the Scheme implementation of cgen is
+kept.
+
+   The pure Scheme implementation of COS uses vectors to record objects
+and classes.  The C implementation uses smobs (though classes are still
+implemented with vectors).
+
+   A complete list of user-visible functions is at the top of `cos.scm'.
+
+   Here is a list of the frequently used ones.
+
+   * (class-make name parent-name-list element-list method-list)
+
+     Use `class-make' to define a class.
+
+          name: symbol, <name-of-class>
+          parent-name-list: list of symbols, names of each parent class
+          element-list: list of either symbols or (symbol . initial-value)
+          method-list: list of (symbol . lambda)
+
+     The result is the class's definition.  It is usually assigned to a
+     global variable with same name as class's name.  Current cgen code
+     always does this.  It's not a requirement but it is convention.
+
+   * (new <class-name>)
+
+     Create a new object with `new'.  `<class-name>' is typically the
+     global variable that recorded the results of `class-make'.  The
+     result is a new object of the requested class.  Class elements
+     have either an "undefined" value or an initial value if one was
+     specified when the class was defined.
+
+   * (define-getters class-name prefix element-list)
+
+     Elements (aka members) are read/written with "accessors".  Read
+     accessors are defined with `define-getters', which creates one
+     procedure for each element, each defined as `(prefix-element-name
+     object)'.
+
+     This is a macro so don't quote anything.
+
+   * (define-setters class-name prefix element-list)
+
+     Write accessors are defined with `define-setters', which creates
+     one procedure for each element, each defined as
+     `(prefix-set-element-name! object new-value)'.
+
+     This is a macro so don't quote anything.
+
+   * (elm-get object elm-name)
+
+     This can only be used in method definitions (blech, blah blah
+     blah).
+
+   * (elm-set! object elm-name new-value)
+
+     This can only be used in method definitions (blech, blah blah
+     blah).
+
+   * (send object method-name arg1 arg2)
+
+     Invoke method `method-name' on `object'.
+
+     The convention is to put this in a cover fn:
+     `(class-name-method-name object arg1 arg2)'.
+
+   * (send-next object method-name arg1 arg2)
+
+     Same as `send' except only usable in methods and is used to invoke
+     the method in the parent class.
+
+   * (make object . args)
+
+     One standard way to create a new object is with `make'.  It is a
+     wrapper, defined as
+
+          (define (make object . args)
+            (apply send (cons (new object) (cons 'make! args)))
+          )
+
+   * (vmake class . args)
+
+     The other standard way to create objects is with `vmake'.
+
+     `args' is a list of option names and arguments.
+
+     ??? Not completely implemented yet.
+
+   * (method-make! class method-name lambda)
+
+     The normal way of creating methods is to use `method-make!', not
+     define them with the class.  It's just easier to define them
+     separately.
+
+   * (method-make-virtual! class method-name lambda)
+
+     Create virtual methods created with `method-make-virtual!'.
+
+   * (method-make-forward! class elm-name methods) -> unspecified
+
+     Forwarding a method invocation on one object to another is
+     extremely useful so some utilities have been created to simplify
+     creating forwarding methods.
+
+     `methods' is a list of method names.  A method is created for each
+     one that forwards the method onto the object contained in element
+     ELM-NAME.
+
+   * (method-make-virtual-forward!)
+
+     Same as method-make-forward! except that it creates virtual
+     methods.
+
+
+File: cgen.info,  Node: Glossary,  Next: Miscellaneous notes,  Prev: Writing an application,  Up: Top
+
+Glossary
+********
+
+arch
+     This is the overall architecture.  It is the same as BFD's use of
+     *arch*.
+
+isa
+     Acronym for Instruction Set Architecture.
+
+mach
+     This is a variant of the architecture, short for machine. It is
+     essentially the same as BFD's use of *mach*.
+
+CPU family
+     A group of related mach's.  Simulator support is organized along
+     "CPU family" lines to keep related mach's together under one roof
+     to simplify things.  The organization is semi-arbitrary and is up
+     to the programmer.
+
+model
+     An implementation of a mach.  It is essentially akin to the
+     argument to `-mtune=' in SPARC GCC (and other GCC ports).
+
+
+File: cgen.info,  Node: Miscellaneous notes,  Next: Credits,  Prev: Glossary,  Up: Top
+
+Miscellaneous notes
+*******************
+
+   This chapter is a repository of miscellaneous notes that belong
+elsewhere or nowhere.  They're here because I want them written down,
+for now anyway, and I'm not sure where else to put them.  There may be
+duplication here with things elsewhere in the docs.  I'm not bothering
+to ensure there isn't.  It's better to have things written down twice
+than not at all.  If there is a conflict between notes here and
+elsewhere, check the chronology.  I may have changed my mind.  If not,
+the situation may be complicated and I don't have a strong opinion on
+what's right.  No claim is made that these notes represent my complete
+opinion.  (Hmmm... lessee what other caveats I can throw in here ... :-)
+
+* Menu:
+
+* Description language notes::
+* CGEN architecture notes::
+* COS notes::
+* RTL notes::
+* Guile implementation notes::
+* Code generation notes::
+* Machine generated files notes::
+* Implementation language notes::
+
+
+File: cgen.info,  Node: Description language notes,  Next: CGEN architecture notes,  Up: Miscellaneous notes
+
+Description language notes
+==========================
+
+   - timing support
+
+     The current implementation of timing (aka pipeline, function
+     units, etc.)  support is a quick hack in order to achieve useful
+     numbers out of the simulator.  It is intended to be replaced with
+     something a lot more sophisticated.  Remember to keep in mind
+     cgen's goal of application independence when designing the new
+     version.  For example, it must handle things like code scheduling
+     in a compiler (where speed of analysis is not critical) to
+     scheduling in a dynamic compiler (where speed of analysis is
+     critical).  It must also handle semi-accurate to fully-accurate
+     cycle counting in simulators (where the former might trade off
+     accuracy for speed which one wouldn't do in the latter, assuming
+     there is a trade-off to be made).  It must also handle the
+     representation and handling of pipelines with program visible
+     hazards.
+
+   - organization of cpu description
+
+     One thing that may not be apparent is that the description language
+     doesn't preclude one item (say an insn) from having its definition
+     spread over several files.  One example would be to leave the
+     timing elements unspecified in the "main" entry of an insn, and
+     then have a machine-specific file providing timing
+     characteristics, etc.
+
+     One can even leave the semantics to be defined elsewhere.  The `='
+     insn format prefix is not currently used very much (no need).  It
+     might also need better documentation.
+
+     A possible break-up of an item's description into several files
+     should be generally supported (where reasonable).
+
+
+File: cgen.info,  Node: CGEN architecture notes,  Next: COS notes,  Prev: Description language notes,  Up: Miscellaneous notes
+
+CGEN architecture notes
+=======================
+
+   - compiled form of description in libcgen
+
+     The current compiled form of the cpu description has been focused
+     on two applications: opcodes and simulator.  No doubt there are
+     things present that will present problems to future applications.
+     One thing on the todo list has been to record semantics with the
+     compiled form, probably as bytecode.  Maybe it would make sense to
+     record the entire cpu description as a kind of bytecode.  This
+     would allow apps to instantiate it for the task at hand as they
+     please.
+
+   - function-style attributes
+
+     Attributes currently only support static (compile-time computed)
+     notions.  They should also support run-time computed values.  The
+     way to do this is to record such attributes as bytecode and lazily
+     (or not lazily) evaluate them at runtime, perhaps caching the
+     results.  It might make sense to record all attributes this way
+     (though I currently don't think so).
+
+   - importance of description language
+
+     When hacking on cgen, the description language takes priority over
+     implementation.  That cannot be stressed enough.  When faced with
+     choices of what to do, put the elegance, maintainability, and
+     application independence of the description language first.
+     Implementation will almost always take shortcuts due to
+     application specific requirements.  Theoretically the description
+     language won't have to; at least that's where the effort in
+     application independence should be put.
+
+
+File: cgen.info,  Node: COS notes,  Next: RTL notes,  Prev: CGEN architecture notes,  Up: Miscellaneous notes
+
+COS notes
+=========
+
+   - elm-xget, elm-xset
+
+     These procedures are quick hacks and should be avoided.  Existing
+     uses should be replaced.  Where they're used it's either because
+     of laziness or because I wasn't sure whether I wanted to allow
+     global access to the element, so using an easily grep-able hack
+     let's me find them and revisit them.
+
+
+File: cgen.info,  Node: RTL notes,  Next: Guile implementation notes,  Prev: COS notes,  Up: Miscellaneous notes
+
+RTL notes
+=========
+
+   - Where's strict_lowpart?  Where's foo?
+
+     Elements of gcc's rtl like strict_lowpart, pre_inc, etc. aren't in
+     cgen's rtl only because thus far there hasn't been a compelling
+     need for them.  When there is a compelling need they'll be added.
+
+   - boolean values
+
+     Sometimes #f/#t is used for boolean values.  However the "boolean"
+     mode `BI' has values 0 and 1.  Which one is in use is context
+     dependent.  Not sure there is a problem but it should be revisited.
+
+   - #f to denote "unspecified" values
+
+     Sometimes () is used to specify "unspecified" values.  Other times
+     #f is used.  Should standardize in #f.
+
+   - ifield assertions
+
+     Perhaps these should be renamed to "constraints".
+     "ifield-assertion" sounds clumsy.
+
+
+File: cgen.info,  Node: Guile implementation notes,  Next: Code generation notes,  Prev: RTL notes,  Up: Miscellaneous notes
+
+Guile implementation notes
+==========================
+
+   - Remaining todo is to complete switchover from "errtxt" (a string)
+     in .cpu file reader support to "context" (a <context> object).
+
+   - Remaining todo is to complete switchover of naming functions from
+     "prefix:function" to "prefix-function".  One reasonable naming
+     style is "prefix-verb-noun".  I like it.
+
+   - Slib uses "prefix:foo" for "internal" routines.  Maybe that would
+     be a better choice than the current "-prefix-foo" style.
+
+
+File: cgen.info,  Node: Code generation notes,  Next: Machine generated files notes,  Prev: Guile implementation notes,  Up: Miscellaneous notes
+
+Code generation notes
+=====================
+
+   - foo
+
+
+File: cgen.info,  Node: Machine generated files notes,  Next: Implementation language notes,  Prev: Code generation notes,  Up: Miscellaneous notes
+
+Machine generated files notes
+=============================
+
+   - In the end I think the best thing is to build the machine
+     generated files when the tools themselves are built (same as gcc's
+     gen* -> insn* files).
+
+
+File: cgen.info,  Node: Implementation language notes,  Prev: Machine generated files notes,  Up: Miscellaneous notes
+
+Implementation language notes
+=============================
+
+   In the end I think the implementation language (or the Guile
+implementation) will have to change.  If one compares the speed of
+gcc's gen* file generators vs cgen's, and one envisions the day when
+machine generated files are built at build time, then I think the user
+community will require similar speed in file generation.  Guile isn't
+fast enough.  And while Guile+Hobbit may be, for the one-time builder
+the time taken to compile Hobbit, run it, and compile the result, will
+appear to swamp any gains.  There is also the additional burden of
+building Guile first (though with my prefered Guile implementation I'm
+_hoping_ that wouldn't be a problem).
+
+   The pragmatic choice is C.  Blech.
+
+   A better choice would be C++ but then that would obviously place a
+requirement on having a C++ compiler available in order to build
+binutils, for example (assuming machine generated files are built at
+build time).
+
+   Java would also be a better implementation language than C [an
+interesting experiment would be Kawa].  But it's worse as a pragmatic
+choice than C++.
+
+   My prefered choice is a small-and-fast subset of Guile that gets
+distributed with binutils, gdb, etc.  IMO Guile is too bloated and
+unmaintainable for the casual maintainer (hacking on its innards
+requires too steep a learning curve, and is one that is easily slipped
+back down should one step away from it for too long).  If those can be
+fixed and the speed of cgen's file generation can be made acceptable,
+then that is the path I would choose.
+
+   In making the choice people need to look forward rather than look
+backward.  We're finally switching the GNU tools to ANSI C.  If the
+host doesn't provide an ANSI C compiler the user is expected to get one
+(GCC).  Well, G++ is available on most if not all hosts of concern, so
+in this day and age requiring C++ in order to build binutils isn't as
+much of a burden as it use to be.  Cgen is a forward looking design.
+At its heart is a goal to close no doors on future uses.  That's a
+pretty lofty goal.  Forcing people to achieve that goal with C because
+of pragmatic concerns is unjustifiable, IMO.
+
+   Note that changing the "implementation language" does _not_ mean
+Guile cannot or will not be used for various things!  I think Guile
+should continue to be used for prototyping as well as certain
+applications.
+

@@ -1,0 +1,1675 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE> Emotion Engine Tools User's Guide</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="ECOS" WIDTH="100%" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR>
+<TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">
+Emotion Engine Tools User's Guide</P>
+</TH></TR>
+<TR><TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEcontents.html">
+contents</A>
+</P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="Assembler.html">
+previous&nbsp;page</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="Linker.html">
+next&nbsp;page</A></P>
+</TD>
+</TR></TABLE>
+<HR ALIGN="center">
+</DIV>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-469532"></A><A NAME="32461"></A>DVP Assembler</H2>
+<P CLASS="Body">
+<A NAME="pgfId-542042"></A>The <A NAME="marker-802958"></A>DVP Assembler allows a combination of DMA tags, GIF tags, VIF instructions, and VU instructions to be assembled from a single input stream to produce an <A NAME="marker-802960"></A>ELF object file.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-460669"></A><A NAME="15783"></A>Emotion Engine-specific command-line options</H3>
+<P CLASS="Body">
+<A NAME="pgfId-495299"></A>For a list of available generic assembler options, refer to &quot;Command-Line Options&quot; in <EM CLASS="Emphasis">
+Using AS</EM>
+ in <STRONG CLASS="BoldEmphasis">
+GNUPro Utilities.</STRONG>
+ </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-802966"></A><KBD CLASS="Code">
+-no-dma</KBD>
+<A NAME="marker-802965"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-802967"></A>Use if you do not want to include DMA instructions in the output.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-802969"></A><KBD CLASS="Code">
+-no-dma-vif</KBD>
+<A NAME="marker-802968"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-802970"></A>Use if you do not want to include DMA or VIF instructions in the output.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-820781"></A><KBD CLASS="Code">
+-stalls-pipeline</KBD>
+<A NAME="marker-821274"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-820783"></A>Use if you want the DVP Assembler to issue a warning message if the execution of an instruction stalls the pipeline. One of the following reason will be provided:<A NAME="marker-821277"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-820786"></A>DIV resource hazards</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-820787"></A>Occurs when a DIV/SQRT/RSQRT instruction is being executed and another instruction of similar type is executed concurrently. For instance if a DIV instruction and an SQRT instructioned were executed concurrently, the DVP Assembler would issue this warning.</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-820789"></A>EFU resource hazards</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-820791"></A>Occurs when a calculation instruction that uses the EFU unit is executed, and the next instruction of this type is executed concurrently.</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-820793"></A>floating point register data hazards</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-821016"></A>Occurs when an instruction that uses a floating point register as the destination is executed, and the next instruction--which uses the same floating point register--is executed.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-820799"></A>Data hazard checks are perform independently in each field of <KBD CLASS="Code">
+x/y/z/w.</KBD>
+ VF00 is a constant register and is not subject to Data hazards.</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-820802"></A>integer register data hazards </P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-820803"></A>Occurs if a <KBD CLASS="Code">
+load/store</KBD>
+ instruction that uses an integer register is executed and the next instruction that uses the same integer register is executed. VI00 is not subject to integer register data hazards.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-820807"></A>For further references, see the <STRONG CLASS="BoldEmphasis">
+VU User's Manual, Section 3.4.</STRONG>
+</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-820809"></A><KBD CLASS="Code">
+-no-fetching</KBD>
+<A NAME="marker-821275"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-820811"></A>The DVP Assembler will issue a warning if an upper instruction fetches a value that  is not the value that the corresponding lower instruction set to I register.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-820815"></A><KBD CLASS="Code">
+-no-interdependency</KBD>
+<A NAME="marker-821276"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-821307"></A>If the destination register of the instruction executed before an SQ instruction is a floating point register, there should not be any interdependency between the instruction and the SQ instruction. However, if the number of the registers are the same, the hardware thinks that there is interdependency. This option issues a warning message to indicate that the hardware thinks there is an interdependency when there actually is none.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-461429"></A>Syntax</H3>
+<P CLASS="Body">
+<A NAME="pgfId-492016"></A>For a list of available generic description of assembler syntax, refer to &quot;Syntax&quot; in <EM CLASS="Emphasis">
+Using AS</EM>
+ in <STRONG CLASS="BoldEmphasis">
+GNUPro Utilities.</STRONG>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-492017"></A>There are two types of <A NAME="marker-524424"></A>comments: inline comments and line comments. In both cases, the comment is equivalent to one space. Anything from <KBD CLASS="Code">
+'/*'</KBD>
+ to <KBD CLASS="Code">
+'*/'</KBD>
+ is an inline comment. Inline comments can span multiple lines but cannot be nested. A line comment is everything from <KBD CLASS="Code">
+`;'</KBD>
+ to the next newline.</P>
+<P CLASS="Body">
+<A NAME="pgfId-492020"></A>A <A NAME="marker-524425"></A>statement ends at a <A NAME="marker-515569"></A>newline character (<KBD CLASS="Code">&#92;n</KBD>). There is no line separator character; there can be no more than one statement on a line.</P>
+<P CLASS="Body">
+<A NAME="pgfId-529059"></A>A statement begins with an optional label, optionally followed by a key symbol and appropriate operands. A <A NAME="marker-529060"></A>label is a symbol that is immediately followed by a colon (:). The <A NAME="marker-529061"></A>key symbol <A NAME="marker-529062"></A>(opcode) determines the syntax of the rest of the statement. The <A NAME="marker-529063"></A>mode of the assembler determines which set of opcodes is acceptable.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-492224"></A><A NAME="marker-535724"></A>Literals</H3>
+<P CLASS="Body">
+<A NAME="pgfId-504857"></A>For a generic description of numeric and character constants (literals), refer to &quot;Syntax&quot; in <EM CLASS="Emphasis">
+Using AS</EM>
+ in <STRONG CLASS="BoldEmphasis">
+GNUPro Utilities.</STRONG>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-534643"></A>The DVP and MIPS assemblers support a new format for quadword literals. The format of this literal is <KBD CLASS="Code">
+'0x'</KBD>
+ followed by four 1-word hexadecimal values separated by the underscore (<KBD CLASS="Code">'_'</KBD>) character.</P>
+<P CLASS="Body">
+<A NAME="pgfId-534647"></A>For example, the literal:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-534649"></A>  	0x333_0_12345678_1</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-534651"></A>can be used, and is equivalent to:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-534641"></A>  	0x0000033300000000123456780000001</PRE>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-496366"></A><A NAME="marker-496365"></A><A NAME="27097"></A>Directives</H3>
+<P CLASS="Body">
+<A NAME="pgfId-488410"></A>The DVP assembler accepts a subset of the directives described in <EM CLASS="Emphasis">
+Using AS</EM>
+ in <STRONG CLASS="BoldEmphasis">
+GNUPro Utilities.</STRONG>
+ In addition, the DVP assembler also accepts a number of new directives.</P>
+<P CLASS="Body">
+<A NAME="pgfId-803088"></A>This is a complete list of DVP assembler directives: </P>
+<TABLE BORDER="1">
+<CAPTION>
+<P CLASS="TableTitle">
+<A NAME="pgfId-802977"></A>DVP Assembler directives</P>
+</CAPTION>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-802985"></A><KBD CLASS="Code">
+.ascii</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-802987"></A><KBD CLASS="Code">
+.EndGif</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-802989"></A><KBD CLASS="Code">
+.if</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-802991"></A><KBD CLASS="Code">
+.quad</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-802993"></A><KBD CLASS="Code">
+.asciz</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-802995"></A><KBD CLASS="Code">
+.endm</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-802997"></A><KBD CLASS="Code">
+.ifdef</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-802999"></A><KBD CLASS="Code">
+.rept</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803001"></A><KBD CLASS="Code">
+.balign</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803003"></A><KBD CLASS="Code">
+.EndMpg</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803005"></A><KBD CLASS="Code">
+.ifndef</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803007"></A><KBD CLASS="Code">
+.sbttl </KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803009"></A><KBD CLASS="Code">
+.byte</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803011"></A><KBD CLASS="Code">
+.EndUnpack</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803013"></A><KBD CLASS="Code">
+.include</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803015"></A><KBD CLASS="Code">
+.section</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803017"></A><KBD CLASS="Code">
+.data</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803019"></A><KBD CLASS="Code">
+.equ</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803021"></A><KBD CLASS="Code">
+.int</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803023"></A><KBD CLASS="Code">
+.set</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803025"></A><KBD CLASS="Code">
+.DmaData</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803027"></A><KBD CLASS="Code">
+.equiv</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803029"></A><KBD CLASS="Code">
+.irp</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803031"></A><KBD CLASS="Code">
+.short</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803033"></A><KBD CLASS="Code">
+.DmaPackVif</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803035"></A><KBD CLASS="Code">
+.err</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803037"></A><KBD CLASS="Code">
+.irpc</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803039"></A><KBD CLASS="Code">
+.skip</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803041"></A><KBD CLASS="Code">
+.eject</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803043"></A><KBD CLASS="Code">
+.exitm</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803045"></A><KBD CLASS="Code">
+.list</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803047"></A><KBD CLASS="Code">
+.space</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803049"></A><KBD CLASS="Code">
+.else</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803051"></A><KBD CLASS="Code">
+.extern</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803053"></A><KBD CLASS="Code">
+.macro</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803055"></A><KBD CLASS="Code">
+.string</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803057"></A><KBD CLASS="Code">
+.EndDirect</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803059"></A><KBD CLASS="Code">
+.fill</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803061"></A><KBD CLASS="Code">
+.nolist</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803063"></A><KBD CLASS="Code">
+.text</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803065"></A><KBD CLASS="Code">
+.EndDmaData</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803067"></A><KBD CLASS="Code">
+.float</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803069"></A><KBD CLASS="Code">
+.org</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803071"></A><KBD CLASS="Code">
+.title</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803073"></A><KBD CLASS="Code">
+.endfunc</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803075"></A><KBD CLASS="Code">
+.func</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803077"></A><KBD CLASS="Code">
+.p2align</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803079"></A><KBD CLASS="Code">
+.vu</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803081"></A><KBD CLASS="Code">
+.endif</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803083"></A><KBD CLASS="Code">
+.global</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803085"></A><KBD CLASS="Code">
+.psize</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-803087"></A><KBD CLASS="Code">
+.word</KBD>
+</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-462943"></A>&nbsp;</P>
+<P CLASS="Body">
+<A NAME="pgfId-462946"></A>For information on most supported directives, refer to <EM CLASS="Emphasis">
+Using AS</EM>
+ in <STRONG CLASS="BoldEmphasis">
+GNUPro Utilities.</STRONG>
+ Some existing assembler directives have been modified for the DVP Assembler. In addition, the DVP Assembler also supports several new directives.</P>
+<P CLASS="Body">
+<A NAME="pgfId-505770"></A>The following list describes the new and modified directives that the DVP assembler supports:</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-803094"></A><KBD CLASS="Code">
+.DmaData</KBD>
+<A NAME="marker-803093"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803095"></A>Builds a labeled block of DMA data for use with <KBD CLASS="Code">
+DMAref</KBD>. </P> <P CLASS="BodyHang1">
+<A NAME="pgfId-803097"></A><KBD CLASS="Code">
+.DmaPackVif</KBD>
+<A NAME="marker-803096"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803098"></A>Specifies whether a DMA tag will be packed with two subsequent VIF instructions. The argument to <KBD CLASS="Code">
+.DmaPackVif</KBD>
+ is either <KBD CLASS="Code">
+`1'</KBD>
+ or <KBD CLASS="Code">
+`0'</KBD>.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-461623"></A><KBD CLASS="Code">
+.EndDirect</KBD>
+<A NAME="marker-524367"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-462057"></A>Terminates the list of data following <KBD CLASS="Code">
+direct</KBD>
+ or <KBD CLASS="Code">
+directhl</KBD>
+ VIF opcodes.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-803109"></A><KBD CLASS="Code">
+.EndDmaData</KBD>
+<A NAME="marker-803108"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803110"></A>Terminates the list of data following <KBD CLASS="Code">
+.DmaData</KBD>. </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-461625"></A><KBD CLASS="Code">
+.EndGif</KBD>
+<A NAME="marker-515574"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-462103"></A>Terminates the list of data following <KBD CLASS="Code">
+GIFpacked</KBD>, <KBD CLASS="Code">
+GIFreglist</KBD>
+ and <KBD CLASS="Code">
+GIFimage</KBD>. </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-529380"></A><KBD CLASS="Code">
+.endfunc</KBD>
+<A NAME="marker-529388"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-529399"></A>Denotes the end of the function started with <KBD CLASS="Code">
+.func</KBD>.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-461627"></A><KBD CLASS="Code">
+.endm</KBD>
+<A NAME="marker-515575"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-462112"></A>Terminates a macro definition. </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-461628"></A><KBD CLASS="Code">
+.EndMpg</KBD>
+<A NAME="marker-515576"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-524373"></A>Terminates the list of VU instructions following <KBD CLASS="Code">
+mpg</KBD>. </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-524375"></A><KBD CLASS="Code">
+.EndUnpack</KBD>
+<A NAME="marker-524374"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-524376"></A>Terminates the list of data following <KBD CLASS="Code">
+unpack</KBD>. </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-529516"></A><KBD CLASS="Code">
+.func</KBD>
+<A NAME="marker-529524"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-529517"></A>Emits debugging information for user-written assembler functions. Must assemble with <KBD CLASS="Code">
+--gstabs</KBD>
+<A NAME="marker-634416"></A> for this directive to have any effect.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-529518"></A>Syntax:  <KBD CLASS="Code">
+.func function_name [,symbol_name]</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-529416"></A>Note that <KBD CLASS="Code">
+symbol_name</KBD>
+ is optional. It is used when the function name, as viewed from the debugger, is different than what is written in the assembler code (for example, some systems have a leading underscore (<KBD CLASS="Code">`_'</KBD>) for C functions).</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-496275"></A><KBD CLASS="Code">
+.quad</KBD>
+<A NAME="marker-515578"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-464193"></A>Assembles a 16-byte integer.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-495846"></A><KBD CLASS="Code">
+.vu</KBD>
+<A NAME="marker-515579"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803120"></A>Sets the assembler to compile VU instructions.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803121"></A>Must be present before any VU instructions are assembled.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-495849"></A><KBD CLASS="Code">
+.word</KBD>
+<A NAME="marker-515580"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-495850"></A>Assembles a 4-byte integer.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-665208"></A><A NAME="marker-803126"></A>VU opcodes </H3>
+<P CLASS="Body">
+<A NAME="pgfId-803132"></A>For detailed information on the VU machine instruction set, see <STRONG CLASS="BoldEmphasis">
+VU User's Manual.</STRONG>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-665210"></A>To set the <KBD CLASS="Code">
+I, E, M, D</KBD>
+ and <KBD CLASS="Code">
+T</KBD>
+ bits in an instruction, specify the appropriate letters as a bracketed suffix to the upper opcode. Case is ignored.</P>
+<P CLASS="Body">
+<A NAME="pgfId-814705"></A>For example: </P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-814706"></A>
+   NOP[DT]     IADDIU  VI01, VI00, LOOP
+</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-814768"></A>You can use <KBD CLASS="Code">
+LOI</KBD>
+ pseudo instruction as lower instruction to load floating point immediate value into the I register.</P>
+<P CLASS="Body">
+<A NAME="pgfId-814884"></A>For example:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-814891"></A>
+   NOP        LOI 3.141592
+</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-814892"></A>This pseudo instruction set the <KBD CLASS="Code">
+I</KBD>
+ bit of a corresponding upper instruction field and put the immediate value in a lower instruction field.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-814709"></A><A NAME="marker-814707"></A>VIF opcodes</H3>
+<P CLASS="Body">
+<A NAME="pgfId-803143"></A>For detailed information on the VIF instruction set, see <STRONG CLASS="BoldEmphasis">
+EE User's Manual.</STRONG>
+ (Note that the &quot;<B CLASS="Bold">PKE</B>&quot; has been renamed to &quot;<B CLASS="Bold">VIF</B>&quot;.)</P>
+<P CLASS="Body">
+<A NAME="pgfId-538016"></A>Some tags support the following optional bits, enclosed in brackets &quot;[]&quot; as a suffix:</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-538073"></A><KBD CLASS="Code">
+i:  interrupt</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-538074"></A><KBD CLASS="Code">
+m:  mask</KBD>
+ (<KBD CLASS="Code">unpack</KBD>
+ instruction only)</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-538075"></A><KBD CLASS="Code">
+r:  TOPS</KBD>
+ relative address (<KBD CLASS="Code">unpack</KBD>
+ instruction only)</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-537999"></A><KBD CLASS="Code">
+u:  </KBD>
+unsigned <KBD CLASS="Code">
+UNPACK</KBD>
+ (<KBD CLASS="Code">unpack</KBD>
+ instruction only)</P>
+<P CLASS="Body">
+<A NAME="pgfId-462452"></A>The following instructions are supported:</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-462747"></A><KBD CLASS="Code">
+base[i] </KBD>
+<A NAME="marker-524345"></A><KBD CLASS="CodeVariant">
+&lt;expr&gt;</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-462983"></A>Sets the VIF1 Base register. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-462989"></A>Notes: </P>
+<OL>
+<OL>
+<LI>
+<A NAME="pgfId-463005"></A>Only bits 15:0 of the expression are encoded into the instruction</LI>
+<LI>
+<A NAME="pgfId-463023"></A>Only bits 9:0 are used by the register. </LI>
+</OL>
+</OL>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-464391"></A><KBD CLASS="Code">
+direct[i] </KBD>
+<A NAME="marker-524346"></A><KBD CLASS="CodeVariant">
+&lt;filename&gt;</KBD>
+</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-464392"></A><KBD CLASS="Code">
+direct[i] </KBD>
+<KBD CLASS="CodeVariant">
+&lt;expr&gt;</KBD>
+</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-464393"></A><KBD CLASS="Code">
+direct[i] * </KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-464394"></A>Send data directly to GIF via path 2. The operand is either the name of a binary file containing only GIF tagged data, or the number of 128-bit quadwords following, or an asterisk for the assembler to compute the number of quadwords following. The last two forms of <KBD CLASS="Code">
+direct</KBD>
+ should end the data with the directive <KBD CLASS="Code">
+.EndDirect</KBD>. Only valid for execution on VIF1. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-464564"></A>Examples:</P>
+<PRE CLASS="CodeExample2"><A NAME="pgfId-464650"></A>&nbsp;</PRE>
+<PRE CLASS="CodeExample2"><A NAME="pgfId-815066"></A>   DIRECT *
+   GIFpacked REGS={A_D}, NLOOP=13, EOP
+   .int  0x000a0000, 0x00000000, 0x0000004c, 0x00000000
+   .int  0x027f0000, 0x01df0000, 0x00000040, 0x00000000
+   .int  0x00000001, 0x00000000, 0x0000001a, 0x00000000
+   .int  0x01000096, 0x00000000, 0x0000004e, 0x00000000
+   .int  0x00000001, 0x00000000, 0x00000046, 0x00000000
+   .int  0x00000000, 0x00000000, 0x00000047, 0x00000000
+   .int  0x00000000, 0x00000000, 0x00000018, 0x00000000
+   .int  0x00000006, 0x00000000, 0x00000000, 0x00000000
+   .int  0x00000000, 0x00000000, 0x00000001, 0x00000000
+   .int  0x00000000, 0x00000000, 0x00000004, 0x00000000
+   .int  0x1e002800, 0x00000000, 0x00000004, 0x00000000
+   .int  0x00070000, 0x00000000, 0x00000047, 0x00000000
+   .int  0x00006c00, 0x00007100, 0x00000018, 0x00000000
+   .EndGif
+   .EndDirect
+</PRE>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-464395"></A><KBD CLASS="Code">
+directhl[i] </KBD>
+<A NAME="marker-524347"></A><KBD CLASS="CodeVariant">
+&lt;filename&gt;</KBD>
+</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-464396"></A><KBD CLASS="Code">
+directhl[i] </KBD>
+<KBD CLASS="CodeVariant">
+&lt;expr&gt;</KBD>
+</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-464397"></A><KBD CLASS="Code">
+directhl[i] * </KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-464398"></A>The syntax of <KBD CLASS="Code">
+directhl</KBD>
+ is identical to that of <KBD CLASS="Code">
+direct.</KBD>
+ </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-814713"></A><KBD CLASS="Code">
+flush[i]</KBD>
+<A NAME="marker-814712"></A> </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-814714"></A>Waits until the VU1 program and Paths 1 and 2 to GIF are idle. Only valid for execution on VIF1. </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-462758"></A><KBD CLASS="Code">
+flusha[i]</KBD>
+<A NAME="marker-524349"></A> </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-462759"></A>Waits until the VU1 program and all Paths to GIF are idle. Only valid for execution on VIF1. </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-462762"></A><KBD CLASS="Code">
+flushe[i]</KBD>
+<A NAME="marker-524350"></A> </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-462763"></A>Waits until the VU program is idle. </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-462764"></A><KBD CLASS="Code">
+itop[i] </KBD>
+<A NAME="marker-524351"></A><KBD CLASS="CodeVariant">
+&lt;expr&gt;</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-462765"></A>Sets the VIF ITOPS register. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-462766"></A>Notes: </P>
+<OL>
+<OL>
+<LI>
+<A NAME="pgfId-462767"></A>Only bits 15:0 of the expression are encoded into the instruction. </LI>
+<LI>
+<A NAME="pgfId-462768"></A>Only bits 9:0 are used by the register. </LI>
+</OL>
+</OL>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-464486"></A><KBD CLASS="Code">
+mark[i] </KBD>
+<A NAME="marker-524352"></A><KBD CLASS="CodeVariant">
+&lt;abs-expr&gt;</KBD>
+ </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-464487"></A>Sets the VIF Mark register. Only bits 15:0 of the expression are encoded into the instruction. </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-462776"></A><KBD CLASS="Code">
+mpg[i] </KBD>
+<A NAME="marker-524354"></A><KBD CLASS="CodeVariant">
+&lt;expr&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;filename&gt;</KBD>
+</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-462777"></A><KBD CLASS="Code">
+mpg[i] </KBD>
+<KBD CLASS="CodeVariant">
+&lt;expr&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;expr&gt;</KBD>
+</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-462778"></A><KBD CLASS="Code">
+mpg[i] </KBD>
+<KBD CLASS="CodeVariant">
+&lt;expr&gt;</KBD><KBD CLASS="Code">, *</KBD>
+ </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-462779"></A>As <KBD CLASS="Code">
+flushe,</KBD>
+ then load a program into micro memory. The first operand is always the address at which to load the program. If specified as &quot;*&quot;, the current value of <KBD CLASS="Code">
+$.MpgLoc</KBD>
+ is used. The second operand is either the name of a binary file containing only VU instructions, or the number of following 64-bit doublewords, or an asterisk for the assembler to compute the number of following doublewords. The assembler will automatically insert VIF code (<KBD CLASS="Code">
+mpg</KBD>
+, <KBD CLASS="Code">
+direct</KBD>
+ or <KBD CLASS="Code">
+directhl</KBD>
+) if the written data is longer than the specified length. In addition to assembling the <KBD CLASS="Code">
+mpg</KBD>
+ instruction, <KBD CLASS="Code">
+mpg</KBD>
+ causes the following to be executed: </P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-463876"></A>     $.MpgLoc = value of 1st operand ;update the mpg location counter</PRE>
+<PRE CLASS="CodeExample"><A NAME="pgfId-463882"></A>     $. = $.MpgLoc ;set the secondary location counter</PRE>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-463986"></A>The symbol <KBD CLASS="Code">
+$.MpgLoc</KBD>
+ is reserved for the <KBD CLASS="Code">
+mpg</KBD>
+ location counter. Users should not set it. The last two forms of <KBD CLASS="Code">
+mpg</KBD>
+ should end the VU instructions with the directive <KBD CLASS="Code">
+.EndMpg</KBD>. It will switch the assembler back to non-VU mode and cause the following to be executed: </P>
+<PRE CLASS="CodeExample2"><A NAME="pgfId-463987"></A>$.MpgLoc = $. ;update the mpg location counter</PRE>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-463988"></A>Examples: </P>
+<PRE CLASS="CodeExample2"><A NAME="pgfId-462798"></A>          mpg 0x20,&quot;test00.vubin&quot; 
+          mpg *,*
+  main:   NOP IADDIU VI01,VI00,0 ;Euler angle,transfer vector
+          NOP IADDIU VI02,VI00,22 ; omatrix(SCREEN/LOCAL)
+          NOP NOP 
+          NOP BAL VI15,$RotMatrix 
+          NOP NOP 
+          NOP END ;wait VIF 
+          NOP NOP 
+          NOP B $main ;repeat 
+          NOP NOP 
+          .EndMpg
+</PRE>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-789680"></A><KBD CLASS="Code">
+mscal[i] </KBD>
+<A NAME="marker-789679"></A><KBD CLASS="CodeVariant">
+&lt;expr&gt;</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-789681"></A>As <KBD CLASS="Code">
+flushe,</KBD>
+ then sets the VU1 start address to <KBD CLASS="CodeVariant">
+&lt;expr&gt; </KBD>
+and executes via <KBD CLASS="Code">
+callms.</KBD>
+</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-464531"></A><KBD CLASS="Code">
+mscalf[i] </KBD>
+<A NAME="marker-524356"></A><KBD CLASS="CodeVariant">
+&lt;expr&gt;</KBD>
+<KBD CLASS="Code">
+ </KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-464532"></A>As <KBD CLASS="Code">
+flush,</KBD>
+ then sets the VU1 start address to <KBD CLASS="CodeVariant">
+&lt;expr&gt; </KBD>
+and executes via <KBD CLASS="Code">
+callms.</KBD>
+</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-464533"></A><KBD CLASS="Code">
+mscnt[i]</KBD>
+<A NAME="marker-524357"></A> </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-464534"></A>As <KBD CLASS="Code">
+flushe, </KBD>
+then continues to execute a micro program from the next address of the last program counter on VU. </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-532950"></A><KBD CLASS="Code">
+mskpath3[i] </KBD>
+<A NAME="marker-532949"></A><KBD CLASS="CodeVariant">
+&lt;ability&gt;</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-532951"></A>Enables or disables path 3 transfers. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-532952"></A>Notes: </P>
+<OL>
+<OL>
+<LI>
+<A NAME="pgfId-740000"></A>Bit 15 of the instruction is set via <KBD CLASS="CodeVariant">
+&lt;ability&gt;</KBD>
+</LI>
+</OL>
+</OL>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-532955"></A>     DISABLE = 1 AND ENABLE = 0. </P>
+<OL>
+<OL>
+<LI>
+<A NAME="pgfId-740002"></A>Bits 14:0 are always set to 0. </LI>
+<LI>
+<A NAME="pgfId-803193"></A>Only valid for execution on VIF1.</LI>
+</OL>
+</OL>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-464298"></A><KBD CLASS="Code">
+offset[i] </KBD>
+<A NAME="marker-524358"></A><KBD CLASS="CodeVariant">
+&lt;expr&gt;</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-464299"></A>Sets the VIF1 Offset register. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-464300"></A>Notes: </P>
+<OL>
+<OL>
+<LI>
+<A NAME="pgfId-740024"></A>Only bits 15:0 of the expression are encoded into the instruction.</LI>
+<LI>
+<A NAME="pgfId-740025"></A>Only bits 9:0 are used by the register. </LI>
+</OL>
+</OL>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-740027"></A><KBD CLASS="Code">
+stcol[i] </KBD>
+<A NAME="marker-740026"></A><KBD CLASS="CodeVariant">
+&lt;expr0&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;expr1&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;expr2&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;expr3&gt;</KBD>
+ </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-464326"></A>Set the VIF <KBD CLASS="Code">
+COL</KBD>
+ registers <KBD CLASS="Code">
+C0, C1, C2</KBD>
+ and <KBD CLASS="Code">
+C3</KBD>. All 32-bits are used from each expression. </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-462842"></A><KBD CLASS="Code">
+stcycl[i] </KBD>
+<A NAME="marker-524360"></A><KBD CLASS="CodeVariant">
+&lt;abs-expr&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;abs-expr&gt;</KBD>
+ </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-462843"></A>Sets the VIF <KBD CLASS="Code">
+WL</KBD>
+ and <KBD CLASS="Code">
+CL</KBD>
+ values in the cycle register from the 1st and 2nd operands, respectively. Only bits 7:0 are used from each expression. </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-665282"></A><KBD CLASS="Code">
+stmask[i] </KBD>
+<A NAME="marker-665281"></A><KBD CLASS="CodeVariant">
+&lt;expr&gt;</KBD>
+<KBD CLASS="Code">
+ </KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-665283"></A>Sets VIF <KBD CLASS="Code">
+MASK</KBD>
+ register to <KBD CLASS="CodeVariant">
+&lt;expr&gt;.</KBD>
+ All 32 bits are used. </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-665285"></A><KBD CLASS="Code">
+stmod[i] </KBD>
+<A NAME="marker-665284"></A><KBD CLASS="CodeVariant">
+&lt;mode&gt;</KBD>
+<KBD CLASS="Code">
+ </KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-462846"></A>Sets the VIF <KBD CLASS="Code">
+MODE</KBD>
+ register, where <KBD CLASS="CodeVariant">
+&lt;mode&gt;</KBD>
+  is one of <KBD CLASS="Code">
+DIRECT, ADD,</KBD>
+ or <KBD CLASS="Code">
+ADDROW.</KBD>
+ </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-462847"></A>Notes: </P>
+<OL>
+<OL>
+<LI>
+<A NAME="pgfId-462848"></A>Bits 15:2 of the instruction are always set to 0. </LI>
+<LI>
+<A NAME="pgfId-462849"></A>Bits 1:0 are set via <KBD CLASS="CodeVariant">
+&lt;mode&gt;</KBD>
+<KBD CLASS="Code">
+: DIRECT = 0x00, ADD = 0x01, and ADDROW = 0x02</KBD>
+ </LI>
+</OL>
+</OL>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-535866"></A><KBD CLASS="Code">
+strow[i] </KBD>
+<A NAME="marker-524363"></A><KBD CLASS="CodeVariant">
+&lt;expr0&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;expr1&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;expr2&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;expr3&gt;</KBD>
+ </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-462856"></A>Sets the VIF <KBD CLASS="Code">
+ROW</KBD>
+ registers <KBD CLASS="Code">
+R0</KBD>, <KBD CLASS="Code">R1</KBD>, <KBD CLASS="Code">
+R2</KBD>
+ and <KBD CLASS="Code">
+R3</KBD>. All 32 bits are used from each expression.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-464949"></A><KBD CLASS="Code">
+unpack[imru] </KBD>
+<A NAME="marker-524364"></A><KBD CLASS="CodeVariant">
+&lt;wl&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;cl&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;type&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;addr&gt;</KBD><KBD CLASS="Code">, &lt;filename&gt; </KBD>
+</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-464950"></A><KBD CLASS="Code">
+unpack[imru] </KBD>
+<KBD CLASS="CodeVariant">
+&lt;wl&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;cl&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;type&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;addr&gt;</KBD><KBD CLASS="Code">, *</KBD>
+ </P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-665306"></A><KBD CLASS="Code">
+unpack[imru] </KBD>
+<KBD CLASS="CodeVariant">
+&lt;wl&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;cl&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;type&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;addr&gt;</KBD <KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;num&gt;</KBD>
+ </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-665307"></A>Unpack data to an address in VU memory according to type. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-665308"></A>The above forms emit two machine instructions. The first, <KBD CLASS="Code">
+stcycl,</KBD>
+ sets the VIF <KBD CLASS="Code">
+WL</KBD>
+ and <KBD CLASS="Code">
+CL</KBD>
+ values in the cycle register from the 1st and 2nd operands, respectively. The second, <KBD CLASS="Code">
+unpack,</KBD>
+ uses the remaining operands. These instructions are emitted together because assembling the unpack instruction requires knowledge of the <KBD CLASS="Code">
+WL</KBD>
+ and <KBD CLASS="Code">
+CL</KBD>
+ values.</P>
+<P CLASS="Body">
+<A NAME="pgfId-535956"></A>The following forms are deprecated, and assume the <KBD CLASS="Code">
+WL</KBD>
+ and <KBD CLASS="Code">
+CL</KBD>
+ values from the most recently assembled <KBD CLASS="Code">
+stcycl</KBD>
+ instruction:</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-535957"></A><KBD CLASS="Code">
+unpack[imru] </KBD>
+<KBD CLASS="CodeVariant">
+&lt;type&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;addr&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;filename&gt;</KBD>
+</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-535958"></A><KBD CLASS="Code">
+unpack[imru] </KBD>
+<KBD CLASS="CodeVariant">
+&lt;type&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant"> &lt;addr&gt;</KBD><KBD CLASS="Code">, *</KBD>
+ </P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-464940"></A><KBD CLASS="Code">
+unpack[imru] </KBD>
+<KBD CLASS="CodeVariant">
+&lt;type&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;addr&gt;</KBD><KBD CLASS="Code">, </KBD>
+<KBD CLASS="CodeVariant">
+&lt;num&gt;</KBD>
+ </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-462881"></A>Unpack data to an address in VU memory according to type. The <KBD CLASS="CodeVariant">
+&lt;type&gt;</KBD>
+ operand is the type of data. </P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-462883"></A><KBD CLASS="Code">
+S_32 scalar, 32-bit </KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-462884"></A><KBD CLASS="Code">
+S_16 scalar, 16-bit </KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-462885"></A><KBD CLASS="Code">
+S_8 scalar, 8-bit </KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-462886"></A><KBD CLASS="Code">
+V2_32 vector of 2 * 32-bit </KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-462887"></A><KBD CLASS="Code">
+V2_16 vector of 2 * 16-bit </KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-462888"></A><KBD CLASS="Code">
+V2_8 vector of 2 * 8-bit </KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-462889"></A><KBD CLASS="Code">
+V3_32 vector of 3 * 32-bit </KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-462890"></A><KBD CLASS="Code">
+V3_16 vector of 3 * 16-bit </KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-462891"></A><KBD CLASS="Code">
+V3_8 vector of 3 * 8-bit </KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-462892"></A><KBD CLASS="Code">
+V4_32 vector of 4 * 32-bit </KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-462893"></A><KBD CLASS="Code">
+V4_16 vector of 4 * 16-bit </KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-462894"></A><KBD CLASS="Code">
+V4_8 vector of 4 * 8-bit </KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-462895"></A><KBD CLASS="Code">
+V4_5 vector of 4 * 5-bit </KBD>
+(actually <KBD CLASS="Code">
+1*1-bit</KBD>
+ and <KBD CLASS="Code">
+3*5-bit</KBD>)</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-462896"></A>The <KBD CLASS="CodeVariant">
+&lt;addr&gt;</KBD>
+ operand is always the address at which to load the data. The final operand is either the name of a binary file containing only data, or an asterisk for the assembler to compute the number of data writes to be performed. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-465045"></A>A <KBD CLASS="Code">
+PackV4_5</KBD>
+ macro will be provided to encode the <KBD CLASS="Code">
+V4_5</KBD>
+ packed data for this instruction. An example of its use is: </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-465060"></A>Examples:</P>
+<PRE CLASS="CodeExample2"><A NAME="pgfId-462906"></A>   Unpack 1, 1, V4_5, loadAddr, * 
+   PackV4_5 1,29,7,12 
+   PackV4_5 0,18,31,4 
+   .EndUnpack
+</PRE>
+<PRE CLASS="CodeExample2"><A NAME="pgfId-465073"></A>   unpack 1, 1, V4_32, loadAddr, &quot;euler.vubin&quot; 
+   unpack 1, 1, V4_32, 0X20, * 
+   .float   0,   -0.7, 0,  0.7 ; Euler angle (sin) 
+   .float   0,   -0.7, 0, -0.7 ; Euler angle (cos) 
+   .float 1.0, 1024.0, 0,    0 ; Transfer vector 
+   .EndUnpack 
+</PRE>
+<PRE CLASS="CodeExample2"><A NAME="pgfId-463675"></A>   unpack 1, 1, V3_8, 0X40, * 
+   .byte 0x00, 0x10, 0x20 
+   .byte 0x30, 0x40, 0x50 
+   .EndUnpack </PRE>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-464217"></A><KBD CLASS="Code">
+vifnop[i]</KBD>
+<A NAME="marker-524365"></A> </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-464218"></A>VIF no-op instruction. </P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-803244"></A><A NAME="marker-803243"></A>DMA tag instructions</H3>
+<P CLASS="Body">
+<A NAME="pgfId-803245"></A>&quot;Source&quot; DMA (from memory) is done by one of eight DMA tags:</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-803247"></A><KBD CLASS="Code">
+DMAcnt</KBD>
+<A NAME="marker-803246"></A> </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803248"></A>Inline data, inline next-tag</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-803250"></A><KBD CLASS="Code">
+DMAnext</KBD>
+<A NAME="marker-803249"></A> </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803251"></A>Inline data, ptr to next-tag</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-803253"></A><KBD CLASS="Code">
+DMAref</KBD>
+<A NAME="marker-803252"></A> </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803254"></A><KBD CLASS="Code">
+ptr</KBD>
+ to data, inline next-tag</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-803256"></A><KBD CLASS="Code">
+DMArefe</KBD>
+<A NAME="marker-803255"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803257"></A><KBD CLASS="Code">
+ptr</KBD>
+ to data, inline next-tag and stop</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-803259"></A><KBD CLASS="Code">
+DMArefs</KBD>
+<A NAME="marker-803258"></A> </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803260"></A><KBD CLASS="Code">
+ptr</KBD>
+ to data, inline next-tag (stall control)</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-803262"></A><KBD CLASS="Code">
+DMAcall</KBD>
+<A NAME="marker-803261"></A> </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803263"></A>Inline data, ptr to next-tag (push <KBD CLASS="Code">
+addr</KBD>
+ of inline tag)</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-803265"></A><KBD CLASS="Code">
+DMAret</KBD>
+<A NAME="marker-803264"></A> </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803266"></A>Inline data, pop next-tag <KBD CLASS="Code">
+addr</KBD>
+</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-803268"></A><KBD CLASS="Code">
+DMAend</KBD>
+<A NAME="marker-803267"></A> </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803269"></A>Inline data and stop</P>
+<P CLASS="Body">
+<A NAME="pgfId-803270"></A>&quot;Destination&quot; DMA (to memory) is not supported.</P>
+<P CLASS="Body">
+<A NAME="pgfId-803271"></A>Each tag supports the following optional bits, enclosed in brackets &quot;[]&quot; as a suffix:</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803272"></A><KBD CLASS="Code">
+0   </KBD>
+D_PCR.PCE=0</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803273"></A><KBD CLASS="Code">
+1   </KBD>
+D_PCR.PCE=1</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803274"></A><KBD CLASS="Code">
+I   </KBD>
+Interrupt request</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-803275"></A><KBD CLASS="Code">
+S   </KBD>
+SPR address (N/A for DMA channels 0, 1, 2)</P>
+<P CLASS="Body">
+<A NAME="pgfId-803276"></A>Most tags have two operands: a quadword count and address. For <KBD CLASS="Code">
+DMAcnt</KBD>
+, <KBD CLASS="Code">
+DMAret</KBD>
+ and <KBD CLASS="Code">
+DMAend</KBD>
+ the second operand is not permitted.</P>
+<P CLASS="Body">
+<A NAME="pgfId-803277"></A>The DMA tags may be coded in one of two forms:</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-803278"></A><KBD CLASS="Code">
+*, DmaData_label</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-803279"></A>The asterisk indicates that the quadword count should be taken from the attributes of the label on a <KBD CLASS="Code">
+DmaData</KBD>
+ macro.</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-803280"></A><KBD CLASS="Code">
+QWcount, address</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-803281"></A>The quadword count is specified along with the address or label of the data block.</P>
+<P CLASS="Body">
+<A NAME="pgfId-803282"></A>Since DMA tags must be 16-byte aligned but are only 8 bytes long, the hardware supports packing two VIF instructions into the unused upper words. 
+By default, the assembler will automatically pack the next two instructions into a DMA tag if they are VIF instructions. This behavior can be disabled by <KBD CLASS="Code">
+.DmaPackVif 0</KBD>
+ or re-enabled with <KBD CLASS="Code">
+.DmaPackVif 1.</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-803283"></A>If the assembler is not filling the unused upper words with subsequent VIF instructions, they will be set to VIF <KBD CLASS="Code">
+NOP</KBD>
+ instructions.</P>
+<P CLASS="Body">
+<A NAME="pgfId-803284"></A>Examples of how to use DMA tags:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-803285"></A>   DMAref[I1] *, data1
+   DMAend  4
+   .word   0, 0, 0, 0
+   .EndDmaData
+   
+   .DmaData data1
+   MPG     *, *
+   NOP     IADDIU  VI01, VI00, 0x00000100
+   NOP     LQI.xyzw VF04, (VI01++) 
+   NOP[d]  LQI.xyzw VF05, (VI01++) 
+   NOP     LQI.xyzw VF06, (VI01++) 
+   NOP     LQI.xyzw VF07, (VI01++) 
+   NOP[e]  NOP
+   NOP     NOP
+   .endmpg
+   .EndDmaData</PRE>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-462743"></A><A NAME="marker-516757"></A>GIF tag instructions</H3>
+<P CLASS="Body">
+<A NAME="pgfId-489345"></A>There are three forms of the GIF tag: <KBD CLASS="Code">
+PACKED</KBD>, <KBD CLASS="Code">
+REGLIST</KBD>
+ and <KBD CLASS="Code">
+IMAGE</KBD>.</P>
+<PRE CLASS="CodeExample2"><A NAME="pgfId-489346"></A>
+   <A NAME="marker-516748"></A>GIFpacked  PRIM=0Xxx, REGS={ rr, rr, ..}, NLOOP=c, EOP
+</PRE>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-489348"></A><KBD CLASS="Code">
+PRIM</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489349"></A>Optional.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489350"></A>The least-significant 11 bits will be transferred to the <KBD CLASS="Code">
+PRIM</KBD>
+ register. The other bits are ignored.</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-489351"></A><KBD CLASS="Code">
+REGS</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489641"></A>Required. </P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489353"></A>One to sixteen instances of the following register names may be specified in any order, combination or repetitions.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489356"></A>The sixteen possible register names and encodings are:</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-815638"></A><KBD CLASS="Code">
+0x0 PRIM</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-815639"></A><KBD CLASS="Code">
+0x1 RGBAQ</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-815640"></A><KBD CLASS="Code">
+0x2 ST</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-815641"></A><KBD CLASS="Code">
+0x3 UV</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-815642"></A><KBD CLASS="Code">
+0x4 XYZF2</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-815643"></A><KBD CLASS="Code">
+0x5 XYZ2</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-815644"></A><KBD CLASS="Code">
+0x6 TEX0_1</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-815645"></A><KBD CLASS="Code">
+0x7 TEX0_2</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-815646"></A><KBD CLASS="Code">
+0x8 CLAMP_1</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-815647"></A><KBD CLASS="Code">
+0x9 CLAMP_2</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-815648"></A><KBD CLASS="Code">
+0xA XYZF</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-815649"></A><KBD CLASS="Code">
+0xB RESERVED</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-815650"></A><KBD CLASS="Code">
+0xC XYZF3</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-815651"></A><KBD CLASS="Code">
+0xD XYZ3</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-815652"></A><KBD CLASS="Code">
+0xE A_D</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-815653"></A><KBD CLASS="Code">
+0xF NOP </KBD>
+(skips a quadword of data)</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-489374"></A><KBD CLASS="Code">
+NLOOP</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489375"></A>Optional. If unspecified, its value is computed from the location of <KBD CLASS="Code">
+.EndGif.</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489376"></A>The least-significant 15 bits are used as an iteration count for the list of registers. The length of the following data must be <KBD CLASS="Code">
+NREG*NLOOP</KBD>
+ quadwords.</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-490881"></A><KBD CLASS="Code">
+EOP</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489378"></A>Optional.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489379"></A>If specified, there is no subsequent primitive in this packet </P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489380"></A>(End-Of-Packet).</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-489744"></A>Notes:</P>
+<OL>
+<OL>
+<LI>
+<A NAME="pgfId-489382"></A>If both <KBD CLASS="Code">
+PRIM</KBD>
+ and <KBD CLASS="Code">
+REGS</KBD>
+ are given, the <KBD CLASS="Code">
+PRIM</KBD>
+ value is transferred first.</LI>
+<LI>
+<A NAME="pgfId-528085"></A>The assembler will produce a warning if the length of the following data is not <KBD CLASS="Code">
+NREG*NLOOP</KBD>
+ 128-bit quadwords.</LI>
+<LI>
+<A NAME="pgfId-528078"></A>The tag and any data must be followed by the pseudo-op <KBD CLASS="Code">
+.EndGif.</KBD>
+</LI>
+</OL>
+</OL>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-489787"></A><KBD CLASS="Code">
+GIFreglist  REGS={ rr, rr, ..}, NLOOP=c, EOP</KBD>
+<A NAME="marker-516749"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-489390"></A><KBD CLASS="Code">
+REGS</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489391"></A>Required.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489392"></A>One to sixteen instances of the following register names may be specified in any order, combination or repetitions.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489395"></A>The sixteen possible register names and encodings are:</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-489396"></A><KBD CLASS="Code">
+0x0 PRIM</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-489397"></A><KBD CLASS="Code">
+0x1 RGBAQ</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-489398"></A><KBD CLASS="Code">
+0x2 ST</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-489399"></A><KBD CLASS="Code">
+0x3 UV</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-489400"></A><KBD CLASS="Code">
+0x4 XYZF2</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-489401"></A><KBD CLASS="Code">
+0x5 XYZ2</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-489402"></A><KBD CLASS="Code">
+0x6 TEX0_1</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-489403"></A><KBD CLASS="Code">
+0x7 TEX0_2</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-489404"></A><KBD CLASS="Code">
+0x8 CLAMP_1</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-489405"></A><KBD CLASS="Code">
+0x9 CLAMP_2</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-489406"></A><KBD CLASS="Code">
+0xA XYZF</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-489407"></A><KBD CLASS="Code">
+0xB RESERVED</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-489408"></A><KBD CLASS="Code">
+0xC XYZF3</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-489409"></A><KBD CLASS="Code">
+0xD XYZ3</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-489410"></A><KBD CLASS="Code">
+0xE A_D</KBD>
+</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-489411"></A><KBD CLASS="Code">
+0xF NOP </KBD>
+(skips 64 bits of data)</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-489414"></A><KBD CLASS="Code">
+NLOOP</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489415"></A>Optional. If unspecified, its value is computed from the location of <KBD CLASS="Code">
+.EndGif.</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489416"></A>The least-significant 15 bits are used as an iteration count for the list of registers.</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-489417"></A><KBD CLASS="Code">
+EOP</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489418"></A>Optional.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489419"></A>If specified, there is no subsequent primitive in this packet </P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489420"></A>(End-Of-Packet).</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-489421"></A>Notes:</P>
+<OL>
+<OL>
+<LI>
+<A NAME="pgfId-489422"></A>The length of subsequent data must be <KBD CLASS="Code">
+NREG*NLOOP</KBD>
+ 64-bit words.</LI>
+<LI>
+<A NAME="pgfId-489423"></A>The data is contained in quadwords. If the number of 64-bit words is odd, the most-significant 64-bits of the last quadword are ignored.</LI>
+<LI>
+<A NAME="pgfId-489424"></A>The data must be followed by the pseudo-op <KBD CLASS="Code">
+.EndGif.</KBD>
+</LI>
+</OL>
+</OL>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-489426"></A><KBD CLASS="Code">
+GIFimage  NLOOP=c, EOP</KBD>
+<A NAME="marker-516750"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-489429"></A><KBD CLASS="Code">
+NLOOP</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489430"></A>Optional. If unspecified, its value is computed from the location of <KBD CLASS="Code">
+.EndGif.</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489431"></A>The least-significant 15 bits are used as an count of the number of data values to be transferred to <KBD CLASS="Code">
+HWREG (0x54).</KBD>
+</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-489432"></A><KBD CLASS="Code">
+EOP</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489433"></A>Optional.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489434"></A>If specified, there is no subsequent primitive in this packet</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-489435"></A>(End-Of-Packet).</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-489436"></A>Notes:</P>
+<OL>
+<OL>
+<LI>
+<A NAME="pgfId-489437"></A>The length of subsequent data must be <KBD CLASS="Code">
+NLOOP</KBD>
+ 128-bit quadwords.</LI>
+<LI>
+<A NAME="pgfId-490139"></A>The data must be followed by the pseudo-op <KBD CLASS="Code">
+.EndGif.</KBD>
+</LI>
+</OL>
+</OL>
+<HR ALIGN="center">
+<TABLE CLASS="ECOS" WIDTH="100%" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">Emotion Engine Tools User's Guide</P>
+</TH></TR>
+<TR><TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEcontents.html">
+contents</A></P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="Assembler.html">
+previous&nbsp;page</A></P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="Linker.html">
+next&nbsp;page</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

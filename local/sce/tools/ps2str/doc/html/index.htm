@@ -1,0 +1,120 @@
+<html>
+
+<head>
+<title>ps2str stream converter tool</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+</head>
+
+<body>
+
+<h1>ps2str stream converter tool</h1>    
+<hr>    
+<h2>Purpose</h2>    
+<p> Convert various media files to files used by the PlayStation 2.</p>    
+<p> </p>    
+<h2>Function</h2>    
+<ol>    
+  <li>Convert from MPEG video to IPU video</li>    
+  <li>Perform ADPCM compression and format conversion for uncompressed audio data</li>    
+  <li>Multiplex multiple elementary streams of video, audio, data, etc.</li>    
+  <li>Demultiplex multiplexed streams</li>    
+  <li>Display attributes of input data</li>    
+</ol>    
+<p> </p>    
+<h2>command line format</h2>    
+<h3>General format</h3>    
+<p>&nbsp;&nbsp;&nbsp; ps2str [command] [options] [target file]</p>    
+<p> </p>
+<h4>command section</h4>    
+<p> Specify the feature to be used. Abbreviations can be used.</p>   
+<p> </p>   
+<h4>options section</h4>    
+<p> The options for the different features will be described.</p>    
+<p> Available options vary according to feature.</p>    
+<p> </p>    
+<h4>target file section</h4>    
+<p> Specify the target file.</p>    
+<p> </p>    
+<p> Keywords are case sensitive.</p>   
+<p> The command  
+section should be placed at the start of the command line parameters.</p>  
+<p> </p>  
+<h4>Example:</h4>  
+<p>&nbsp;&nbsp;&nbsp; ps2str demux -video test_stream.pss</p>    
+<p> </p>
+<h3>Command</h3>
+<p>The following features can be used.</p>
+<p> </p>
+<table border="1">
+  <tr>
+    <td>Command name</td>
+    <td>Abbreviated form</td>
+    <td>Function</td>
+  </tr>
+  <tr>
+    <td><a href="convert_cmd.htm">convert</a></td>
+    <td>c</td>
+    <td>Convert from MPEG video to IPU video</td>    
+  </tr>    
+  <tr>    
+    <td><a href="encode_cmd.htm">encode</a></td>    
+    <td>e</td>    
+    <td>Perform ADPCM compression and
+      format conversion of uncompressed audio data</td>    
+  </tr>    
+  <tr>    
+    <td><a href="mux_cmd.htm">mux</a></td>   
+    <td>m</td>   
+    <td>Multiplex multiple elementary streams such as video, audio, data</td>   
+  </tr>   
+  <tr>   
+    <td><a href="demux_cmd.htm">demux</a></td>   
+    <td>d</td>   
+    <td>Demultiplex multiplexed stream</td>   
+  </tr>   
+  <tr>   
+    <td><a href="info_cmd.htm">info</a></td>   
+    <td>i</td>   
+    <td>Display attributes of input data</td>   
+  </tr>   
+  <tr>   
+    <td><a href="help_cmd.htm">help</a></td>   
+    <td>h</td>   
+    <td>Help</td>   
+  </tr>   
+</table>   
+<p> </p>   
+<hr> 
+<h2>GUI version</h2>  
+<p> GUI operation is provided by running ps2str with no command line
+parameters or by directly running ps2strw.exe.</p>  
+<p><b> (Feature available only in Windows version)</b></p>  
+<p> </p>   
+<h2>Main window</h2>   
+<p><img border="0" src="image/ipu_conv.gif" width="467" height="373"></p> 
+<p> A window is provided for each function, and windows are selected using the tab controls at the top.</p> 
+<p> </p> 
+<p> <a href="ipu_convert_gui.htm">IPU Convert</a></p>  
+<p> <a href="vag_encode_gui.htm">SPU Encode</a></p>  
+<p> <a href="mux_gui.htm">Mux</a></p>
+<p> <a href="demux_gui.htm">Demux</a></p>
+<p> <a href="info_gui.htm">Info</a></p>
+<p> </p>  
+<p> </p>  
+<p><strong>[EOF]</strong></p>  
+<p>Last update:<!--webbot bot="Timestamp" startspan S-Type="EDITED"  
+S-Format="%Y/%m/%d" -->1999/09/27<!--webbot bot="Timestamp" i-CheckSum="12959"  
+endspan -->  
+</p>  
+<HR>
+<DIV ALIGN="right">
+<ADDRESS>
+    SCEI CONFIDENTIAL
+    <BR>Copyright (c) 1999 Sony Computer Entertainment Inc.  All Rights Reserved.</BR>
+</ADDRESS>
+</DIV>  
+</body>  
+  
+</html>  

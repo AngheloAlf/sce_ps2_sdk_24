@@ -1,0 +1,129 @@
+[SCEI CONFIDENTIAL DOCUMENT]
+PlayStation 2 Programmer Tool Runtime Library Release 2.4
+   Copyright (C) 2001 by Sony Computer Entertainment Inc.
+                                      All Rights Reserved
+					        Sep. 2001
+---------------------------------------------------------
+Document Directory Structure
+---------------------------------------------------------
+- Note that the following files are available only in 
+  the formats below.
+  
+   Files released in TEXT format only
+      text/ee/libref/librspu2.txt
+      text/iop/libref/libspu2.txt
+
+
+- An asterisk (*) indicates either a new document or a composite document that contains one or more new docs.
+
+doc
+|--doclst.txt
+|--deci2
+|   |--d2_rf.pdf		DECI2 Library Reference
+|   |--dbgp.pdf			DBGP Debug Protocol
+|   |--dcmp.pdf			DCMP
+|   |--deci2.pdf		DECI2 (Host-Target Communications
+|   |			        Environment)
+|   |--drfp.pdf			DRFP (DECI2 Remote File Protocol)
+|   |--ee_dbgp.pdf     		DBGP (EE thread expansion)
+|   |--iloadp.pdf		ILOADP (DECI2 IOP Load Protocol)
+|   |--libd2.pdf		DECI2 Library Overview
+|   |--netmp.pdf		NETMP
+|   +--ttyp.pdf			TTYP
+|--ee
+|   |--libref
+|   |   |--device
+|   |   |     +--PS2_EELibRef_Device_24.pdf (*)
+|   |   |--graphics
+|   |   |     +--PS2_EELibRef_Graphics_24.pdf 
+|   |   |--inet
+|   |   |     +--PS2_EELibRef_Inet_24.pdf (*)
+|   |   |--kernel
+|   |   |     +--PS2_EELibRef_Kernel_24.pdf 
+|   |   |--movie
+|   |   |     +--PS2_EELibRef_Movie_24.pdf 
+|   |   |--other
+|   |   |     +--PS2_EELibRef_Other_24.pdf 
+|   |   |--sif
+|   |   |     +--PS2_EELibRef_Sif_24.pdf 
+|   |   +--sound
+|   |         +--PS2_EELibRef_Sound_24.pdf (*)
+|   +--overview
+|       |--device
+|       |     +--PS2_EEOvr_Device_24.pdf (*)
+|       |--graphics
+|       |     +--PS2_EEOvr_Graphics_24.pdf 
+|       |--inet
+|       |     +--PS2_EEOvr_Inet_24.pdf (*)
+|       |--kernel
+|       |     +--PS2_EEOvr_Kernel_24.pdf 
+|       |--movie
+|       |     +--PS2_EEOvr_Movie_24.pdf 
+|	|--other
+|       |     +--PS2_EEOvr_Other_24.pdf 
+|       |--sif
+|       |     +--PS2_EEOvr_Sif_24.pdf 
+|       +--sound
+|             +--PS2_EEOvr_Sound_24.pdf (*)
+|--format
+|   |--gformat.pdf	Graphic Format
+|   |--hmd.pdf		Hmd Format
+|   |--mvformat.pdf	Stream Format
+|   +--sformat.pdf	Sound Format
+|--general (EE/IOP Common Documents)
+|   |   |--setup.pdf			Setup Guide
+|   |   |--setapp_r.pdf			Guideline for Network Configuration
+|   |   |--hdd_rule.pdf	(*)		Hard Disk Drive Operation Rule
+|   |   |--syshard.pdf			System Overview Hardware
+|   |   |				Architecture
+|   |   |--syssoft.pdf			System Overview Software
+|   |	|				Architecture
+|   |   +--systool.pdf (*)		Development Tool Overview
+|--iop
+|   |--libref
+|   |   |--device
+|   |   |     +--PS2_IOPLibRef_Device_24.pdf 
+|   |   |--inet
+|   |   |     +--PS2_IOPLibRef_Inet_24.pdf 
+|   |   |--kernel
+|   |   |     +--PS2_IOPLibRef_Kernel_24.pdf (*)
+|   |   |--netcnf
+|   |   |     +--PS2_IOPLibRef_Netcnf_24.pdf 
+|   |   |--sif
+|   |   |     +--PS2_IOPLibRef_Sif_24.pdf 
+|   |   +--sound
+|   |         +--PS2_IOPLibRef_Sound_24.pdf 
+|   +--overview
+|       |--device
+|       |     +--PS2_IOPOvr_Device_24.pdf 
+|	|--inet
+|       |     +--PS2_IOPOvr_Inet_24.pdf 
+|	|--kernel
+|       |     +--PS2_IOPOvr_Kernel_24.pdf 
+|       |--netcnf
+|       |     +--PS2_IOPOvr_Netcnf_24.pdf 
+|	+--sound
+|            +--PS2_IOPOvr_Sound_24.pdf
+|--pdadoc
+|   |--pda
+|   |   |--fat.pdf
+|   |   |--pda.pdf
+|   |   +--pdakernel.pdf
+|   +--arm
+|       +--armref.pdf
+|--tips
+|   |--analog.pdf		Analog button features overview
+|   |--anti.pdf 		Anti-aliasing for improving image quality
+|   |--gsknhow.pdf		Know-how for speeding up GS drawing
+|   |--movtips.pdf	 (*)	Creation and Playback of animation 
+|   |--progtips.pdf	 (*)	Programming Tips
+|   +--usbkb.pdf		USB keyboard layout
++--tool
+    |--diskboot.pdf		Disk Activation with DTL-T10000
+    |--dsnet.pdf		DSNET Overview
+    |--dsnet_rf.pdf		dsedb/dsidb Command Reference
+    |--ee_util.pdf	 (*)	EE programming tool
+    |--iop_util.pdf	   	Compiling IOP Programs
+    +--thmon.pdf		Simple Thread Monitor
+
+

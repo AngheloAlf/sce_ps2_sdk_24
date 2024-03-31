@@ -1,0 +1,1864 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE> Emotion Engine Tools User's Guide</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="ECOS" WIDTH="100%" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR>
+<TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">
+Emotion Engine Tools User's Guide</P>
+</TH></TR>
+<TR><TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEcontents.html">
+contents</A>
+</P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEreference.html">
+previous&nbsp;page</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="ABI.html">
+next&nbsp;page</A></P>
+</TD>
+</TR></TABLE>
+<HR ALIGN="center">
+</DIV>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-525020"></A><A NAME="marker-525018"></A><A NAME="32057"></A>Compiler</H2>
+<P CLASS="Body">
+<A NAME="pgfId-525021"></A>This section describes Emotion Engine-specific features of the GNUPro Compiler.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-539582"></A>Emotion Engine-specific command-line options</H3>
+<P CLASS="Body">
+<A NAME="pgfId-465449"></A>For a list of available generic compiler options, refer to &quot;GNU CC Command Options&quot; in <EM CLASS="Emphasis">
+Using GNU CC</EM>
+ in<STRONG CLASS="BoldEmphasis">
+ GNUPro Compiler Tools.</STRONG>
+ The defaults for the following Emotion Engine-specific command-line options have changed:</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-465450"></A><KBD CLASS="Code">
+-mhard-float</KBD>
+<A NAME="marker-515562"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-501271"></A>This option is on by default. It causes the compiler to generate output containing floating point instructions.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-508337"></A>To turn this option off, specify <KBD CLASS="Code">
+-msoft-float</KBD>
+<A NAME="marker-515563"></A>. This causes the compiler to generate output containing library calls for floating point operations. </P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-508346"></A><KBD CLASS="Code">
+-msingle-float</KBD>
+<A NAME="marker-515564"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-525208"></A>This option is on by default. It tells GCC to assume that the floating point co-processor only supports single precision operations. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-525210"></A>To turn this option off, specify <KBD CLASS="Code">
+-mdouble-float</KBD>
+<A NAME="marker-525209"></A>. This permits GCC to use double precision operations. </P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-465452"></A><KBD CLASS="Code">
+-EL</KBD>
+<A NAME="marker-515566"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-465453"></A>This option is on by default. Compiles code for the processor in little endian mode.</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-525329"></A><KBD CLASS="Code">
+-G </KBD>
+<A NAME="marker-525355"></A><KBD CLASS="CodeVariant">
+num</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-525420"></A>Puts global and static items less than or equal to <KBD CLASS="CodeVariant">
+num </KBD>
+bytes into the <KBD CLASS="Code">
+small data</KBD>
+ or <KBD CLASS="Code">
+bss </KBD>
+section, instead of the <KBD CLASS="Code">
+normal data</KBD>
+ or <KBD CLASS="Code">
+bss</KBD>
+ section. This allows the assembler to emit one word memory reference instructions based 
+on the global pointer (<KBD CLASS="Code">gp</KBD> or <KBD CLASS="Code"> $28</KBD>), instead of the normal two words used. By default, <KBD CLASS="CodeVariant">
+num</KBD>
+  is set at 8 bytes. The <KBD CLASS="Code">
+-G </KBD>
+<KBD CLASS="CodeVariant">
+num </KBD>
+switch is also passed to the assembler and linker. All modules should be compiled with the same <KBD CLASS="Code">
+-G </KBD>
+<KBD CLASS="CodeVariant">
+num</KBD>
+<KBD CLASS="Code">
+ </KBD>
+value.</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-533257"></A><KBD CLASS="Code">
+-fno-edge-lcm</KBD>
+<A NAME="marker-545493"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-533280"></A>Turns off all the new optimization work added for the flow graph edge based global common sub-expression elimination (gcse) load motion and store motion.</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-533259"></A><KBD CLASS="Code">
+-fno-edge-lm</KBD>
+<A NAME="marker-545494"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-533287"></A>Turns off just the new load motion work, but still performs the edge based gcse optimization.</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-533261"></A><KBD CLASS="Code">
+-fno-edge-sm</KBD>
+<A NAME="marker-545495"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-533294"></A>Turns off just the new store motion work, but still performs the edge based gcse optimization.</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-545454"></A><KBD CLASS="Code">
+-mhandle-ee-div-pipeline-bug</KBD>
+<A NAME="marker-545496"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-556648"></A>This option is on by default.  It ensures that the compiler will not place a <KBD CLASS="Code">
+div.s,</KBD>
+  <KBD CLASS="Code">
+sqrt.s</KBD>
+ or <KBD CLASS="Code">
+rsqrt.s</KBD>
+ instruction in the following places:</P>
+<UL>
+<LI>
+<A NAME="pgfId-556808"></A>in the delay-slot of a branch instruction</LI>
+<LI>
+<A NAME="pgfId-556811"></A>within two instructions after the delay-slot of branch instruction, or</LI>
+<LI>
+<A NAME="pgfId-556815"></A>within two instructions after a branch target address.</LI>
+</UL>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-556613"></A><KBD CLASS="Code">
+-ftrapv</KBD>
+<A NAME="marker-545497"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-545462"></A>Raise exceptions on signed overflow for addition, subtraction and multiplication operations.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-556869"></A><KBD CLASS="Code">
+-fsingle-precision-constant</KBD>
+<A NAME="marker-556883"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-556870"></A>This option tells the compiler to treat floating point constants as single precision constants instead of implicitly converting them to double precision constants.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-556833"></A><KBD CLASS="Code">
+--target-help</KBD>
+<A NAME="marker-556853"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-556848"></A>When gcc is invoked with this option, it prints a description of target-specific command line options for each tool to the standard output.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-525422"></A><A NAME="marker-525421"></A>Preprocessor symbols</H3>
+<P CLASS="Body">
+<A NAME="pgfId-465455"></A>The compiler supports the following preprocessor symbols:</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-465456"></A><KBD CLASS="Code">
+__mips__</KBD>
+<A NAME="marker-524468"></A></P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-465457"></A><KBD CLASS="Code">
+__ee__</KBD>
+<A NAME="marker-524469"></A></P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-465458"></A><KBD CLASS="Code">
+__MIPSEL__</KBD>
+<A NAME="marker-524470"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-465459"></A>Each of these is always defined.</P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-465460"></A><KBD CLASS="Code">
+__mips_single_float</KBD>
+<A NAME="marker-515567"></A></P>
+<P CLASS="BodyHang1List">
+<A NAME="pgfId-465461"></A><KBD CLASS="Code">
+__mips_soft_float</KBD>
+<A NAME="marker-515568"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-508310"></A>One of these will be defined depending on the floating point compilation mode. The default is <KBD CLASS="Code">
+__mips_single_float.</KBD>
+</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-465463"></A>Emotion Engine-specific attributes</H3>
+<P CLASS="Body">
+<A NAME="pgfId-540097"></A>There are no Emotion Engine-specific attributes. See &quot;Declaring Attributes of Functions&quot; and &quot;Specifying Attributes of Variables&quot; in &quot;Extensions to the C Language Family&quot; in <EM CLASS="Emphasis">
+Using GNU CC</EM>
+ in <STRONG CLASS="BoldEmphasis">
+GNUPro Compiler Tools</STRONG>
+ for more information.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-540099"></A>Rules for Inlining Functions <KBD CLASS="Code">
+</KBD>
+<A NAME="marker-540098"></A></H3>
+<P CLASS="Body">
+<A NAME="pgfId-540100"></A>Functions are categorized into three basic types: </P>
+<UL>
+<LI>
+<A NAME="pgfId-539926"></A>leaf functions</LI>
+<LI>
+<A NAME="pgfId-539927"></A>non-recursive functions</LI>
+<LI>
+<A NAME="pgfId-539930"></A>recursive functions. </LI>
+</UL>
+<P CLASS="Body">
+<A NAME="pgfId-540104"></A>A leaf function does not call other functions. Generally, you invoke leaf functions as normal calls. </P>
+<P CLASS="Body">
+<A NAME="pgfId-540107"></A>A non-recursive function contains one or more calls to other functions. At the end of the execution of these called functions, control returns to the calling function. A call to another non-recursive function made anywhere other than at the end of the function is known as a sibling call. A call made at the end of the function is known as a tail call.</P>
+<P CLASS="Body">
+<A NAME="pgfId-540112"></A>Recursive functions call themselves. Some recursive functions are tail-recursive, which means that they have certain properties that allow recursive calls to be transformed into a loop.</P>
+<P CLASS="Body">
+<A NAME="pgfId-540116"></A>Leaf functions, non-recursive functions, and tail-recursive functions can be inlined. </P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-545444"></A>Declaring a Function Inline<A NAME="marker-545445"></A></H4>
+<P CLASS="Body">
+<A NAME="pgfId-540119"></A>Declaring a function inline means integrating that function's code into the code for its caller. This makes execution faster by eliminating the function-call overhead. In addition, if any of the actual argument values are constant, their known values may permit simplifications at compile time so that not all of the inline function's code needs to be included.</P>
+<P CLASS="Body">
+<A NAME="pgfId-540126"></A>The effect of inlining on code size is less predictable; object code may be larger or smaller with function inlining, depending on the particular case. Inlining of functions is an optimization and it really works only in optimizing compilation. To permit functions to be inlined, you must use the <KBD CLASS="Code">
+-O</KBD>
+ command line option.</P>
+<P CLASS="Body">
+<A NAME="pgfId-540151"></A>To declare a function inline, use the inline keyword in its declaration, such as in the following example:</P>
+<PRE CLASS="CodeExample2"><A NAME="pgfId-556697"></A>&nbsp;</PRE>
+<PRE CLASS="CodeExample2"><A NAME="pgfId-556698"></A>   inline int
+   inc (int *a)
+   {
+      (*a)++;
+   }
+</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-539693"></A>For ANSI C programs, use the <KBD CLASS="Code">
+__inline__</KBD>
+ keyword instead of the <KBD CLASS="Code">
+inline</KBD>
+ keyword.</P>
+<P CLASS="Body">
+<A NAME="pgfId-556748"></A>You can also make all simple enough functions inline with the <KBD CLASS="Code">
+-finline-functions</KBD>
+ option. If compiled with <KBD CLASS="Code">
+-finline-functions,</KBD>
+ the compiler makes decisions based on the size of the function and the registers used to inline a function, even if the function is not declared explicitly.</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-556710"></A>Note:</H3>
+<P CLASS="Note">
+<A NAME="pgfId-556711"></A>In C and Objective C, unlike C++, the inline keyword does not affect the linkage of the function.</P>
+<P CLASS="Body">
+<A NAME="pgfId-556703"></A>GNU CC automatically inlines member functions defined within the class body of C++ programs, even if they are not explicitly declared inline. (You can override this with the <KBD CLASS="Code">
+-fno-default-inline</KBD>
+ option.)</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-545451"></A>Using Inline Functions</H4>
+<P CLASS="Body">
+<A NAME="pgfId-540214"></A>When a function is both inline and static, if all calls to the function are integrated into the caller and the function's address is 
+never used, then the function's own assembler code is never referenced. In this case, GNU CC does not actually output assembler code for the function, unless you specify the <KBD CLASS="Code">
+-fkeep-inline-functions</KBD>
+ option. Some calls cannot be integrated for various reasons. 
+In particular, calls that precede the function's definition cannot be integrated, and neither can recursive calls within the definition. 
+If there is a nonintegrated call, then the function is compiled to assembler code as usual. The function must also be compiled as usual if the program refers to its address, because that cannot be inlined.</P>
+<P CLASS="Body">
+<A NAME="pgfId-540232"></A>When an inline function is not static, the compiler must assume that there may be calls from other source files. Since a global symbol can be defined only once in any program, the function must not be defined in the other source files, so the calls therein cannot be integrated. Therefore, a non-static inline function is always compiled on its own in the usual fashion.</P>
+<P CLASS="Body">
+<A NAME="pgfId-540240"></A>If you specify both inline and extern in the function definition, then the definition is used only for inlining. In no case is the function compiled on its own, not even if you refer to its address explicitly. Such an address becomes an external reference, as if you had only declared the function, and had not defined it.</P>
+<P CLASS="Body">
+<A NAME="pgfId-540249"></A>This combination of inline and extern has almost the effect of a macro. The way to use it is to put a function definition in a header file with these keywords, and put another copy of the definition (lacking inline and extern) in a library file. The definition in the header file will cause most calls to the function to be inlined. If any uses of the function remain, they will refer to the single copy in the library.</P>
+<P CLASS="Body">
+<A NAME="pgfId-539731"></A>You cannot inline functions that:</P>
+<UL>
+<LI>
+<A NAME="pgfId-540362"></A>are too big</LI>
+<LI>
+<A NAME="pgfId-540363"></A>have variable arguments</LI>
+<LI>
+<A NAME="pgfId-540387"></A>have nested functions</LI>
+<LI>
+<A NAME="pgfId-540388"></A>have a nested function that jumps to a non-local label</LI>
+<LI>
+<A NAME="pgfId-540389"></A>have label addresses used in initializers </LI>
+<LI>
+<A NAME="pgfId-540390"></A>have a transparant union type parameter </LI>
+<LI>
+<A NAME="pgfId-540368"></A>have a nonlocal goto  </LI>
+<LI>
+<A NAME="pgfId-540369"></A>have complex parameters</LI>
+<LI>
+<A NAME="pgfId-540370"></A>contain computed jumps</LI>
+<LI>
+<A NAME="pgfId-540371"></A>contain alloca and/or setjmp</LI>
+<LI>
+<A NAME="pgfId-539760"></A>return variable size parameters.</LI>
+</UL>
+<P CLASS="Body">
+<A NAME="pgfId-540408"></A>Even if the function is not explicitly inlined, the compiler inlines functions under the following circumstances only if invoked with <KBD CLASS="Code">
+-O3</KBD>
+ command line option:</P>
+<UL>
+<LI>
+<A NAME="pgfId-539765"></A>if the called function has just one call.</LI>
+<LI>
+<A NAME="pgfId-539767"></A>if the size of function body is smaller than the size of the function call.</LI>
+</UL>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-545500"></A>SIMD Built-in Functions<A NAME="marker-546862"></A></H3>
+<P CLASS="Body">
+<A NAME="pgfId-556791"></A>A set of built-in functions has been implemented in order to provide access to the SIMD instruction set of the Emotion Engine. There is one built-in function for each SIMD instruction. We have provided two headers to help you work with the built-in functions. The files are called <KBD CLASS="Code">
+mmintrin.h</KBD>
+ and <KBD CLASS="Code">
+mmutils.h. </KBD>
+Both files are located in the <KBD CLASS="CodeVariant">
+&lt;install&gt;</KBD>
+<KBD CLASS="Code">
+/lib/gcc-lib/ee/</KBD>
+<KBD CLASS="CodeVariant">
+&lt;release&gt;</KBD>
+<KBD CLASS="Code">
+/include</KBD>
+ directory, where <KBD CLASS="CodeVariant">
+&lt;install&gt;</KBD>
+ is the diretory in which you installed your files, and <KBD CLASS="CodeVariant">
+&lt;release&gt;</KBD>
+ is the name of the release that you are using. </P>
+<P CLASS="Body">
+<A NAME="pgfId-556792"></A>The <KBD CLASS="Code">
+mmintrin.h</KBD>
+ header file contains the definitions of built-in functions and the data types they operate on. These are the built-in functions that we have included: </P>
+<TABLE BORDER="1">
+<CAPTION>
+<P CLASS="TableTitle">
+<A NAME="pgfId-550813"></A>SIMD Built-in Functions</P>
+</CAPTION>
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-550817"></A><B CLASS="Bold">
+Function Name</B>
+</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-550819"></A><B CLASS="Bold">
+Macro</B>
+</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550821"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_pabsh (__v8hi A)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550823"></A><KBD CLASS="CodeSmall">
+#define _pabsh(A)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550825"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_pabsw (__v4si A)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550827"></A><KBD CLASS="CodeSmall">
+#define _pabsw(A)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550829"></A><KBD CLASS="CodeSmall">
+__v16qi __builtin_mips5900_paddb (__v16qi A, __v16qi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550831"></A><KBD CLASS="CodeSmall">
+#define _paddb(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550833"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_paddh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550835"></A><KBD CLASS="CodeSmall">
+#define _paddh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550837"></A><KBD CLASS="CodeSmall">
+__v16qi __builtin_mips5900_paddsb (__v16qi A, __v16qi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550839"></A><KBD CLASS="CodeSmall">
+#define _paddsb(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550841"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_paddsh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550843"></A><KBD CLASS="CodeSmall">
+#define _paddsh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550845"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_paddsw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550847"></A><KBD CLASS="CodeSmall">
+#define _paddsw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550849"></A><KBD CLASS="CodeSmall">
+__v16qi __builtin_mips5900_paddub (__v16qi A, __v16qi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550851"></A><KBD CLASS="CodeSmall">
+#define _paddub(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550853"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_padduh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550855"></A><KBD CLASS="CodeSmall">
+#define _padduh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550857"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_padduw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550859"></A><KBD CLASS="CodeSmall">
+#define _padduw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550861"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_paddw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550863"></A><KBD CLASS="CodeSmall">
+#define _paddw(A,B) </KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550865"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_padsbh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550867"></A><KBD CLASS="CodeSmall">
+#define _padsbh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550869"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_pand (__v2di A, __v2di B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550871"></A><KBD CLASS="CodeSmall">
+#define _pand(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550873"></A><KBD CLASS="CodeSmall">
+__v16qi __builtin_mips5900_pceqb (__v16qi A, __v16qi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550875"></A><KBD CLASS="CodeSmall">
+#define _pceqb(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550877"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_pceqh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550879"></A><KBD CLASS="CodeSmall">
+#define _pceqh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550881"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_pceqw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550883"></A><KBD CLASS="CodeSmall">
+#define _pceqw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550885"></A><KBD CLASS="CodeSmall">
+__v16qi __builtin_mips5900_pcgtb (__v16qi A, __v16qi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550887"></A><KBD CLASS="CodeSmall">
+#define _pcgtb(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550889"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_pcgth (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550891"></A><KBD CLASS="CodeSmall">
+#define _pcgth(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550893"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_pcgtw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550895"></A><KBD CLASS="CodeSmall">
+#define _pcgtw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550897"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_pcpyh (__v8hi A)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550899"></A><KBD CLASS="CodeSmall">
+#define _pcpyh(A)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550901"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_pcpyld (__v2di A, __v2di B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550903"></A><KBD CLASS="CodeSmall">
+#define _pcpyld(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550905"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_pcpyud (__v2di A, __v2di B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550907"></A><KBD CLASS="CodeSmall">
+#define _pcpyud(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550909"></A><KBD CLASS="CodeSmall">
+void    __builtin_mips5900_pdivbw (__v4si A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550911"></A><KBD CLASS="CodeSmall">
+#define _pdivbw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550913"></A><KBD CLASS="CodeSmall">
+void    __builtin_mips5900_pdivuw (__v2di A, __v2di B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550915"></A><KBD CLASS="CodeSmall">
+#define _pdivuw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550917"></A><KBD CLASS="CodeSmall">
+void    __builtin_mips5900_pdivw (__v2di A, __v2di B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550919"></A><KBD CLASS="CodeSmall">
+#define _pdivw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550921"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_phmadh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550923"></A><KBD CLASS="CodeSmall">
+#define _phmadh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550925"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_phmsbh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550927"></A><KBD CLASS="CodeSmall">
+#define _phmsbh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550929"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_pmaddh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550931"></A><KBD CLASS="CodeSmall">
+#define _pmaddh(A,B) </KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550933"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_pmadduw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550935"></A><KBD CLASS="CodeSmall">
+#define _pmadduw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550937"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_pmaddw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550939"></A><KBD CLASS="CodeSmall">
+#define _pmaddw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550941"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_pmsubh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550943"></A><KBD CLASS="CodeSmall">
+#define _pmsubh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550945"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_pmsubw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550947"></A><KBD CLASS="CodeSmall">
+#define _pmsubw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550949"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_pmulth (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550951"></A><KBD CLASS="CodeSmall">
+#define _pmulth(A,B) </KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550953"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_pmultuw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550955"></A><KBD CLASS="CodeSmall">
+#define _pmultuw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550957"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_pmultw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550959"></A><KBD CLASS="CodeSmall">
+#define _pmultw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550961"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_pexch (__v8hi A)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550963"></A><KBD CLASS="CodeSmall">
+#define _pexch(A)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550965"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_pexcw (__v4si A)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550967"></A><KBD CLASS="CodeSmall">
+#define _pexcw(A)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550969"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_pexeh (__v8hi A)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550971"></A><KBD CLASS="CodeSmall">
+#define _pexeh(A)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550973"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_pexew (__v4si A)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550975"></A><KBD CLASS="CodeSmall">
+#define _pexew(A) </KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550977"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_pext5 (__v8hi A)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550979"></A><KBD CLASS="CodeSmall">
+#define _pext5(A)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550981"></A><KBD CLASS="CodeSmall">
+__v16qi __builtin_mips5900_pextlb (__v16qi A, __v16qi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550983"></A><KBD CLASS="CodeSmall">
+#define _pextlb(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550985"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_pextlh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550987"></A><KBD CLASS="CodeSmall">
+#define _pextlh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550989"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_pextlw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550991"></A><KBD CLASS="CodeSmall">
+#define _pextlw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550993"></A><KBD CLASS="CodeSmall">
+__v16qi __builtin_mips5900_pextub (__v16qi A, __v16qi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550995"></A><KBD CLASS="CodeSmall">
+#define _pextub(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-550997"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_pextuh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-550999"></A><KBD CLASS="CodeSmall">
+#define _pextuh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551001"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_pextuw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551003"></A><KBD CLASS="CodeSmall">
+#define _pextuw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551005"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_pinth (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551007"></A><KBD CLASS="CodeSmall">
+#define _pinth(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551009"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_pinteh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551011"></A><KBD CLASS="CodeSmall">
+#define _pinteh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551013"></A><KBD CLASS="CodeSmall">
+__v2si  __builtin_mips5900_plzcw (__v2si A)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551015"></A><KBD CLASS="CodeSmall">
+#define _plzcw(A)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551017"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_pmaxh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551019"></A><KBD CLASS="CodeSmall">
+#define _pmaxh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551021"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_pmaxw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551023"></A><KBD CLASS="CodeSmall">
+#define _pmaxw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551025"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_pminh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551027"></A><KBD CLASS="CodeSmall">
+#define _pminh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551029"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_pminw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551031"></A><KBD CLASS="CodeSmall">
+#define _pminw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551033"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_pnor (__v2di A, __v2di B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551035"></A><KBD CLASS="CodeSmall">
+#define _pnor(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551037"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_por (__v2di A, __v2di B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551039"></A><KBD CLASS="CodeSmall">
+#define _por(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551041"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_ppac5 (__v4si A)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551043"></A><KBD CLASS="CodeSmall">
+#define _ppac5(A)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551045"></A><KBD CLASS="CodeSmall">
+__v16qi __builtin_mips5900_ppacb (__v16qi A, __v16qi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551047"></A><KBD CLASS="CodeSmall">
+#define _ppacb(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551049"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_ppach (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551051"></A><KBD CLASS="CodeSmall">
+#define _ppach(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551053"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_ppacw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551055"></A><KBD CLASS="CodeSmall">
+#define _ppacw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551057"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_prevh (__v8hi A)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551059"></A><KBD CLASS="CodeSmall">
+#define _prevh(A)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551061"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_prot3w (__v4si A)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551063"></A><KBD CLASS="CodeSmall">
+#define _prot3w(A)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551065"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_psllh (__v8hi A, int B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551067"></A><KBD CLASS="CodeSmall">
+#define _psllh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551069"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_psllvw (__v2di A, __v2di B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551071"></A><KBD CLASS="CodeSmall">
+#define _psllvw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551073"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_psllw (__v4si A, int B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551075"></A><KBD CLASS="CodeSmall">
+#define _psllw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551077"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_psrah (__v8hi A, int B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551079"></A><KBD CLASS="CodeSmall">
+#define _psrah(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551081"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_psravw (__v2di A, __v2di B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551083"></A><KBD CLASS="CodeSmall">
+#define _psravw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551085"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_psraw (__v4si A, int B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551087"></A><KBD CLASS="CodeSmall">
+#define _psraw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551089"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_psrlh (__v8hi A, int B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551091"></A><KBD CLASS="CodeSmall">
+#define _psrlh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551093"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_psrlvw (__v2di A, __v2di B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551095"></A><KBD CLASS="CodeSmall">
+#define _psrlvw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551097"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_psrlw (__v4si A, int B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551099"></A><KBD CLASS="CodeSmall">
+#define _psrlw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551101"></A><KBD CLASS="CodeSmall">
+__v16qi __builtin_mips5900_psubb (__v16qi A, __v16qi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551103"></A><KBD CLASS="CodeSmall">
+#define _psubb(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551105"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_psubh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551107"></A><KBD CLASS="CodeSmall">
+#define _psubh(A,B) </KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551109"></A><KBD CLASS="CodeSmall">
+__v16qi __builtin_mips5900_psubsb (__v16qi A, __v16qi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551111"></A><KBD CLASS="CodeSmall">
+#define _psubsb(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551113"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_psubsh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551115"></A><KBD CLASS="CodeSmall">
+#define _psubsh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551117"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_psubsw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551119"></A><KBD CLASS="CodeSmall">
+#define _psubsw(A,B) </KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551121"></A><KBD CLASS="CodeSmall">
+__v16qi __builtin_mips5900_psubub (__v16qi A, __v16qi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551123"></A><KBD CLASS="CodeSmall">
+#define _psubub(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551125"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_psubuh (__v8hi A, __v8hi B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551127"></A><KBD CLASS="CodeSmall">
+#define _psubuh(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551129"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_psubuw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551131"></A><KBD CLASS="CodeSmall">
+#define _psubuw(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551133"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_psubw (__v4si A, __v4si B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551135"></A><KBD CLASS="CodeSmall">
+#define _psubw(A,B) </KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551137"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_pxor (__v2di A, __v2di B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellCode">
+<A NAME="pgfId-551139"></A><KBD CLASS="CodeSmall">
+#define _pxor(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551141"></A><KBD CLASS="CodeSmall">
+void    __builtin_mips5900_mtsab (int A, int B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551201"></A><KBD CLASS="CodeSmall">
+#define _mtsab(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551145"></A><KBD CLASS="CodeSmall">
+void    __builtin_mips5900_mtsah (int A, int B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551203"></A><KBD CLASS="CodeSmall">
+#define _mtsah(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551149"></A><KBD CLASS="CodeSmall">
+void    __builtin_mips5900_mtsa (__m64 A)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551205"></A><KBD CLASS="CodeSmall">
+#define _mtsa(A)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551153"></A><KBD CLASS="CodeSmall">
+__m64   __builtin_mips5900_mfsa (void)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551207"></A><KBD CLASS="CodeSmall">
+#define _mfsa()</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551157"></A><KBD CLASS="CodeSmall">
+__m128  __builtin_mips5900_qfsrv (__m128 A, __m128 B)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551209"></A><KBD CLASS="CodeSmall">
+#define _qfsrv(A,B)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551161"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_pmfhi (void)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551211"></A><KBD CLASS="CodeSmall">
+#define _pmfhi()</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551165"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_pmflo (void)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551213"></A><KBD CLASS="CodeSmall">
+#define _pmflo()</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551169"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_pmfhl_lw (void)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551215"></A><KBD CLASS="CodeSmall">
+#define _pmfhl_lw()</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551173"></A><KBD CLASS="CodeSmall">
+__v4si  __builtin_mips5900_pmfhl_uw (void)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551217"></A><KBD CLASS="CodeSmall">
+#define _pmfhl_uw()</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551177"></A><KBD CLASS="CodeSmall">
+__v2di  __builtin_mips5900_pmfhl_slw (void)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551219"></A><KBD CLASS="CodeSmall">
+#define _pmfhl_slw()</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551181"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_pmfhl_lh (void)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551221"></A><KBD CLASS="CodeSmall">
+#define _pmfhl_lh()</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551185"></A><KBD CLASS="CodeSmall">
+__v8hi  __builtin_mips5900_pmfhl_sh (void)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551223"></A><KBD CLASS="CodeSmall">
+#define _pmfhl_sh()</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551189"></A><KBD CLASS="CodeSmall">
+void    __builtin_mips5900_pmthi (__v2di A)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551229"></A><KBD CLASS="CodeSmall">
+#define _pmthi(A)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551193"></A><KBD CLASS="CodeSmall">
+void    __builtin_mips5900_pmtlo (__v2di A)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551231"></A><KBD CLASS="CodeSmall">
+#define _pmtlo(A)</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551197"></A><KBD CLASS="CodeSmall">
+void    __builtin_mips5900_pmthl_lw (__v4si A)</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-551233"></A><KBD CLASS="CodeSmall">
+#define _pmthl_lw(A)</KBD>
+</P>
+</TD>
+</TR>
+</TABLE>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-548682"></A>SIMD Data Types<A NAME="marker-546863"></A></H4>
+<P CLASS="Body">
+<A NAME="pgfId-545558"></A>There are also new data types that represent the vectors used by the built-in functions.</P>
+<P CLASS="Body">
+<A NAME="pgfId-545571"></A>The <KBD CLASS="Code">
+mmutils.h</KBD>
+ header file contains functions and macros designed to help you manipulate the SIMD data types themselves. This includes functions and macros for setting and obtaining the values of vectors and vector elements, and for printing the values of vectors.</P>
+<TABLE BORDER="1">
+<CAPTION>
+<P CLASS="TableTitle">
+<A NAME="pgfId-545679"></A>SIMD data types</P>
+</CAPTION>
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-545683"></A>Data Type</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-545685"></A>Value</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-545730"></A><KBD CLASS="Code">
+__m128</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellSmall">
+<A NAME="pgfId-545732"></A>a 128 bit integer</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-545734"></A><KBD CLASS="Code">
+__m64</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellSmall">
+<A NAME="pgfId-545736"></A>a 64 bit integer</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-545687"></A><KBD CLASS="Code">
+__v2di</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellSmall">
+<A NAME="pgfId-545689"></A>two 64-bit (&quot;double&quot;) integers</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-545691"></A><KBD CLASS="Code">
+__v2si</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellSmall">
+<A NAME="pgfId-545693"></A>two 32-bit (&quot;single&quot;) integers</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-545695"></A><KBD CLASS="Code">
+__v4si</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellSmall">
+<A NAME="pgfId-545697"></A>four 32-bit (&quot;single&quot;) integers</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-545699"></A><KBD CLASS="Code">
+__v8hi</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellSmall">
+<A NAME="pgfId-545701"></A>eight 32-bit (&quot;half&quot;) integers</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-545703"></A><KBD CLASS="Code">
+__v16qi</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellSmall">
+<A NAME="pgfId-545705"></A>sixteen 32-bit (&quot;quarter&quot;) integers</P>
+</TD>
+</TR>
+</TABLE>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-545574"></A>Example of a Program Using SIMD Data Types</H4>
+<P CLASS="Body">
+<A NAME="pgfId-545575"></A>The following is an example of a program that uses SIMD Data Types:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-545576"></A>&nbsp;</PRE>
+<PRE CLASS="CodeExample"><A NAME="pgfId-556518"></A>#include &quot;mmutils.h&quot;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+static void
+pass (void)
+{
+  puts (&quot;pass&quot;);
+}
+
+static void
+fail (void)
+{
+  puts (&quot;fail&quot;);
+  exit(1);
+}
+
+static void
+compare (__v4si result, __v4si expected)
+{
+  int i;
+  for (i = 0; i &lt; 4; ++i)
+    {
+      if (_MM_INT ((__m128)result, i) != _MM_INT ((__m128)expected, i))
+      fail ();
+    }
+}
+
+
+main () {
+  __v8hi vec;
+  __v4si expected, result;
+
+  vec = (__v8hi)_m_set_v8hi (0xdead, 0x0000, 0xbeef, 0x8000,
+                             0xdead, 0x7c1f, 0xbeef, 0x83e0);
+  expected = (__v4si)_m_set_v4si (0x00000000, 0x80000000,
+                                  0x00f800f8, 0x8000f800);
+
+  result = _pext5 (vec);
+#if DEBUG
+  _m_print_v8hi (vec);
+  _m_print_v4si (result);
+  _m_print_v4si (expected);
+#endif
+  compare (result, expected);
+
+  pass ();
+  return 0;
+}
+
+</PRE>
+<HR ALIGN="center">
+<TABLE CLASS="ECOS" WIDTH="100%" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">Emotion Engine Tools User's Guide</P>
+</TH></TR>
+<TR><TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEcontents.html">
+contents</A></P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEreference.html">
+previous&nbsp;page</A></P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="ABI.html">
+next&nbsp;page</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

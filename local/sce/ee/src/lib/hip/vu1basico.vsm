@@ -1,0 +1,334 @@
+; flowMon::Emit() vcl version 0.91 produced this code:
+        .vu
+	.global	vclbasicdemo_CodeStart
+	.global	vclbasicdemo_CodeEnd
+vclbasicdemo_CodeStart:
+; iStream '__vcl__MMvu1basicClip_vcl_2' [ln 1 lp 0] entry 0
+__vcl__MMvu1basicClip_vcl_2:
+; EMITTED_AS_ITABLE OPT_normal1
+; maxtab 80 start 0 end 0 count 0 m_EndType ISTET_FALL
+; 
+; iStream '__vcl__MMvu1basicClip_vcl_3' [ln 29 lp 0] entry 1
+__vcl__MMvu1basicClip_vcl_3:
+; EMITTED_AS_ITABLE OPT_normal
+; maxtab 1872 start 0 end 38 count 38 m_EndType ISTET_FALL
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           lq              VF04,16(VI00)                                   
+              nop                                                                           lq              VF01,0(VI00)                                    
+              nop                                                                           lq              VF06,17(VI00)                                   
+              nop                                                                           lq              VF05,18(VI00)                                   
+              nop                                                                           fcset           0                                               
+              mulax           ACC,VF04,VF01x                                                lq              VF07,19(VI00)                                   
+              madday          ACC,VF06,VF01y                                                lq              VF02,1(VI00)                                    
+              maddaz          ACC,VF05,VF01z                                                nop                                                             
+              nop                                                                           nop                                                             
+              maddw           VF01,VF07,VF01w                                               nop                                                             
+              mulax           ACC,VF04,VF02x                                                lq              VF03,2(VI00)                                    
+              madday          ACC,VF06,VF02y                                                nop                                                             
+              maddaz          ACC,VF05,VF02z                                                nop                                                             
+              maddw           VF02,VF07,VF02w                                               lq              VF10,3(VI00)                                    
+              mulax           ACC,VF04,VF03x                                                lq.zw           VF08,30(VI00)                                   
+              madday          ACC,VF06,VF03y                                                lq.xy           VF09,30(VI00)                                   
+              maddaz          ACC,VF05,VF03z                                                nop                                                             
+              maddw           VF03,VF07,VF03w                                               lq              VF13,4(VI00)                                    
+              mulax           ACC,VF04,VF10x                                                lq.xyz          VF12,32(VI00)                                   
+              madday          ACC,VF06,VF10y                                                lq.xyz          VF11,33(VI00)                                   
+              maddaz          ACC,VF05,VF10z                                                lq.xyz          VF10,34(VI00)                                   
+              maddw           VF04,VF07,VF10w                                               move.xyz        VF07,VF00                                       
+              mulax.xyz       ACC,VF12,VF13x                                                lq              VF06,5(VI00)                                    
+              madday.xyz      ACC,VF11,VF13y                                                nop                                                             
+              maddaz.xyz      ACC,VF10,VF13z                                                nop                                                             
+              maddw.xyz       VF05,VF07,VF13w                                               nop                                                             
+              mulax.xyz       ACC,VF12,VF06x                                                lq              VF13,6(VI00)                                    
+              madday.xyz      ACC,VF11,VF06y                                                nop                                                             
+              maddaz.xyz      ACC,VF10,VF06z                                                nop                                                             
+              maddw.xyz       VF06,VF07,VF06w                                               nop                                                             
+              mulax.xyz       ACC,VF12,VF13x                                                nop                                                             
+              madday.xyz      ACC,VF11,VF13y                                                nop                                                             
+              maddaz.xyz      ACC,VF10,VF13z                                                nop                                                             
+              maddw.xyz       VF07,VF07,VF13w                                               loi             2048.0                                          
+              addi.xy         VF08,VF00,I                                                   nop                                                             
+; 
+; iStream '__vcl__MMvu1basicClip_vcl_4' [ln 1 lp 0] entry 1
+__vcl__MMvu1basicClip_vcl_4:
+; EMITTED_AS_ITABLE OPT_normal1
+; maxtab 80 start 0 end 2 count 2 m_EndType ISTET_END_CONT
+              nop[ED]                                                                       nop                                                             
+              nop                                                                           nop                                                             
+; 
+; iStream '__vcl__MMvu1basicClip_vcl_6' [ln 1 lp 0] entry 1
+__vcl__MMvu1basicClip_vcl_6:
+; EMITTED_AS_ITABLE OPT_normal1
+; maxtab 80 start 0 end 2 count 2 m_EndType ISTET_END_CONT
+              nop[ED]                                                                       nop                                                             
+              nop                                                                           nop                                                             
+; 
+; iStream 'BASICD_START' [ln 6 lp 0] entry 2
+BASICD_START:
+; EMITTED_AS_ITABLE OPT_normal1
+; maxtab 400 start 0 end 6 count 6 m_EndType ISTET_FALL
+              nop                                                                           ilw.x           VI03,10(VI00)                                   
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           xtop            VI02                                            
+              nop                                                                           iadd            VI03,VI02,VI03                                  
+              nop                                                                           iaddiu          VI04,VI03,0                                     
+; 
+; iStream 'BASICD_GIFTAG' [ln 26 lp 0] entry 2
+BASICD_GIFTAG:
+; EMITTED_AS_ITABLE OPT_normal1
+; maxtab 1680 start 0 end 26 count 26 m_EndType ISTET_FALL
+              sub.w           VF15,VF00,VF00                                                ilw.z           VI01,29(VI00)                                   
+              nop                                                                           ilw.x           VI06,1(VI02)                                    
+              nop                                                                           ilw.x           VI05,0(VI02)                                    
+              nop                                                                           mfir.yzw        VF13,VI00                                       
+              nop                                                                           ilw.y           VI08,0(VI02)                                    
+              nop                                                                           ior             VI07,VI01,VI06                                  
+              nop                                                                           lq.yzw          VF12,9(VI00)                                    
+              nop                                                                           iaddiu          VI01,VI00,0x1b                                  
+              nop                                                                           iaddiu          VI06,VI00,0x7fff                                
+              nop                                                                           lq              VF11,8(VI00)                                    
+              nop                                                                           sq.yzw          VF13,1(VI04)                                    
+              nop                                                                           sq.yzw          VF13,2(VI04)                                    
+              nop                                                                           isw.x           VI08,1(VI04)                                    
+              nop                                                                           isw.x           VI07,2(VI04)                                    
+              nop                                                                           sq.yzw          VF12,3(VI04)                                    
+              nop                                                                           isw.x           VI05,3(VI04)                                    
+              nop                                                                           iand            VI05,VI05,VI06                                  
+              nop                                                                           sq              VF11,0(VI04)                                    
+              nop                                                                           isw.z           VI01,2(VI04)                                    
+              nop                                                                           iaddiu          VI04,VI04,4                                     
+              nop                                                                           lq.xyz          VF11,40(VI00)                                   
+              nop                                                                           lq.xyz          VF12,41(VI00)                                   
+              nop                                                                           lq.xyz          VF13,42(VI00)                                   
+              nop                                                                           lq.xyz          VF14,43(VI00)                                   
+              nop                                                                           lq.x            VF10,0(VI02)                                    
+              nop                                                                           iaddiu          VI02,VI02,2                                     
+; 
+; iStream 'EXPL_vu1basicClip_vcl_BASICD_vertex_loop__PRO0' [ln -1 lp -1] entry 2
+EXPL_vu1basicClip_vcl_BASICD_vertex_loop__PRO0:
+EXPL_vu1basicClip_vcl_BASICD_vertex_loop__ENTRY_POINT:
+; EMITTED_AS_ITABLE OPT_dumb
+; maxtab 23 start 0 end 23 count 23 m_EndType ISTET_UNSET
+              nop                                                                           lq.xyz          VF21,1(VI02)                                    
+              nop                                                                           lq.xyz          VF18,0(VI02)                                    
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              mulax.xyz       ACC,VF05,VF21x                                                nop                                                             
+              madday.xyz      ACC,VF06,VF21y                                                nop                                                             
+              maddz.xyz       VF21,VF07,VF21z                                               nop                                                             
+              mulax           ACC,VF01,VF18x                                                nop                                                             
+              madday          ACC,VF02,VF18y                                                nop                                                             
+              maddaz          ACC,VF03,VF18z                                                nop                                                             
+              maxx.xyz        VF20,VF21,VF00x                                               iaddi           VI05,VI05,-1                                    
+              maddw           VF18,VF04,VF00w                                               iaddiu          VI02,VI02,4                                     
+              nop                                                                           iaddiu          VI04,VI04,3                                     
+              nop                                                                           nop                                                             
+              mulax.xyz       ACC,VF11,VF20x                                                lq              VF19,(3)-(1*(4))(VI02)                          
+              madday.xyz      ACC,VF12,VF20y                                                div             Q,VF00w,VF18w                                   
+              maddaz.xyz      ACC,VF13,VF20z                                                nop                                                             
+              maddw.xyz       VF20,VF14,VF00w                                               nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           move.w          VF05,VF19                                       
+              subw.z          VF16,VF08,VF18w                                               lq.xyz          VF22,(2)-(1*(4))(VI02)                          
+              miniw.xyz       VF17,VF20,VF00w                                               ibeq            VI05,VI00,EXPL_vu1basicClip_vcl_BASICD_vertex_loop__EPI1
+              mulq.xyz        VF15,VF18,Q                                                   nop                                                             
+; 
+; iStream 'EXPL_vu1basicClip_vcl_BASICD_vertex_loop__PRO1' [ln -1 lp -1] entry 1
+EXPL_vu1basicClip_vcl_BASICD_vertex_loop__PRO1:
+; EMITTED_AS_ITABLE OPT_dumb
+; maxtab 23 start 0 end 23 count 23 m_EndType ISTET_UNSET
+              ftoi0.w         VF05,VF05                                                     lq.xyz          VF21,1(VI02)                                    
+              mulq.xyz        VF20,VF22,Q                                                   lq.xyz          VF18,0(VI02)                                    
+              mul.xyz         VF17,VF17,VF19                                                nop                                                             
+              sub.xy          VF19,VF15,VF08                                                nop                                                             
+              mulax.xyz       ACC,VF05,VF21x                                                nop                                                             
+              madday.xyz      ACC,VF06,VF21y                                                nop                                                             
+              maddz.xyz       VF21,VF07,VF21z                                               sq.w            VF05,(1)-(1*(3))(VI04)                          
+              mulax           ACC,VF01,VF18x                                                nop                                                             
+              madday          ACC,VF02,VF18y                                                sq.xyz          VF20,(0)-(1*(3))(VI04)                          
+              maddaz          ACC,VF03,VF18z                                                nop                                                             
+              maxx.xyz        VF20,VF21,VF00x                                               iaddi           VI05,VI05,-1                                    
+              maddw           VF18,VF04,VF00w                                               iaddiu          VI02,VI02,4                                     
+              mul.xy          VF16,VF19,VF09                                                iaddiu          VI04,VI04,3                                     
+              ftoi4.xyz       VF15,VF15                                                     nop                                                             
+              mulax.xyz       ACC,VF11,VF20x                                                lq              VF19,(3)-(1*(4))(VI02)                          
+              madday.xyz      ACC,VF12,VF20y                                                div             Q,VF00w,VF18w                                   
+              maddaz.xyz      ACC,VF13,VF20z                                                nop                                                             
+              maddw.xyz       VF20,VF14,VF00w                                               sq              VF15,(2)-(2*(3))(VI04)                          
+              ftoi0.xyz       VF15,VF17                                                     nop                                                             
+              clipw.xyz       VF16xyz,VF08w                                                 move.w          VF05,VF19                                       
+              subw.z          VF16,VF08,VF18w                                               lq.xyz          VF22,(2)-(1*(4))(VI02)                          
+              miniw.xyz       VF17,VF20,VF00w                                               ibeq            VI05,VI00,EXPL_vu1basicClip_vcl_BASICD_vertex_loop__EPI0
+              mulq.xyz        VF15,VF18,Q                                                   sq.xyz          VF15,(1)-(2*(3))(VI04)                          
+; 
+; iStream 'EXPL_vu1basicClip_vcl_BASICD_vertex_loop__MAIN_LOOP' [ln -1 lp -1] entry 1
+EXPL_vu1basicClip_vcl_BASICD_vertex_loop__MAIN_LOOP:
+BASICD_vertex_loop:
+; EMITTED_AS_ITABLE OPT_dumb
+; maxtab 23 start 0 end 23 count 23 m_EndType ISTET_UNSET
+              ftoi0.w         VF05,VF05                                                     lq.xyz          VF21,1(VI02)                                    
+              mulq.xyz        VF20,VF22,Q                                                   lq.xyz          VF18,0(VI02)                                    
+              mul.xyz         VF17,VF17,VF19                                                fcand           VI01,0x003ffff                                  
+              sub.xy          VF19,VF15,VF08                                                iaddiu          VI01,VI01,0x7fff                                
+              mulax.xyz       ACC,VF05,VF21x                                                isw.w           VI01,(2)-(2*(3))(VI04)                          
+              madday.xyz      ACC,VF06,VF21y                                                nop                                                             
+              maddz.xyz       VF21,VF07,VF21z                                               sq.w            VF05,(1)-(1*(3))(VI04)                          
+              mulax           ACC,VF01,VF18x                                                nop                                                             
+              madday          ACC,VF02,VF18y                                                sq.xyz          VF20,(0)-(1*(3))(VI04)                          
+              maddaz          ACC,VF03,VF18z                                                nop                                                             
+              maxx.xyz        VF20,VF21,VF00x                                               iaddi           VI05,VI05,-1                                    
+              maddw           VF18,VF04,VF00w                                               iaddiu          VI02,VI02,4                                     
+              mul.xy          VF16,VF19,VF09                                                iaddiu          VI04,VI04,3                                     
+              ftoi4.xyz       VF15,VF15                                                     nop                                                             
+              mulax.xyz       ACC,VF11,VF20x                                                lq              VF19,(3)-(1*(4))(VI02)                          
+              madday.xyz      ACC,VF12,VF20y                                                div             Q,VF00w,VF18w                                   
+              maddaz.xyz      ACC,VF13,VF20z                                                nop                                                             
+              maddw.xyz       VF20,VF14,VF00w                                               sq              VF15,(2)-(2*(3))(VI04)                          
+              ftoi0.xyz       VF15,VF17                                                     nop                                                             
+              clipw.xyz       VF16xyz,VF08w                                                 move.w          VF05,VF19                                       
+              subw.z          VF16,VF08,VF18w                                               lq.xyz          VF22,(2)-(1*(4))(VI02)                          
+              miniw.xyz       VF17,VF20,VF00w                                               ibne            VI05,VI00,EXPL_vu1basicClip_vcl_BASICD_vertex_loop__MAIN_LOOP
+              mulq.xyz        VF15,VF18,Q                                                   sq.xyz          VF15,(1)-(2*(3))(VI04)                          
+; 
+; iStream 'EXPL_vu1basicClip_vcl_BASICD_vertex_loop__EPI0' [ln -1 lp -1] entry 2
+EXPL_vu1basicClip_vcl_BASICD_vertex_loop__EPI0:
+; EMITTED_AS_ITABLE OPT_dumb
+; maxtab 46 start 0 end 46 count 46 m_EndType ISTET_UNSET
+              ftoi0.w         VF05,VF05                                                     nop                                                             
+              mulq.xyz        VF20,VF22,Q                                                   nop                                                             
+              mul.xyz         VF17,VF17,VF19                                                fcand           VI01,0x003ffff                                  
+              sub.xy          VF19,VF15,VF08                                                iaddiu          VI01,VI01,0x7fff                                
+              nop                                                                           isw.w           VI01,(2)-(2*(3))(VI04)                          
+              nop                                                                           nop                                                             
+              nop                                                                           sq.w            VF05,(1)-(1*(3))(VI04)                          
+              nop                                                                           nop                                                             
+              nop                                                                           sq.xyz          VF20,(0)-(1*(3))(VI04)                          
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              mul.xy          VF16,VF19,VF09                                                nop                                                             
+              ftoi4.xyz       VF15,VF15                                                     nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           sq              VF15,(2)-(1*(3))(VI04)                          
+              ftoi0.xyz       VF15,VF17                                                     nop                                                             
+              clipw.xyz       VF16xyz,VF08w                                                 nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           sq.xyz          VF15,(1)-(1*(3))(VI04)                          
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           fcand           VI01,0x003ffff                                  
+              nop                                                                           iaddiu          VI01,VI01,0x7fff                                
+              nop                                                                           isw.w           VI01,(2)-(1*(3))(VI04)                          
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           b               EXPL_vu1basicClip_vcl_BASICD_vertex_loop__EXIT_POINT
+              nop                                                                           nop                                                             
+; 
+; iStream 'EXPL_vu1basicClip_vcl_BASICD_vertex_loop__EPI1' [ln -1 lp -1] entry 1
+EXPL_vu1basicClip_vcl_BASICD_vertex_loop__EPI1:
+; EMITTED_AS_ITABLE OPT_dumb
+; maxtab 46 start 0 end 46 count 46 m_EndType ISTET_UNSET
+              ftoi0.w         VF05,VF05                                                     nop                                                             
+              mulq.xyz        VF20,VF22,Q                                                   nop                                                             
+              mul.xyz         VF17,VF17,VF19                                                nop                                                             
+              sub.xy          VF19,VF15,VF08                                                nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           sq.w            VF05,(1)-(1*(3))(VI04)                          
+              nop                                                                           nop                                                             
+              nop                                                                           sq.xyz          VF20,(0)-(1*(3))(VI04)                          
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              mul.xy          VF16,VF19,VF09                                                nop                                                             
+              ftoi4.xyz       VF15,VF15                                                     nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           sq              VF15,(2)-(1*(3))(VI04)                          
+              ftoi0.xyz       VF15,VF17                                                     nop                                                             
+              clipw.xyz       VF16xyz,VF08w                                                 nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           sq.xyz          VF15,(1)-(1*(3))(VI04)                          
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           fcand           VI01,0x003ffff                                  
+              nop                                                                           iaddiu          VI01,VI01,0x7fff                                
+              nop                                                                           isw.w           VI01,(2)-(1*(3))(VI04)                          
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+; 
+; iStream 'BASICD_done' [ln 5 lp 0] entry 2
+BASICD_done:
+EXPL_vu1basicClip_vcl_BASICD_vertex_loop__EXIT_POINT:
+; EMITTED_AS_ITABLE OPT_normal1
+; maxtab 336 start 0 end 9 count 9 m_EndType ISTET_COND
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           mtir            VI01,VF10x                                      
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           nop                                                             
+              nop                                                                           ibgez           VI01,BASICD_GIFTAG                              
+              nop                                                                           nop                                                             
+; 
+; iStream '__vcl__MMvu1basicClip_vcl_18' [ln 1 lp 0] entry 1
+__vcl__MMvu1basicClip_vcl_18:
+; EMITTED_AS_ITABLE OPT_normal1
+; maxtab 80 start 0 end 1 count 1 m_EndType ISTET_FALL
+              nop                                                                           xgkick          VI03                                            
+; 
+; iStream '__vcl__MMvu1basicClip_vcl_19' [ln 1 lp 0] entry 1
+__vcl__MMvu1basicClip_vcl_19:
+; EMITTED_AS_ITABLE OPT_normal1
+; maxtab 80 start 0 end 2 count 2 m_EndType ISTET_END_CONT
+              nop[ED]                                                                       nop                                                             
+              nop                                                                           nop                                                             
+; 
+; iStream '__vcl__MMvu1basicClip_vcl_20' [ln 1 lp 0] entry 1
+__vcl__MMvu1basicClip_vcl_20:
+; EMITTED_AS_ITABLE OPT_normal1
+; maxtab 80 start 0 end 2 count 2 m_EndType ISTET_JUMP
+              nop                                                                           b               BASICD_START                                    
+              nop                                                                           nop                                                             
+; 
+vclbasicdemo_CodeEnd:
+;	iCount=249

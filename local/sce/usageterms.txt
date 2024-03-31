@@ -1,0 +1,38 @@
+[SCEI CONFIDENTIAL DOCUMENT]
+PlayStation 2 Programmer Tool Runtime Library Release 2.4
+   Copyright (C) 2001 by Sony Computer Entertainment Inc.
+                                      All Rights Reserved
+
+---------------------------------------------------------
+Terminology
+---------------------------------------------------------
+To improve readability, the following terminology is used in the documents contained in this release package.
+
+Hard disk drive
+---------------
+Unless specifically referred to otherwise, an external hard disk drive (** GB) (for PlayStation 2) with network adaptor (PC CARD type) and an internal hard disk drive (** GB) (for PlayStation 2) with network adaptor are described as the hard disk drive.
+
+Network adaptor
+---------------
+A network adaptor (for PlayStation 2) and a network adaptor
+(PC CARD type) (for PlayStation 2) are described as the network adaptor.
+
+PS2 Memory card 
+---------------
+A memory card (8MB) (for PlayStation 2) is described as the PS2 memory card.
+
+Multitap
+--------
+A multitap (for PlayStation 2) is described as the multitap.
+   
+DUALSHOCK
+---------
+An analog controller (DUALSHOCK) is described as the DUALSHOCK.
+   
+DUALSHOCK 2
+-----------
+An analog controller (DUALSHOCK 2) is described as the DUALSHOCK 2.
+
+Debugging station
+-----------------
+A debugging station (for PlayStation 2) is described as the debugging station.

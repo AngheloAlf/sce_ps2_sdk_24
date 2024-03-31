@@ -1,0 +1,681 @@
+[SCE CONFIDENTIAL DOCUMENT]
+"PlayStation 2" Programmer Tool Runtime Library Release 2.5.3
+                     Copyright (C) 2002 Sony Computer Entertainment Inc.
+                                                     All Rights Reserved
+                                                                May 2002
+
+                                      Document Changes and New Additions
+========================================================================
+The following are document changes since Release 2.5.2.
+
+========================================================================
+Contents of this Package
+========================================================================
+New files added since Release 2.5.2 are marked with an asterisk (*).
+doc/text(html)
+|---deci2
+|     |---ee_dbgp.txt
+|     +---netmp.txt
+|---ee
+|     |---libref
+|     |     |---device
+|     |     |     |---ecdvd_rf.txt
+|     |     |     |---edev9_rf.txt
+|     |     |     |---ehdd_rf.txt
+|     |     |     |---epfs_rf.txt
+|     |     |     |---usbkb_rf.txt
+|     |     |     +---vib_rf.txt
+|     |     |---etc
+|     |     |     +---atok_rf.txt	(*)
+|     |     |---graphics
+|     |     |     |---gp_rf.txt
+|     |     |     |---graph_rf.txt
+|     |     |     +---hip_rf.txt
+|     |     |---kernel
+|     |     |     +---ekrnl_rf.txt
+|     |     |---network
+|     |     |     |---http_rf.txt
+|     |     |     |---insck_rf.txt
+|     |     |     |---libnt_rf.txt
+|     |     |     +---ntcif_rf.txt
+|     |     |---sif
+|     |     |     |---emrpc_rf.txt
+|     |     |     |---iserv_rf.txt
+|     |     |     |---scmd_rf.txt
+|     |     |     +---sdma_rf.txt
+|     |     +---sound
+|     |           +---sdr_rf.txt
+|     +---overview
+|           |---device
+|           |     |---libcdvd.txt
+|           |     |---libmc.txt
+|           |     |---libmcx.txt
+|           |     |---libusbkb.txt
+|           |     |---mcfile.txt	(*)
+|           |     +---pfs.txt
+|           |---etc
+|           |     +---libatok.txt	(*)
+|           |---graphics
+|           |     |---libgp.txt
+|           |     +---libhip.txt
+|           |---network
+|           |     |---libhttp.txt
+|           |     |---libnet.txt
+|           |     |---netcnfif.txt
+|           |     +---ntglue.txt
+|           +---sif
+|                 +---sif.txt
+|---format
+|     +---gformat.txt
+|---general
+|     |---syssoft.txt
+|     +---yncf.txt
+|---iop
+|     |---libref
+|     |     |---device
+|     |     |     |---icdvd_rf.txt
+|     |     |     |---ihdd_rf.txt
+|     |     |     +---ipfs_rf.txt
+|     |     |---network
+|     |     |     |---inctl_rf.txt
+|     |     |     |---inet_rf.txt
+|     |     |     +---ntcnf_rf.txt
+|     |     +---sound
+|     |           |---hsyn_rf.txt
+|     |           +---sd_rf.txt
+|     +---overview
+|           |---kernel
+|           |     +---iop_prog.txt
+|           |---network
+|           |     |---inet.txt
+|           |     +---netcnf.txt
+|           +---sound
+|                 +---libsd.txt
+|---tips
+|     +---cdvdtips.txt			(*)
++---tool
+      +---iop_util.txt
+
+
+========================================================================
+Documents Added
+------------------------------------------------------------------------
+- Documents for the ATOK library beta version have been added.
+    ee/overview/libatok
+    ee/libref/atok_rf
+
+- A document for the memory card file system has been added.
+    ee/overview/mcsys
+  This document contains the file system information previously included 
+  in the "Memory Card Overview" and "PDA Library Overview".
+
+========================================================================
+Documents Changed
+------------------------------------------------------------------------
+EE Kernel Library
+------------------------------------------------------------------------
+[libref]
+- In the "Notes" section of the following functions, a description about 
+  the case where an interrupt handler returns a value more than 0 has been 
+  added.
+   AddDmacHandler()
+   AddDmacHandler2()
+   AddIntcHandler()
+   AddIntcHandler2()
+
+- In the "Description" section of InvalidDCache/iInvalidDCache(), 
+  examples of arguments have been added.
+
+- In the "Description" section of SyncDCache/iSyncDCache(), examples 
+  of arguments have been added.
+
+- In the "Return Value" section of ReferSemaStatus/iReferSemaStatus(), 
+  the description of initCount has been deleted.
+
+- In the "Notes" section of LoadExecPS2(), a note has been added.
+
+------------------------------------------------------------------------
+Standard IOP Service
+------------------------------------------------------------------------
+[libref]
+- In the "Notes" section of sceSifRebootIop(), a note has been added.
+
+------------------------------------------------------------------------
+SIF Related
+------------------------------------------------------------------------
+[overview]
+- "5. Multi-Thread SIF RPC" has been added.
+
+- In "Default Module Replacement" of "7. IOP Module Replacement", the 
+  description of GS coprocessor control has been deleted. 
+
+------------------------------------------------------------------------
+Multithread SIF Remote Procedure Call (ee)
+------------------------------------------------------------------------
+[libref]
+- A description of sceSifMExitRpc() has been added.
+
+------------------------------------------------------------------------
+SIF Command
+------------------------------------------------------------------------
+[libref]
+- With the description of the sceSifSendCmdIntr() function, a description 
+  that it is implemented on the IOP only has been added.
+
+------------------------------------------------------------------------
+SIF DMA
+------------------------------------------------------------------------
+[libref]
+- With sceSifSetDmaIntr(), a functional description has been added.
+
+------------------------------------------------------------------------
+Hard Disk Library (EE/IOP)
+------------------------------------------------------------------------
+[libref]
+- In the "Notes" section of the HDIOC_DEV9OFF command, a description that 
+  the DDIOC_OFF command of dev9 (not HDIOC_DEV9OFF) is used to power off 
+  the device has been added. 
+
+------------------------------------------------------------------------
+PlayStation File System (EE/IOP)
+------------------------------------------------------------------------
+[overview]
+- In "Power OFF Process" of "5. Notes", the description has been changed 
+  due to the specification change in the power-off process of the device.
+
+[libref]
+- In the "Return Value" section of sceRead(), an error of a value has been 
+  corrected.
+
+------------------------------------------------------------------------
+dev9 Reference
+------------------------------------------------------------------------
+[libref]
+- In the "Notes" section of the DDIOC_OFF command, a description about 
+  the dev9.irx specification change has been added.
+
+------------------------------------------------------------------------
+CD(DVD)-ROM Library
+------------------------------------------------------------------------
+[libref]
+- In <Sample power-off processing function calling sequence when a hard 
+  disk drive is used> in the "Notes" section of sceCdPowerOff(), the 
+  program for powering off the device has been changed.
+
+- In the "Description" section of sceCdStatus(), a note has been added.
+
+- In the "Description" section of sceCdStSeekF(), a note has been added.
+
+[overview]
+- In "File System" of "2. CD(DVD)-ROM Specifications", supplemental 
+  remarks have been given to the characters applicable to the file name 
+  and directory name.
+
+------------------------------------------------------------------------
+Memory Card Library
+------------------------------------------------------------------------
+[overview]
+- The following sections have been deleted.  Their contents have been 
+  moved to the newly added document "Memory Card File System".
+     File System Overview
+     File Creation Rules
+     Icon Definition Files
+     Icon Files
+
+------------------------------------------------------------------------
+PDA Library
+------------------------------------------------------------------------
+[overview]
+- The following section has been deleted. Its contents have been moved 
+  to the newly added document "Memory Card File System".
+     File Creation Rules
+
+------------------------------------------------------------------------
+USB Keyboard Library
+------------------------------------------------------------------------
+[libref]
+- In the "Structure" section of the USBKBINFO_t structure, error 
+  correction has been made.
+
+- In the "Argument" section of sceUsbKbSetCodeType(), error correction 
+  has been made to type.
+
+[overview]
+- In "Starting Up usbkb.irx" of "2. Using the USB Keyboard Library", 
+  error correction has been made to the program in "(2) Startup 
+  Procedure".
+
+------------------------------------------------------------------------
+libnet
+------------------------------------------------------------------------
+[libref]
+- A description has been added to the following functions.
+   sceInetPoll()
+   sceInetCtlGetState()
+
+- In the "Description" section of sceLibnetInitialize(), a description 
+  that the buffer size is specified in 64-byte units has been added.
+  
+- In the "Return Value" section of sceInetOpen(), a description of 
+  sceINETE_CONNECTION_RESET(-510) has been added.
+
+- In the "Return Value" section of sceInetRecvFrom(), the descriptions of 
+  the following return values have been deleted.
+   sceINETE_CONNECTION_CLOSING(-509)
+   sceINETE_CONNECTION_RESET(-510)
+
+- In the "Return Value" section of sceInetSendTo(), the descriptions of 
+  the following return values have been deleted.
+   sceINETE_TIMEOUT(-500)
+   sceINETE_ABORT(-501)
+   sceINETE_CONNECTION_CLOSING(-509)
+   sceINETE_CONNECTION_RESET(-510)
+
+[overview]
+- In "Difference between Libnet Function and INET/INETCTL Function" of 
+  "3. Libnet Function Specifications", a description that the buffer size 
+  is specified in 64-byte units has been added.
+------------------------------------------------------------------------
+Network Socket Library
+------------------------------------------------------------------------
+[libref]
+- Descriptions of the following functions have been added.
+   sceInsockPoll()
+   sceInsockSendFin()
+
+- In the "Description" section of sceInsockGethostbyname(), a note has 
+  been added.
+
+- With sceInsockSetSifMBindRpcValue(), the "Notes" section has been added.
+
+- In the "Description" section of sceInsockGetsockopt() and 
+  sceInsockSetsockopt(), the description of the TCP_NODELAY option has 
+  been changed.
+
+------------------------------------------------------------------------
+Common Network Configuration Interface Library
+------------------------------------------------------------------------
+[libref]
+- Descriptions of the following functions have been added.
+   sceNetcnfifCheckSpecialProvider()
+   sceNetcnfifConvAuthname()
+
+- In the "Return Value" section of sceNetcnfifAddEntry(), a description 
+  of sceNETCNFIF_AOL_CONFIGURATION(-20) has been added.
+
+- In the "Description" section of sceNetcnfifCheck(), 
+  sceNetcnfifCheckSpecialProvider has been added to the function 
+  that uses SIF RPC.
+  
+- In the "Return Value" section of sceNetcnfifEditEntry(), descriptions 
+  of the following return values have been added.
+   sceNETCNFIF_INVALID_TYPE(-10)
+   sceNETCNFIF_AOL_CONFIGURATION(-20)
+
+[overview]
+- In "Sample Programs" of "1. Overview", a description of the convauth 
+  sample has been added.
+
+- In "2. Library Structure", descriptions of 
+  sceNetcnfifCheckSpecialProvider() and sceNetcnfifConvAuthname() 
+  have been added.
+
+- In "3. Operating Procedure", "Checking whether or not in Special 
+  Provider Settings" has been added.
+------------------------------------------------------------------------
+HTTP Library
+------------------------------------------------------------------------
+[libref]
+- Descriptions of the following functions have been added.
+    sceHTTPDeleteCookieListEntry()
+    sceHTTPFilterCookieList()
+    sceHTTPFreeAuthInfo()
+    sceHTTPGetPostedBytes()
+    sceHTTPGetResolveError()
+
+- A description of proxy has been added to the members of the following 
+  structures.
+    sceHTTPAuth_t
+    sceHTTPAuthInfo_t
+    sceHTTPSetBasicAuth
+    sceHTTPSetDigestAuth
+
+- With the structure sceHTTPClient_t, descriptions of the following 
+  members have been added.
+    net_herrno
+    otimeout
+    c_wait0
+    c_wait1
+    c_tcount
+    c_timer
+    hflags
+   
+- In the "Description" section of sceHTTPAddCookieList(), a note has been 
+  added.
+
+- In the "Description" section of sceHTTPGetOption(), descriptions of 
+  the following options have been added.
+    sceHTTPO_OpenTimeout
+    sceHTTPO_DefaultHeaders
+
+- In the "Notes" section of sceHTTPGetSocketError(), a description about 
+  errors has been added.
+
+- In the "Description" section of sceHTTPOpen(), a description about 
+  threads has been added.
+
+- In the "Description" section of sceHTTPSetOption(), descriptions of 
+  the following options have been added.
+    sceHTTPO_OpenTimeout
+    sceHTTPO_DefaultHeaders
+
+- In "Definition" of the sceHTTPOption_t literal, the following 
+  definitions have been added.
+    sceHTTPO_DefaultHeaders
+    sceHTTPO_OpenTimeout
+
+[overview]
+- In "Cookie Control" of "2. Features and Code Flow", 
+  a description of sceHTTPFilterCookieList() has been added.
+
+------------------------------------------------------------------------
+General-Purpose Network Wrapper API (netglue)
+------------------------------------------------------------------------
+[overview]
+- In "1. Library Overview", the "Source Release of the netglue Library 
+  for ibinsck" section has been added.
+
+------------------------------------------------------------------------
+Basic Graphics Library (libgp)
+------------------------------------------------------------------------
+[libref]
+- In the "Argument" and "Description" sections of sceGpSetPacketMode(), 
+  CALL has been added to available modes.
+
+[overview]
+- In "Transferring a Single Packet" of "3. Drawing Procedure", a 
+  description has been added. 
+------------------------------------------------------------------------
+GS Basic Library
+------------------------------------------------------------------------
+[libref]
+- In the "Notes" section of sceGsResetGraph(), a note has been added.
+
+- In the "Return Value" section of sceGsSetDef*(), error correction has 
+  been made in the unit of size.
+
+------------------------------------------------------------------------
+High Level Graphics Plugin Library
+------------------------------------------------------------------------
+[libref]
+- Descriptions of the following structures have been added.
+   sceHiPlugCameraData_t
+   sceHiPlugSkinData_t
+   sceHiPlugSkinHead_t
+
+- Descriptions of the following functions have been added.
+   sceHiPlugCamera()
+   sceHiPlugCameraGetData()
+   sceHiPlugSkin()
+   sceHiPlugSkinGetData()
+   sceHiPlugSkinGetHead()
+   sceHiPlugSkinGetLB()
+   sceHiPlugSkinGetLW()
+   sceHiPlugSkinGetBW()
+
+- In the "Description" section of sceHiPlugAnime(), the description of 
+  the amount of memory consumed has been changed.
+
+- In the "Description" section of the following functions, "Write 
+  Operation" has been added as an item to the table providing data type 
+  attributes.
+   sceHiPlugAnime()
+   sceHiPlugClip()
+   sceHiPlugClutBump()
+   sceHiPlugHrchy()
+   sceHiPlugMicro()
+   sceHiPlugShadowBox()
+   sceHiPlugShape()
+   sceHiPlugShare()
+   sceHiPlugTex2D()
+   sceHiPlugTim2()
+
+- In the "Description" section of the following functions, a description 
+  of data type attributes has been added.
+   sceHiPlugFishEye()
+   sceHiPlugLightMap()
+   sceHiPlugReflect()
+   sceHiPlugRefract()
+
+- In the "Description" section of the following functions, a description 
+  of SCE_HIP_MICRO has been added to the plugin type attributes.
+   sceHiPlugLightMap()
+   sceHiPlugReflect()
+   sceHiPlugRefract()
+
+- In the "Description" section of sceHiPlugMicro(), the description of 
+  the amount of memory used has been changed.
+
+- In the "Description" section of sceHiPlugShadowBox(), a description of 
+  SCE_HIP_SHAPE has been added to data type attributes.
+
+- In the "Description" section of sceHiPlugShape(), the description of 
+  the amount of memory consumed has been changed.
+
+- In the "Description" section of sceHiPlugShare(), the description of 
+  the amount of memory consumed has been changed.
+
+[overview]
+- In "Overview" of "1. Library Overview", descriptions of Camera plugin 
+  and Skin plugin have been added.
+
+- In "2. Overview of Plugin Features", descriptions of Camera plugin and 
+  Skin plugin have been added.
+
+------------------------------------------------------------------------
+Vibration Library
+------------------------------------------------------------------------
+[libref]
+- In the "Return Value" section of sceVibSetActParam(), the return values 
+  have been changed.
+
+------------------------------------------------------------------------
+Low Level Sound Library (libsdr)
+------------------------------------------------------------------------
+[libref]
+- In the "Description" section of sceSdRemote(), a description about 
+  the case where an argument is specified to rSdProcBatch2 and 
+  rSdProcBatchEx2 has been added.
+
+------------------------------------------------------------------------
+IOP Programming (iop/iop_prog)
+------------------------------------------------------------------------
+- ET_SCE_IOPRELEXEC2 (==0xFF81) has been added to e_type in "ELF Header 
+  Details" of "8. Reference: IOP Object Format".
+
+- A description on ET_SCE_IOPRELEXEC2 has been added in "Relocation Table 
+  Entries" of "8. Reference: IOP Object Format".
+------------------------------------------------------------------------
+Low Level Sound Library
+------------------------------------------------------------------------
+[libref]
+- In "Member" of the structure sceSdEffectAddr, error correction has been 
+  made to the description on feedback.
+
+- In the "Description" section of sceSdSetSpu2IntrHandler(), a note has 
+  been added.
+
+- With the following register macros, a description has been added in 
+  the "Description" section.
+   SD_A_EEA,SD_A_ESA,SD_A_IRQA,SD_P_AVOLL/R,SD_S_KOFF
+   SD_S_KON,SD_VA_NAX, SD_VA_SSA
+
+- With the following register macros, the description in the "Description" 
+  section has been corrected.
+   SD_S_NON, SD_VP_PITCH
+
+[overview]
+- In "Basic Parameter Register Macros" in "2. List of Register Macros", 
+  the description on SD_S_AVOLL/R has been corrected.
+------------------------------------------------------------------------
+CSL Hardware Synthesizer (modhsyn)
+------------------------------------------------------------------------
+- The following function macros have been added.
+   sceHSyn_GetVoiceCtrlPort
+   sceHSyn_GetVoiceStat
+
+------------------------------------------------------------------------
+Network Library (inet)
+------------------------------------------------------------------------
+[libref]
+- The structure sceInetPollFd_t has been added.
+
+- sceInetPoll() has been added.
+
+- In the "Return Value" section of sceInetRecvFrom(), the descriptions of 
+  the following return values have been deleted.
+   sceINETE_CONNECTION_CLOSING(-509)
+   sceINETE_CONNECTION_RESET(-510)
+
+- In the "Return Value" section of sceInetSendTo(), the descriptions of 
+  the following return values have been deleted.
+   sceINETE_TIMEOUT(-500)
+   sceINETE_ABORT(-501)
+   sceINETE_CONNECTION_CLOSING(-509)
+   sceINETE_CONNECTION_RESET(-510)
+
+- A description of sceINETC_CODE_SEND_FIN has been added to "Control Codes 
+  for Connection Control".
+
+[overview]
+- In "Supported Equipment" in "1. Library Overview", the following has 
+  been added to the USB-Ethernet adapters for development purposes only.
+  U.S.	D-Link	DSB-650TX B1
+
+------------------------------------------------------------------------
+Network (INET) Configuration Library
+------------------------------------------------------------------------
+[libref]
+- Since a problem with the library has been fixed, the "Syntax", 
+  "Return Value" and "Description" sections of sceInetCtlGetConfiguration() 
+  have been corrected.
+
+------------------------------------------------------------------------
+Common Network Configuration Library (netcnf)
+------------------------------------------------------------------------
+[libref]
+- A description of sceNetCnfCheckSpecialProvider() has been added.
+
+- In the "Return Value" section of sceNetCnfAddEntry(), descriptions of 
+  the following return valeus have been added.
+   sceNETCNF_SYNTAX_ERROR(-14)
+   sceNETCNF_AOL_CONFIGURATION(-20)
+
+- In the "Return Value" section of sceNetCnfEditEntry, descriptions of 
+  the following return values have been added.
+   sceNETCNF_INVALID_TYPE(-10)
+   sceNETCNF_SYNTAX_ERROR(-14)
+   sceNETCNF_MAGIC_ERROR(-15)
+   sceNETCNF_AOL_CONFIGURATION(-20)
+
+[overview]
+- In "Method for Starting up netcnf.irx" in "2. NET Configuration File 
+  Overview", a description of the -no_check_provider option has been 
+  added.
+
+------------------------------------------------------------------------
+Graphics Data Format (format/gformat)
+------------------------------------------------------------------------
+- With eSTD of "1.eS Unified File Format", the following descriptions 
+  have been added to (2) Structures.
+    Weight
+    SkinWeight
+    SkinHeader
+
+- In "Type Attributes" of "4. HiP Plugin Data Format", descriptions of 
+  the following plugins have been added.
+    Clip plugin
+    Camera plugin
+    Skin plugin
+
+- In "Type Attributes" of "4. HiP Plugin Data Format", a description of 
+  read/write processing performed by the plugins to the data blocks has 
+  been added to the type attributes of the data blocks. 
+  The following plugins have also been added.
+    Clip plugin
+    Camera plugin
+    Skin plugin
+
+- In the following items have been added to "4. HiP Plugin Data Format".
+    Clip Plugin Data Structure
+    Camera Plugin Data Structure
+    Skin Plugin Data Structure
+ 
+------------------------------------------------------------------------
+NETMP (deci2/netmp)
+------------------------------------------------------------------------
+- In "2. Messages", a description of factor code has been added to 
+  NETMP_CODE_RESETR.
+
+------------------------------------------------------------------------
+DBGP EE Thread Expansion (deci2/ee_dbgp)
+------------------------------------------------------------------------
+- With the messages Thread List (THREADLIST/THREADLISTR) and Thread 
+  Control Block (TCB/TCBR), the restrictions have been deleted.
+
+------------------------------------------------------------------------
+Library Overview (general/syssoft)
+------------------------------------------------------------------------
+- In "1. Basics of Software Architecture", "List of Unloadable Modules" 
+  has been added.
+
+------------------------------------------------------------------------
+Your Network Configuration File Usage Rule (general/yncf)
+------------------------------------------------------------------------
+- This file has been updated to Version 2.0.
+
+- "Version Management" has been added to "1. About This Document".
+
+- The descriptions on sceNETCNF_MAGIC_ERROR and sceNETCNF_SYNTAX_ERROR 
+  have been moved to "An Error when Reading Your Network Configuration 
+  File" in "3. Standards for Creating a Network Configuration Application 
+  (Read)".
+
+- In "Displaying and Selecting Internet Service Provider Settings" 
+  of "3. Standards for Creating a Network Configuration Application 
+  (Read)", a description of the following rule has been added.  
+
+    Before displaying the user name, the user name conversion function, 
+    sceNetcnfifConvAuthname(), must be performed to the user name you 
+    wish to display. 
+
+- In "Adding, Editing, and Deleting Internet Service Provider Setting" 
+  of "4. Standards for Creating a Network Configuration Application 
+  (Write)", a description on rules to prohibit adding/editing the Internet 
+  Service Provider Setting that has detected 
+  sceNETCNF_AOL_CONFIGURATION(-20).
+
+- In "Usable Characters" of "5. Detailed Standards in Implementation", 
+  a new character has been added.
+
+------------------------------------------------------------------------
+iop Programming Tool (tool/iop_util)
+------------------------------------------------------------------------
+- In "1. iopfixup Utility", descriptions of the following options have 
+  been added.
+    --irx1
+    -d flag
+    --rb
+    --relative-branch
+
+- "5. irxsize Utility" has been added.
+
+- In "6. iop-gcc", descriptions of the following options have been added.
+    -msplit-addresses
+    -mno-split-addresses
+    --rb
+    --relative-branch
+
+- In "6. iop-gcc", a description of -H has been added to the original gcc 
+  options that are useful.
+

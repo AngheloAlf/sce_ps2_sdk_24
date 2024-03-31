@@ -1,0 +1,152 @@
+######################################################
+#                                                    #
+#               USB module auto loader               #
+#                    Config file                     #
+#                                                    #
+######################################################
+
+DeviceName "標準 USB マウス(CD)"  # SJIS
+	Use      0 
+	Class    03
+	SubClass 01
+	Protocol 02
+	Category Mouse
+	DriverPath   "cdrom0:\USBMOUSE.IRX;1"
+
+DeviceName "標準 USB キーボード(CD)"  # SJIS
+	Use      0
+	Class    03
+	SubClass 01
+	Protocol 01
+	Category Keyboard
+	DriverPath   "cdrom0:\USBKEYBD.IRX;1"
+
+DeviceName "標準 USB マウス(HOST)"  # SJIS
+	Use      1
+	Class    03
+	SubClass 01
+	Protocol 02
+	Category Mouse
+	DriverPath   "host1:/usr/local/sce/iop/sample/usb/usbmouse/usbmouse.irx"
+
+DeviceName "標準 USB キーボード(HOST)"  # SJIS
+	Use      1
+	Class    03
+	SubClass 01
+	Protocol 01
+	Category Keyboard
+	DriverPath   "host1:/usr/local/sce/iop/sample/usb/usbkeybd/usbkeybd.irx"
+
+DeviceName "Melco/LUA-TX(1)"
+        Use      1
+        Vendor   0x0411
+        Product  0x0001
+        Category Ether
+        DriverPath   "host1:/usr/local/sce/iop/modules/an986.irx"
+
+DeviceName "Melco/LUA-TX(5)"
+        Use      1
+        Vendor   0x0411
+        Product  0x0005
+        Category Ether
+        DriverPath   "host1:/usr/local/sce/iop/modules/an986.irx"
+
+DeviceName "I-O Data/ET/TX"
+        Use      1
+        Vendor   0x04bb
+        Product  0x0904
+        Category Ether
+        DriverPath   "host1:/usr/local/sce/iop/modules/an986.irx"
+
+DeviceName "PLANEX/UE-100TX"
+        Use      1
+        Vendor   0x07a6
+        Product  0x0986
+        Category Ether
+        DriverPath   "host1:/usr/local/sce/iop/modules/an986.irx"
+
+DeviceName "Corega/USB-TX"
+        Use      1
+        Vendor   0x07aa
+        Product  0x0004
+        Category Ether
+        DriverPath   "host1:/usr/local/sce/iop/modules/an986.irx"
+
+DeviceName "Linksys/USB100TX(2203)"
+        Use      1
+        Vendor   0x066b
+        Product  0x2203
+        Category Ether
+        DriverPath   "host1:/usr/local/sce/iop/modules/an986.irx"
+
+DeviceName "Linksys/USB100TX(2204)"
+        Use      1
+        Vendor   0x066b
+        Product  0x2204
+        Category Ether
+        DriverPath   "host1:/usr/local/sce/iop/modules/an986.irx"
+
+DeviceName "D-Link/DSB-650TX(4001)"
+        Use      1
+        Vendor   0x2001
+        Product  0x4001
+        Category Ether
+        DriverPath   "host1:/usr/local/sce/iop/modules/an986.irx"
+
+DeviceName "D-Link/DSB-650TX(4002)"
+        Use      1
+        Vendor   0x2001
+        Product  0x4002
+        Category Ether
+        DriverPath   "host1:/usr/local/sce/iop/modules/an986.irx"
+
+DeviceName "ADMtek/Pegasus"
+        Use      1
+        Vendor   0x07a6
+        Product  0x0986
+        Category Ether
+        DriverPath   "host1:/usr/local/sce/iop/modules/an986.irx"
+
+DeviceName "D-Link/DU-E100"
+        Use      1
+        Vendor   0x07b8
+        Product  0x4002
+        Category Ether
+        DriverPath   "host1:/usr/local/sce/iop/modules/an986.irx"
+
+DeviceName "Elecom/LD-USBL/TX"
+        Use      1
+        Vendor   0x056e
+        Product  0x4005
+        Category Ether
+        DriverPath   "host1:/usr/local/sce/iop/modules/an986.irx"
+
+DeviceName "PLANEX/UE-200TX"
+        Use      1
+        Vendor   0x07a6
+        Product  0x8511
+        Category Ether
+        DriverPath   "host1:/usr/local/sce/iop/modules/an986.irx"
+
+DeviceName "Melco/LUA2-TX"
+        Use      1
+        Vendor   0x0411
+        Product  0x0009
+        Category Ether
+        DriverPath   "host1:/usr/local/sce/iop/modules/an986.irx"
+
+DeviceName "Linksys/USB100TX B"
+        Use      1
+        Vendor   0x066b
+        Product  0x400b
+        Category Ether
+        DriverPath   "host1:/usr/local/sce/iop/modules/an986.irx"
+
+DeviceName "D-Link/DU-E100 B1"
+        Use      1
+        Vendor   0x07b8
+        Product  0x4102
+        Category Ether
+        DriverPath   "host1:/usr/local/sce/iop/modules/an986.irx"
+
+end

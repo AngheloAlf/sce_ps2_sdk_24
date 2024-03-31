@@ -1,0 +1,317 @@
+[SCEI CONFIDENTIAL DOCUMENT]
+PlayStation2 Programmer Tool Runtime Library Release 2.3
+  Copyright (C) 2000 by Sony Computer Entertainment Inc.
+                                     All Rights Reserved
+                                                             
+
+
+Tentative Sound Libraries for IOP (libspu2, libsnd2)
+====================================================
+
+These tentative sound libraries, for use in developing initial titles, are ports of the existing PlayStation libraries, with only slightly expanded functionality.
+
+The new sound libraries (libsd and CSL) optimized for the next-generation PlayStation have already been released.  In the future, only bug fixes will be carried out in these tentative libraries; improvement of existing functions and addition of new functions will be carried out in the new libraries only. The new authoring tool (JAM) is compatible only with the new libraries. 
+
+
+Overview
+========
+
+libspu2 and libsnd2 are sound libraries that run on the I/O processor. Because they inherit all functions (except CD-related functions) of the current PlayStation sound libraries, specifications of these functions can be found in the current PlayStation documentation. 
+
+New functions were added to libspu2 to support new SPU2 functionality. This document explains only this expanded functionality.
+
+The new functions are as follows:
+
+=======================================================
+SpuSetCore	Set the SPU2 core
+=======================================================
+
+[Format (IOP)]
+	unsigned long SpuSetCore (
+	unsigned long which_core)
+
+[Arguments]
+	which_core	Specifies either core 0 or 1.
+
+[Return value]
+	Core specified previously.
+
+[Description]
+The SPU2 has two on-board cores equivalent to the current SPU. 
+When this command is used to specify a core, subsequent SPU control commands will apply to this core.
+Once this function has been set, it will remain effective until it is next set.
+	
+
+=======================================================
+SpuGetCore	Get the current SPU2 core
+=======================================================
+
+[Format (IOP)]
+	unsigned int SpuGetCore (void)
+
+[Arguments]
+	None
+
+[Return value]
+	Current core.
+
+[Description]
+Gets the current core.
+
+=======================================================
+SpuSetReverbEndAddr  Set the reverb area's end address
+=======================================================
+
+[Format (IOP)]
+	void SpuSetReverbEndAddr (unsigned long eea)
+
+[Arguments]
+	eea	Reverb area end address
+
+[Return value]
+	None
+
+[Description]
+Specifies the reverb area's end address in SPU local memory. 
+The area's starting point is determined according to the required reverb size. The area size is the same as that for the current PlayStation.
+
+Two reverb systems can be used if their reverb areas do not overlap in core 0 and core 1.
+
+The reverb area has a 128-Kbyte boundary, so the end address must be a multiple of 128 Kbytes minus 1. (The low-order 17 bits are all 1.)
+
+========================================================
+SpuGetReverbEndAddr   Get the reverb area's end address
+========================================================
+
+[Format (IOP)]
+	unsigned long SpuGetReverbEndAddr (void)
+
+[Arguments]
+	None
+
+[Return value]
+	Reverb area's end address
+
+[Description]
+Gets the current reverb area's end address.
+
+=======================================================
+SpuAutoDMAWrite	      Use Auto DMA to play back a 
+		      straight PCM waveform
+=======================================================
+
+[Format (IOP)]
+	unsigned long SpuAutoDMAWrite(
+		unsigned char *addr, 
+		unsigned long size, 
+		unsigned long mode[,
+		unsigned char *start]
+	)
+
+[Arguments] 
+	addr	Address in IOP memory of waveform data 
+		to be played
+	size	Size of waveform data to be played
+	mode	Play mode. The bit logical OR of 
+		SPU_AUTODMA_ONESHOT or SPU_AUTODMA_LOOP 
+		and SPU_AUTODMA_START_ADDR can be 
+		specified. 
+	start	Address in IOP memory of waveform data 
+		at which playback is to start. 
+		(Absolute address specification. Can 
+		be specified only when 
+		SPU_AUTODMA_START_ADDR is specified. 
+		Can be omitted if nothing between the 
+		brackets [] is specified.)
+
+[Return Value]
+	0	start is outside of the range indicated 
+		by (addr + size)
+		(Only when SPU_AUTODMA_START_ADDR is 
+		specified)
+	>0	Size of data that was played
+
+[Description] 
+Plays a straight PCM waveform that is in IOP memory. The data format is 16-bit, little endian, signed straight PCM. Moreover, with the current specifications, the left and right channels must be interleaved every 512 bytes.
+
+If SPU_AUTODMA_ONESHOT is specified, the waveform data for the range 	that was set will be performed only once.  When the performance ends, waveform data that remains in the buffer within the SPU2 is played in a loop.  To stop this, use an interrupt or polling to detect the end of the playback and execute SpuAutoDMAStop().
+
+If SPU_AUTODMA_LOOP is specified, the waveform data for the range that was set will be performed repeatedly.  In this case, size must be a multiple of 512.
+
+If SPU_AUTODMA_START_ADDR is specified for mode by combining it with SPU_AUTODMA_ONESHOT or SPU_AUTODMA_LOOP according to a bit logical OR operation, the fourth argument start is referenced, and the data is played beginning with the position indicated by start. For start, specify an absolute address in the range that is specified by addr and size.
+
+If SPU_AUTODMA_START_ADDR is not specified, only three arguments are required.
+
+
+========================================================
+SpuAutoDMAStop Stop playback of a straight PCM waveform
+========================================================
+
+[Format (IOP)]
+	long  SpuAutoDMAStop(void)
+
+[Arguments] 
+	None
+
+[Return Value] 
+	Playback state
+
+[Description] 
+Stops the playback of a straight PCM waveform.  The return value indicates the playback state when the stop processing is executed.  
+The specifications are equivalent to SpuAutoDMAGetStatus().
+
+=======================================================
+SpuAutoDMAGetStatus	Get the auto DMA status
+=======================================================
+
+[Format (IOP)]
+	long SpuAutoDMAGetStatus (void)
+
+[Arguments]
+	None
+
+[Return value]
+	Playback status
+
+[Description]
+Gets the waveform's playback status. Bits 0-23 represent the address (in IOP memory) being played back. For the 
+SPU_AUTODMA_ONESHOT mode, when playback ends, it becomes zero.
+
+Bit 24 is the number of the buffer being played back, and has significance only in the case of SPU_AUTODMA_LOOP. If the first half of the buffer is being played back, 0 is returned. If the second half is being played back, 1 is returned.
+
+========================================================
+SpuAutoDMASetCallback	      Set Auto DMA's interrupt 
+			      callback.
+========================================================
+
+[Format (IOP)]
+ 	SpuTransferCallbackProc	SpuAutoDMASetCallback 
+	(SpuTransferCallbackProc func)
+
+[Arguments]
+	Pointer to the interrupt handler
+
+[Return value]
+	Pointer to the interrupt handler set previously
+
+[Description]
+Sets the Auto DMA interrupt handler.
+
+In the case of SPU_AUTODMA_ONESHOT, an interrupt is generated after the transfer of the specified size is completed.
+
+In the case of SPU_AUTODMA_LOOP, an interrupt is generated at the midpoint and at the end of the transfer.
+
+An interrupt is not generated "after playing" the specified size. Rather, it is generated "after the transfer" to the input buffer in SPU2. The input buffer is 512 bytes per channel.
+
+=======================================================
+SpuStSetCore	Set the core used for streaming
+=======================================================
+
+[Format (IOP)]
+ 	unsigned long SpuStSetCore (
+	unsigned long which_core)
+
+[Arguments]
+	which_core	Specifies either core 0 or 1
+
+[Return value]
+	Core previously specified
+
+[Description]
+Specifies voice core used for streaming. Set this function before streaming. Once it has been set, the value will remain effective until it is reset.
+
+
+=======================================================
+SpuSetAutoDMAAttr            Set AutoDMA attributes
+=======================================================
+
+[Format]
+     void SpuSetAutoDMAAttr( 
+          short vol_l,
+          short vol_r, 
+          short dry_on, 
+          short effect_on 
+     )
+
+[Arguments]
+     vol_l          AutoDMA input volume (left)
+     vol_r          AutoDMA input volume (right)
+     dry_on         Indicates dry (no effects) output
+     effect_on      Indicates output with effects
+
+[Return value]
+     none
+
+[Description]
+vol_l, vol_r are set with values in the range of 0x0 - 0x7fff. 
+Negative values indicate inverted phase.
+dry_on=SPU_ON, effect_on=SPU_OFF provides normal output with no effects.
+dry_on=SPU_ON, effect_on=SPU_ON provides output with effects.
+dry_on=SPU_OFF, effect_on=SPU_OFF results in no output.
+
+=======================================================
+SpuSetSerialInAttr       Set serial input attributes
+=======================================================
+
+[Format]
+     void SpuSetSerialInAttr(
+          short dry_on, 
+          short effect_on 
+     )
+
+[Arguments]
+     dry_on         Indicates dry (no effects) output
+     effect_on      Indicates output with effects
+
+[Return value]
+     none
+
+[Description]
+Core0 output always goes through core1. This API sets up the attributes used when the core0 output is sent to core1.
+Since only the core1 side is valid, SpuSetCore() settings are ignored.
+
+If dry_on=SPU_ON, effect_on=SPU_ON:
+Core1 effects are also applied to the core0 output.
+
+If dry_on=SPU_ON, effect_on=SPU_OFF:
+Core1 effects are not applied to the core0 output.
+
+If dry_on=SPU_OFF, effect_on=SPU_OFF:
+Core0 output is not sent to core1 so no sound is output.
+
+=======================================================
+SpuGetNextAddr      Get next waveform data address
+=======================================================
+
+[Format]
+     unsigned long  SpuGetNextAddr(
+          int vNum
+     )
+
+[Arguments]
+     vNum           Voice number (0 - 23j
+
+[Return value]
+     The address of the next waveform data to be read
+
+[Description]
+This function returns the address of the next waveform data to be read. If the pitch is 0x1000 and the address is not the start of a loop, the address two bytes before this address would be the address of the data currently being played (assuming there is no CPU processing delay).
+
+
+Core
+====
+Although the SPU2 can use 48 voices, libspu2 and libsnd2 are tentative versions based on the old libraries, and cannot process 48 voices linearly.
+
+According to the specification, the core (0 or 1) is specified first, then the desired voices and reverb. Subsequent commands act on the core that was last specified.
+
+Basically, commands can be executed by either core, so the two cores are independently settable. An exception is during libsnd2 sequence playback, when it is impossible for the two cores to simultaneously play separate sequences. Also, during DMA / Auto DMA transfer, the core setting is disregarded, so DMA (i.e., transfer to SPU memory) is always executed by core 1, and Auto DMA (i.e., transfer to the buffer for straight PCM) is always executed by core 0.
+
+These problems have been solved in the formal libraries (libsd, libsdr and CSL).
+
+
+Restrictions
+============
+
+- The VAB body used in libsnd cannot be placed so that it straddles the 1 MByte local memory boundary. When it does not straddle that boundary, it can be placed in an area of more than 1MBytes. This restriction results from the VAB data format.
+
+

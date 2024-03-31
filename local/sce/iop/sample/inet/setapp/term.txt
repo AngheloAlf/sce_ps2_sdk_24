@@ -1,0 +1,93 @@
+[SCEI CONFIDENTIAL DOCUMENT]
+PlayStation 2 Programmer Tool Runtime Library Release 2.4.2
+   Copyright (C) 2001 by Sony Computer Entertainment Inc.
+                                      All Rights Reserved
+
+
+[Items for each screen, item names and terminology]
+
+Use the following items, item names and terminology shown in the table below in an actual title. 
+
+	( Common to all screens )
+
+	Network Connection		: Network connection
+	Network Configuration		: Network configuration
+	Advanced Settings		: Advanced settings
+	Restore defaults		: Restore defaults
+
+
+	( Network Connection screen )
+
+	Combination			:  Combination
+	Hardware			:  Connection device
+	Network Service Provider	:  Connection provider
+	Connect				:  Connect
+	Connection Settings		:  Connection settings
+	Add				:  Register combination
+	Delete				:  Delete combination
+
+
+	( Network Setting(menu) screen )
+
+	New Settings			:  Create new
+	Hardware Settings		:  Connection device settings only
+	Network Service Provider Settings:  Connection provider settings only
+
+	Add Hardware			:  Add connection device setting
+	Edit Hardware			:  Edit existing connection device setting
+	Delete Hardware			:  Delete existing connection device setting
+
+	Add Network Service Provider	:  Add connection provider settings
+	Edit Network Service Provider	:  Edit existing connection provider settings
+	Delete Network Service Provider	:  Delete existing connection provider settings
+
+
+	( Network Setting(dev) screen )
+
+	dialing type			:  Dialing method
+	Tone				:  Tone
+	Pulse				:  Pulse
+	Hardware Address		:  MAC address of connection device
+
+
+	( Network Setting(dev_more) screen )
+
+	Additional AT Command		:  Additional AT command
+	Outside Number			:  Outside call number settings
+	Line Timeout			:  Line disconnect settings
+	Auto-detect			:  Automatic detect
+	10BaseT Half-Duplex		: (use as is)
+	10BaseT Full-Duplex		: (use as is)
+	100BaseTX Half-Duplex		: (use as is)
+	100BaseTX Full-Duplex		: (use as is)
+
+
+	( Network Setting(ifc) screen )
+
+	User ID				:  User ID
+	Password			:  Password
+	Tel. Number1			:  Calling telephone number 1 (required)
+	Tel. Number2			:  Calling telephone number 2 (optional)
+	Tel. Number3			:  Calling telephone number 3 (optional)
+	Auto				:  Obtain automatically
+	Manual				:  Set manually, do not obtain automatically
+	Primary DNS Server Address	:  Primary DNS
+	Secondary DNS Server Address	:  Secondary DNS
+	Auto				:  Obtain automatically
+	Manual				:  Set manually, do not obtain automatically
+	IP Address			:  IP address
+	Netmask				:  Netmask
+	Default Router Address		:  Default router
+	NSP Setting Name		:  Setting name
+
+
+	( Network Setting(ifc_more) screen )
+
+	Set				:  Set
+	Don't set			:  Do not set
+	DHCP Host Name			:  DHCP host name
+	Auto				:  Obtain automatically
+	Manual				:  Set manually, do not obtain automatically
+	Primary DNS Server Address	:  Primary DNS
+	Secondary DNS Server Address	:  Secondary DNS
+

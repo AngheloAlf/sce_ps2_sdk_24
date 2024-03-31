@@ -1,0 +1,132 @@
+<html>
+
+<head>
+<title>demux command</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+</head>
+
+<body>
+
+<h1>demux command</h1>     
+<hr>     
+<h2>Purpose</h2>     
+<p> Demultiplex a multiplexed stream.</p>     
+<p> </p>     
+<h2>Format</h2>     
+<h3>command section</h3>     
+<p> demux (Abbreviated form: d)</p>     
+<p> </p>
+<h3>options section</h3>     
+<table border="1">     
+  <tr>     
+    <td>Options</td>     
+    <td>Meaning</td>     
+  </tr>     
+  <tr>     
+    <td>-o</td>     
+    <td>Overwrite if output file already exists.</td>     
+  </tr>     
+  <tr>     
+    <td>-d [directory]</td>   
+    <td>Specify an output directory.</td>   
+  </tr>   
+  <tr>   
+    <td>-v</td>   
+    <td>Provide a detailed progress report for the operation.</td>   
+  </tr>   
+  <tr>   
+    <td>-video(: number) (number: 0 - 15)</td>     
+    <td>MPEG      
+      Output video stream only. If a number (optional)
+      is specified, data is output only for that stream number.</td>     
+  </tr>     
+  <tr>     
+    <td>-audio(: number) (number: 0 - 31)</td>     
+    <td>MPEG      
+      Output audio stream only. If a number (optional)
+      is specified, data is output only for that stream number.</td>     
+  </tr>     
+  <tr>     
+    <td>-ipu(: number) (number: 0 - 65535)</td>     
+    <td>Output ipu video stream only. If a number (optional)
+      is specified, data is output only for that stream number.</td>     
+  </tr>     
+  <tr>     
+    <td>-pcm(: number) (number: 0 - 65535)</td>     
+    <td>PCM      
+      Output audio stream only. If a number (optional)
+      is specified, data is output only for that stream number.</td>     
+  </tr>     
+  <tr>     
+    <td>-adpcm(: number) (number: 0 - 65535)</td>     
+    <td>adpcm      
+      Output audio stream only. If a number (optional)
+      is specified, data is output only for that stream number.</td>     
+  </tr>     
+  <tr>     
+    <td>-data(: number) (number: 0 - 65535)</td>     
+    <td>Output data stream only. If a number (optional)
+      is specified, data is output only for that stream number.</td>     
+  </tr>     
+</table>     
+<p> If no output stream is specified, all streams will be output.</p>     
+<p> </p>     
+<h3>target file section</h3>     
+<table border="1">     
+  <tr>     
+    <td>Parameter 1</td>     
+    <td>The pss file (MPEG2 program     
+      stream file) to be demultiplexed</td>     
+  </tr>     
+</table>     
+<p> The output filename will be created automatically according to the following rules.</p>
+<table border="1">
+  <tr>
+    <td>Streams</td>
+    <td>Filename (xxx is the input filename. id      
+      is the stream number)</td>     
+  </tr>     
+  <tr>     
+    <td>MPEG video</td>     
+    <td>xxx_video_id.m2v</td>     
+  </tr>     
+  <tr>     
+    <td>MPEG audio</td>     
+    <td>xxx_audio_id.m2a</td>     
+  </tr>     
+  <tr>     
+    <td>ipu video</td>     
+    <td>xxx_ipu_id.ipu</td>     
+  </tr>     
+  <tr>     
+    <td>pcm audio</td>     
+    <td>xxx_pcm_id.ads</td>    
+  </tr>    
+  <tr>    
+    <td>adpcm audio</td>     
+    <td>xxx_adpcm_id.ads</td>    
+  </tr>    
+  <tr>    
+    <td>data</td>    
+    <td>xxx_data_id.dat</td>   
+  </tr>   
+</table>   
+<p> </p>
+<p> </p>
+<p><strong>[EOF]</strong></p>
+<p>Last update:<!--webbot bot="Timestamp" startspan S-Type="EDITED"
+S-Format="%Y/%m/%d" -->1999/09/28<!--webbot bot="Timestamp" i-CheckSum="12961"
+endspan -->
+</p>
+<HR>
+<DIV ALIGN="right">
+<ADDRESS>
+    SCEI CONFIDENTIAL
+    <BR>Copyright (c) 1999 Sony Computer Entertainment Inc.  All Rights Reserved.</BR>
+</ADDRESS>
+</DIV>
+</body>
+
+</html>

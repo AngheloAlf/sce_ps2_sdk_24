@@ -1,0 +1,61 @@
+[SCE CONFIDENTIAL DOCUMENT]
+
+                Copyright (C) 2001 Sony Computer Entertainment Inc.
+                                                   All Rights Reserved
+                                                             
+
+<< Changes since the ps2str version 1.00>>
+
+<< ps2strw.exe (Version 1.08) >> =======================================
+- Features to set loop start and loop end block addresses during SPU 
+  encoding process have been added.
+
+- When audio data of stereo was converted into ads, the size of L/R for 
+  interleave was fixed to 32 bytes. Now other sizes have been available. 
+
+<< Version 1.05 >> =====================================================
+
+- It has been changed to enable to multiplex the variable bit rate of the 
+  MPEG2 video materials.
+
+- For the PSS multiplexing process, the output file size has been reduced
+  by making not to output the padding packet for the rate adjustment.
+
+- The culculating method of SCR time stamp has been changed.
+
+- The placement of the packets on multiplexing the MPEG video stream has 
+  been changed to place according to the order of stream time stamping.
+
+- The conversion from M2V to IPU has been changed in order to enable the 
+  conversion even with the macroblock_stuffing code.
+
+- In the file information screen, it has been changed to display the 
+  input file name.
+
+- The size of the information display window became indeterminate 
+  sometimes. This problem has been fixed.
+
+- The conversion from M2V to IPU sometimes did not finish if the invalid
+  data was input. This problem has been fixed.
+
+- The change has been made to set the delay time on the multiplexing for
+  the arbitrary elementary stream.
+
+- The permission for creating a new file has been changed from 0600 to 
+  0666.
+
+- The change has been made to display the stream type on PSS information 
+  screen.
+
+- The information display has been changed to output into a separate 
+  window.
+
+- In the multiplexing process, there was an output of fault program stream
+  rate. This problem has been fixed. 
+  (With this change, the program stream rate of the PSS data produced by 
+  ver1.00 has a display of a different value (50 times more) from ver1.05.
+  This has no effect on the decoding process.) 
+
+< Change to the document>
+- In the ipustream.doc document, a typo, MABI has been corrected to MBAI.
+

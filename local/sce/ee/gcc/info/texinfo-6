@@ -1,0 +1,1441 @@
+This is Info file texinfo, produced by Makeinfo version 1.68 from the
+input file texinfo.txi.
+
+INFO-DIR-SECTION Texinfo documentation system
+START-INFO-DIR-ENTRY
+* Texinfo: (texinfo).           The GNU documentation format.
+* install-info: (texinfo)Invoking install-info. Updating info/dir entries.
+* texi2dvi: (texinfo)Format with texi2dvi.      Printing Texinfo documentation.
+* texindex: (texinfo)Format with tex/texindex.  Sorting Texinfo index files.
+* makeinfo: (texinfo)makeinfo Preferred.        Translate Texinfo source.
+END-INFO-DIR-ENTRY
+
+  This file documents Texinfo, a documentation system that can produce
+both on-line information and a printed manual from a single source file.
+
+  Copyright (C) 1988, 90, 91, 92, 93, 95, 96, 97, 98 Free Software
+Foundation, Inc.
+
+  This edition is for Texinfo version 3.12.
+
+  Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+  Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+  Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Free Software Foundation.
+
+
+File: texinfo,  Node: itemx,  Prev: ftable vtable,  Up: Two-column Tables
+
+`@itemx'
+--------
+
+  Use the `@itemx' command inside a table when you have two or more
+first column entries for the same item, each of which should appear on a
+line of its own.  Use `@itemx' for all but the first entry; `@itemx'
+should always follow an `@item' command.  The `@itemx' command works
+exactly like `@item' except that it does not generate extra vertical
+space above the first column text.
+
+  For example,
+
+     @table @code
+     @item upcase
+     @itemx downcase
+     These two functions accept a character or a string as
+     argument, and return the corresponding upper case (lower
+     case) character or string.
+     @end table
+
+This produces:
+
+`upcase'
+`downcase'
+     These two functions accept a character or a string as argument,
+     and return the corresponding upper case (lower case) character or
+     string.
+
+(Note also that this example illustrates multi-line supporting text in
+a two-column table.)
+
+
+File: texinfo,  Node: Multi-column Tables,  Prev: Two-column Tables,  Up: Lists and Tables
+
+Multi-column Tables
+===================
+
+  `@multitable' allows you to construct tables with any number of
+columns, with each column having any width you like.
+
+  You define the column widths on the `@multitable' line itself, and
+write each row of the actual table following an `@item' command, with
+columns separated by an `@tab' command.  Finally, `@end multitable'
+completes the table.  Details in the sections below.
+
+* Menu:
+
+* Multitable Column Widths::    Defining multitable column widths.
+* Multitable Rows::             Defining multitable rows, with examples.
+
+
+File: texinfo,  Node: Multitable Column Widths,  Next: Multitable Rows,  Prev: Multi-column Tables,  Up: Multi-column Tables
+
+Multitable Column Widths
+------------------------
+
+  You can define the column widths for a multitable in two ways: as
+fractions of the line length; or with a prototype row.  Mixing the two
+methods is not supported.  In either case, the widths are defined
+entirely on the same line as the `@multitable' command.
+
+  1. To specify column widths as fractions of the line length, write
+     `@columnfractions' and the decimal numbers (presumably less than
+     1) after the `@multitable' command, as in:
+
+          @multitable @columnfractions .33 .33 .33
+
+     The fractions need not add up exactly to 1.0, as these do not.
+     This allows you to produce tables that do not need the full line
+     length.
+
+  2. To specify a prototype row, write the longest entry for each column
+     enclosed in braces after the `@multitable' command.  For example:
+
+          @multitable {some text for column one} {for column two}
+
+     The first column will then have the width of the typeset `some
+     text for column one', and the second column the width of `for
+     column two'.
+
+     The prototype entries need not appear in the table itself.
+
+     Although we used simple text in this example, the prototype
+     entries can contain Texinfo commands; markup commands such as
+     `@code' are particularly likely to be useful.
+
+
+
+File: texinfo,  Node: Multitable Rows,  Prev: Multitable Column Widths,  Up: Multi-column Tables
+
+Multitable Rows
+---------------
+
+  After the `@multitable' command defining the column widths (see the
+previous section), you begin each row in the body of a multitable with
+`@item', and separate the column entries with `@tab'.  Line breaks are
+not special within the table body, and you may break input lines in
+your source file as necessary.
+
+  Here is a complete example of a multi-column table (the text is from
+`The GNU Emacs Manual', *note Splitting Windows: (emacs)Split Window.):
+
+     @multitable @columnfractions .15 .45 .4
+     @item Key @tab Command @tab Description
+     @item C-x 2
+     @tab @code{split-window-vertically}
+     @tab Split the selected window into two windows,
+     with one above the other.
+     @item C-x 3
+     @tab @code{split-window-horizontally}
+     @tab Split the selected window into two windows
+     positioned side by side.
+     @item C-Mouse-2
+     @tab
+     @tab In the mode line or scroll bar of a window,
+     split that window.
+     @end multitable
+
+produces:
+
+Key         Command                          Description                   
+C-x 2       `split-window-vertically'        Split the selected window     
+                                             into two windows, with one    
+                                             above the other.              
+C-x 3       `split-window-horizontally'      Split the selected window     
+                                             into two windows positioned   
+                                             side by side.                 
+C-Mouse-2                                    In the mode line or scroll    
+                                             bar of a window, split that   
+                                             window.                       
+
+
+File: texinfo,  Node: Indices,  Next: Insertions,  Prev: Lists and Tables,  Up: Top
+
+Creating Indices
+****************
+
+  Using Texinfo, you can generate indices without having to sort and
+collate entries manually.  In an index, the entries are listed in
+alphabetical order, together with information on how to find the
+discussion of each entry.  In a printed manual, this information
+consists of page numbers.  In an Info file, this information is a menu
+entry leading to the first node referenced.
+
+  Texinfo provides several predefined kinds of index: an index for
+functions, an index for variables, an index for concepts, and so on.
+You can combine indices or use them for other than their canonical
+purpose.  If you wish, you can define your own indices.
+
+* Menu:
+
+* Index Entries::               Choose different words for index entries.
+* Predefined Indices::          Use different indices for different kinds
+                                  of entry.
+* Indexing Commands::           How to make an index entry.
+* Combining Indices::           How to combine indices.
+* New Indices::                 How to define your own indices.
+
+
+File: texinfo,  Node: Index Entries,  Next: Predefined Indices,  Prev: Indices,  Up: Indices
+
+Making Index Entries
+====================
+
+  When you are making index entries, it is good practice to think of the
+different ways people may look for something.  Different people *do
+not* think of the same words when they look something up.  A helpful
+index will have items indexed under all the different words that people
+may use.  For example, one reader may think it obvious that the
+two-letter names for indices should be listed under "Indices,
+two-letter names", since the word "Index" is the general concept.  But
+another reader may remember the specific concept of two-letter names
+and search for the entry listed as "Two letter names for indices".  A
+good index will have both entries and will help both readers.
+
+  Like typesetting, the construction of an index is a highly skilled,
+professional art, the subtleties of which are not appreciated until you
+need to do it yourself.
+
+  *Note Printing Indices & Menus::, for information about printing an
+index at the end of a book or creating an index menu in an Info file.
+
+
+File: texinfo,  Node: Predefined Indices,  Next: Indexing Commands,  Prev: Index Entries,  Up: Indices
+
+Predefined Indices
+==================
+
+  Texinfo provides six predefined indices:
+
+   * A "concept index" listing concepts that are discussed.
+
+   * A "function index" listing functions (such as entry points of
+     libraries).
+
+   * A "variables index" listing variables (such as global variables of
+     libraries).
+
+   * A "keystroke index" listing keyboard commands.
+
+   * A "program index" listing names of programs.
+
+   * A "data type index" listing data types (such as structures defined
+     in header files).
+
+Not every manual needs all of these, and most manuals use two or three
+of them.  This manual has two indices: a concept index and an @-command
+index (that is actually the function index but is called a command
+index in the chapter heading).  Two or more indices can be combined
+into one using the `@synindex' or `@syncodeindex' commands.  *Note
+Combining Indices::.
+
+
+File: texinfo,  Node: Indexing Commands,  Next: Combining Indices,  Prev: Predefined Indices,  Up: Indices
+
+Defining the Entries of an Index
+================================
+
+  The data to make an index come from many individual indexing commands
+scattered throughout the Texinfo source file.  Each command says to add
+one entry to a particular index; after formatting, the index will give
+the current page number or node name as the reference.
+
+  An index entry consists of an indexing command at the beginning of a
+line followed, on the rest of the line, by the entry.
+
+  For example, this section begins with the following five entries for
+the concept index:
+
+     @cindex Defining indexing entries
+     @cindex Index entries
+     @cindex Entries for an index
+     @cindex Specifying index entries
+     @cindex Creating index entries
+
+  Each predefined index has its own indexing command--`@cindex' for the
+concept index, `@findex' for the function index, and so on.
+
+  Concept index entries consist of text.  The best way to write an index
+is to choose entries that are terse yet clear.  If you can do this, the
+index often looks better if the entries are not capitalized, but
+written just as they would appear in the middle of a sentence.
+(Capitalize proper names and acronyms that always call for upper case
+letters.)  This is the case convention we use in most GNU manuals'
+indices.
+
+  If you don't see how to make an entry terse yet clear, make it longer
+and clear--not terse and confusing.  If many of the entries are several
+words long, the index may look better if you use a different convention:
+to capitalize the first word of each entry.  But do not capitalize a
+case-sensitive name such as a C or Lisp function name or a shell
+command; that would be a spelling error.
+
+  Whichever case convention you use, please use it consistently!
+
+  Entries in indices other than the concept index are symbol names in
+programming languages, or program names; these names are usually
+case-sensitive, so use upper and lower case as required for them.
+
+  By default, entries for a concept index are printed in a small roman
+font and entries for the other indices are printed in a small `@code'
+font.  You may change the way part of an entry is printed with the
+usual Texinfo commands, such as `@file' for file names and `@emph' for
+emphasis (*note Marking Text::.).
+
+  The six indexing commands for predefined indices are:
+
+`@cindex CONCEPT'
+     Make an entry in the concept index for CONCEPT.
+
+`@findex FUNCTION'
+     Make an entry in the function index for FUNCTION.
+
+`@vindex VARIABLE'
+     Make an entry in the variable index for VARIABLE.
+
+`@kindex KEYSTROKE'
+     Make an entry in the key index for KEYSTROKE.
+
+`@pindex PROGRAM'
+     Make an entry in the program index for PROGRAM.
+
+`@tindex DATA TYPE'
+     Make an entry in the data type index for DATA TYPE.
+
+     *Caution:* Do not use a colon in an index entry.  In Info, a colon
+     separates the menu entry name from the node name.  An extra colon
+     confuses Info.  *Note The Parts of a Menu: Menu Parts, for more
+     information about the structure of a menu entry.
+
+  If you write several identical index entries in different places in a
+Texinfo file, the index in the printed manual will list all the pages to
+which those entries refer.  However, the index in the Info file will
+list *only* the node that references the *first* of those index
+entries.  Therefore, it is best to write indices in which each entry
+refers to only one place in the Texinfo file.  Fortunately, this
+constraint is a feature rather than a loss since it means that the index
+will be easy to use.  Otherwise, you could create an index that lists
+several pages for one entry and your reader would not know to which page
+to turn.  If you have two identical entries for one topic, change the
+topics slightly, or qualify them to indicate the difference.
+
+  You are not actually required to use the predefined indices for their
+canonical purposes.  For example, suppose you wish to index some C
+preprocessor macros.  You could put them in the function index along
+with actual functions, just by writing `@findex' commands for them;
+then, when you print the "Function Index" as an unnumbered chapter, you
+could give it the title `Function and Macro Index' and all will be
+consistent for the reader.  Or you could put the macros in with the
+data types by writing `@tindex' commands for them, and give that index
+a suitable title so the reader will understand.  (*Note Printing
+Indices & Menus::.)
+
+
+File: texinfo,  Node: Combining Indices,  Next: New Indices,  Prev: Indexing Commands,  Up: Indices
+
+Combining Indices
+=================
+
+  Sometimes you will want to combine two disparate indices such as
+functions and concepts, perhaps because you have few enough of one of
+them that a separate index for them would look silly.
+
+  You could put functions into the concept index by writing `@cindex'
+commands for them instead of `@findex' commands, and produce a
+consistent manual by printing the concept index with the title
+`Function and Concept Index' and not printing the `Function Index' at
+all; but this is not a robust procedure.  It works only if your
+document is never included as part of another document that is designed
+to have a separate function index; if your document were to be included
+with such a document, the functions from your document and those from
+the other would not end up together.  Also, to make your function names
+appear in the right font in the concept index, you would need to
+enclose every one of them between the braces of `@code'.
+
+* Menu:
+
+* syncodeindex::                How to merge two indices, using `@code'
+                                  font for the merged-from index.
+* synindex::                    How to merge two indices, using the
+                                  default font of the merged-to index.
+
+
+File: texinfo,  Node: syncodeindex,  Next: synindex,  Prev: Combining Indices,  Up: Combining Indices
+
+`@syncodeindex'
+---------------
+
+  When you want to combine functions and concepts into one index, you
+should index the functions with `@findex' and index the concepts with
+`@cindex', and use the `@syncodeindex' command to redirect the function
+index entries into the concept index.
+
+  The `@syncodeindex' command takes two arguments; they are the name of
+the index to redirect, and the name of the index to redirect it to.
+The template looks like this:
+
+     @syncodeindex FROM TO
+
+  For this purpose, the indices are given two-letter names:
+
+`cp'
+     concept index
+
+`fn'
+     function index
+
+`vr'
+     variable index
+
+`ky'
+     key index
+
+`pg'
+     program index
+
+`tp'
+     data type index
+
+  Write an `@syncodeindex' command before or shortly after the
+end-of-header line at the beginning of a Texinfo file.  For example, to
+merge a function index with a concept index, write the following:
+
+     @syncodeindex fn cp
+
+This will cause all entries designated for the function index to merge
+in with the concept index instead.
+
+  To merge both a variables index and a function index into a concept
+index, write the following:
+
+     @syncodeindex vr cp
+     @syncodeindex fn cp
+
+  The `@syncodeindex' command puts all the entries from the `from'
+index (the redirected index) into the `@code' font, overriding whatever
+default font is used by the index to which the entries are now
+directed.  This way, if you direct function names from a function index
+into a concept index, all the function names are printed in the `@code'
+font as you would expect.
+
+
+File: texinfo,  Node: synindex,  Prev: syncodeindex,  Up: Combining Indices
+
+`@synindex'
+-----------
+
+  The `@synindex' command is nearly the same as the `@syncodeindex'
+command, except that it does not put the `from' index  entries into the
+`@code' font; rather it puts them in the roman font.  Thus, you use
+`@synindex' when you merge a concept index into a function index.
+
+  *Note Printing Indices & Menus::, for information about printing an
+index at the end of a book or creating an index menu in an Info file.
+
+
+File: texinfo,  Node: New Indices,  Prev: Combining Indices,  Up: Indices
+
+Defining New Indices
+====================
+
+  In addition to the predefined indices, you may use the `@defindex'
+and `@defcodeindex' commands to define new indices.  These commands
+create new indexing @-commands with which you mark index entries.  The
+`@defindex 'command is used like this:
+
+     @defindex NAME
+
+  The name of an index should be a two letter word, such as `au'.  For
+example:
+
+     @defindex au
+
+  This defines a new index, called the `au' index.  At the same time,
+it creates a new indexing command, `@auindex', that you can use to make
+index entries.  Use the new indexing command just as you would use a
+predefined indexing command.
+
+  For example, here is a section heading followed by a concept index
+entry and two `au' index entries.
+
+     @section Cognitive Semantics
+     @cindex kinesthetic image schemas
+     @auindex Johnson, Mark
+     @auindex Lakoff, George
+
+(Evidently, `au' serves here as an abbreviation for "author".)  Texinfo
+constructs the new indexing command by concatenating the name of the
+index with `index'; thus, defining an `au' index leads to the automatic
+creation of an `@auindex' command.
+
+  Use the `@printindex' command to print the index, as you do with the
+predefined indices.  For example:
+
+     @node Author Index, Subject Index, , Top
+     @unnumbered Author Index
+     
+     @printindex au
+
+  The `@defcodeindex' is like the `@defindex' command, except that, in
+the printed output, it prints entries in an `@code' font instead of a
+roman font.  Thus, it parallels the `@findex' command rather than the
+`@cindex' command.
+
+  You should define new indices within or right after the end-of-header
+line of a Texinfo file, before any `@synindex' or `@syncodeindex'
+commands (*note Header::.).
+
+
+File: texinfo,  Node: Insertions,  Next: Breaks,  Prev: Indices,  Up: Top
+
+Special Insertions
+******************
+
+  Texinfo provides several commands for inserting characters that have
+special meaning in Texinfo, such as braces, and for other graphic
+elements that do not correspond to simple characters you can type.
+
+* Menu:
+
+* Braces Atsigns::              How to insert braces, `@'.
+* Inserting Space::             How to insert the right amount of space
+                                  within a sentence.
+* Inserting Accents::           How to insert accents and special characters.
+* Dots Bullets::                How to insert dots and bullets.
+* TeX and copyright::           How to insert the TeX logo
+                                  and the copyright symbol.
+* pounds::                      How to insert the pounds currency symbol.
+* minus::                       How to insert a minus sign.
+* math::                        How to format a mathematical expression.
+* Glyphs::                      How to indicate results of evaluation,
+                                  expansion of macros, errors, etc.
+* Images::                      How to include graphics.
+
+
+File: texinfo,  Node: Braces Atsigns,  Next: Inserting Space,  Prev: Insertions,  Up: Insertions
+
+Inserting @ and Braces
+======================
+
+  `@' and curly braces are special characters in Texinfo.  To insert
+these characters so they appear in text, you must put an `@' in front
+of these characters to prevent Texinfo from misinterpreting them.
+
+  Do not put braces after any of these commands; they are not necessary.
+
+* Menu:
+
+* Inserting An Atsign::         How to insert `@'.
+* Inserting Braces::            How to insert `{' and `}'.
+
+
+File: texinfo,  Node: Inserting An Atsign,  Next: Inserting Braces,  Prev: Braces Atsigns,  Up: Braces Atsigns
+
+Inserting `@' with @@
+---------------------
+
+  `@@' stands for a single `@' in either printed or Info output.
+
+  Do not put braces after an `@@' command.
+
+
+File: texinfo,  Node: Inserting Braces,  Prev: Inserting An Atsign,  Up: Braces Atsigns
+
+Inserting `{' and `}'with @{ and @}
+-----------------------------------
+
+  `@{' stands for a single `{' in either printed or Info output.
+
+  `@}' stands for a single `}' in either printed or Info output.
+
+  Do not put braces after either an `@{' or an `@}' command.
+
+
+File: texinfo,  Node: Inserting Space,  Next: Inserting Accents,  Prev: Braces Atsigns,  Up: Insertions
+
+Inserting Space
+===============
+
+  The following sections describe commands that control spacing of
+various kinds within and after sentences.
+
+* Menu:
+
+* Not Ending a Sentence::       Sometimes a . doesn't end a sentence.
+* Ending a Sentence::           Sometimes it does.
+* Multiple Spaces::             Inserting multiple spaces.
+* dmn::                         How to format a dimension.
+
+
+File: texinfo,  Node: Not Ending a Sentence,  Next: Ending a Sentence,  Prev: Inserting Space,  Up: Inserting Space
+
+Not Ending a Sentence
+---------------------
+
+  Depending on whether a period or exclamation point or question mark is
+inside or at the end of a sentence, less or more space is inserted after
+a period in a typeset manual.  Since it is not always possible for
+Texinfo to determine when a period ends a sentence and when it is used
+in an abbreviation, special commands are needed in some circumstances.
+(Usually, Texinfo can guess how to handle periods, so you do not need to
+use the special commands; you just enter a period as you would if you
+were using a typewriter, which means you put two spaces after the
+period, question mark, or exclamation mark that ends a sentence.)
+
+  Use the `@:' command after a period, question mark, exclamation mark,
+or colon that should not be followed by extra space.  For example, use
+`@:' after periods that end abbreviations which are not at the ends of
+sentences.
+
+  For example,
+
+     The s.o.p.@: has three parts ...
+     The s.o.p. has three parts ...
+
+produces
+
+     The s.o.p. has three parts ...
+     The s.o.p. has three parts ...
+
+(Incidentally, `s.o.p.' is an abbreviation for "Standard Operating
+Procedure".)
+
+  `@:' has no effect on the Info output.  Do not put braces after `@:'.
+
+
+File: texinfo,  Node: Ending a Sentence,  Next: Multiple Spaces,  Prev: Not Ending a Sentence,  Up: Inserting Space
+
+Ending a Sentence
+-----------------
+
+  Use `@.' instead of a period, `@!' instead of an exclamation point,
+and `@?' instead of a question mark at the end of a sentence that ends
+with a single capital letter.  Otherwise, TeX will think the letter is
+an abbreviation and will not insert the correct end-of-sentence
+spacing.  Here is an example:
+
+     Give it to M.I.B. and to M.E.W@.  Also, give it to R.J.C@.
+     Give it to M.I.B. and to M.E.W.  Also, give it to R.J.C.
+
+produces
+
+     Give it to M.I.B. and to M.E.W.  Also, give it to R.J.C.
+     Give it to M.I.B. and to M.E.W.  Also, give it to R.J.C.
+
+  In the Info file output, `@.' is equivalent to a simple `.'; likewise
+for `@!' and `@?'.
+
+  The meanings of `@:' and `@.' in Texinfo are designed to work well
+with the Emacs sentence motion commands (*note Sentences:
+(emacs)Sentences.).  This made it necessary for them to be incompatible
+with some other formatting systems that use @-commands.
+
+  Do not put braces after any of these commands.
+
+
+File: texinfo,  Node: Multiple Spaces,  Next: dmn,  Prev: Ending a Sentence,  Up: Inserting Space
+
+Multiple Spaces
+---------------
+
+  Ordinarily, TeX collapses multiple whitespace characters (space, tab,
+and newline) into a single space.  Info output, on the other hand,
+preserves whitespace as you type it, except for changing a newline into
+a space; this is why it is important to put two spaces at the end of
+sentences in Texinfo documents.
+
+  Occasionally, you may want to actually insert several consecutive
+spaces, either for purposes of example (what your program does with
+multiple spaces as input), or merely for purposes of appearance in
+headings or lists.  Texinfo supports three commands: `@SPACE', `@TAB',
+and `@NL', all of which insert a single space into the output.  (Here,
+`@SPACE' represents an `@' character followed by a space, i.e., `@ ',
+and `TAB' and `NL' represent the tab character and end-of-line, i.e.,
+when `@' is the last character on a line.)
+
+  For example,
+     Spacey@ @ @ @
+     example.
+
+produces
+
+     Spacey    example.
+
+  Other possible uses of `@SPACE' have been subsumed by `@multitable'
+(*note Multi-column Tables::.).
+
+  Do not follow any of these commands with braces.
+
+
+File: texinfo,  Node: dmn,  Prev: Multiple Spaces,  Up: Inserting Space
+
+`@dmn'{DIMENSION}: Format a Dimension
+-------------------------------------
+
+  At times, you may want to write `12pt' or `8.5in' with little or no
+space between the number and the abbreviation for the dimension.  You
+can use the `@dmn' command to do this.  On seeing the command, TeX
+inserts just enough space for proper typesetting; the Info formatting
+commands insert no space at all, since the Info file does not require
+it.
+
+  To use the `@dmn' command, write the number and then follow it
+immediately, with no intervening space, by `@dmn', and then by the
+dimension within braces.  For example,
+
+     A4 paper is 8.27@dmn{in} wide.
+
+produces
+
+     A4 paper is 8.27in wide.
+
+  Not everyone uses this style.  Some people prefer `8.27 in.@:' or
+`8.27 inches' to `8.27@dmn{in}' in the Texinfo file.  In these cases,
+however, the formatters may insert a line break between the number and
+the dimension, so use `@w' (*note w::.).  Also, if you write a period
+after an abbreviation within a sentence, you should write `@:' after
+the period to prevent TeX from inserting extra whitespace, as shown
+here.  *Note Inserting Space::.
+
+
+File: texinfo,  Node: Inserting Accents,  Next: Dots Bullets,  Prev: Inserting Space,  Up: Insertions
+
+Inserting Accents
+=================
+
+  Here is a table with the commands Texinfo provides for inserting
+floating accents.  The commands with non-alphabetic names do not take
+braces around their argument (which is taken to be the next character).
+(Exception: `@,' *does* take braces around its argument.)  This is so
+as to make the source as convenient to type and read as possible, since
+accented characters are very common in some languages.
+
+Command             Output  What                   
+@"o                 "o      umlaut accent          
+@'o                 'o      acute accent           
+@,{c}               c,      cedilla accent         
+@=o                 =o      macron/overbar accent  
+@^o                 ^o      circumflex accent      
+@`o                 `o      grave accent           
+@~o                 ~o      tilde accent           
+@dotaccent{o}       .o      overdot accent         
+@H{o}               ''o     long Hungarian umlaut  
+@ringaccent{o}      *o      ring accent            
+@tieaccent{oo}      [oo     tie-after accent       
+@u{o}               (o      breve accent           
+@ubaraccent{o}      o_      underbar accent        
+@udotaccent{o}      o-.     underdot accent        
+@v{o}               <o      hacek or check accent  
+
+  This table lists the Texinfo commands for inserting other characters
+commonly used in languages other than English.
+
+@exclamdown{}       !      upside-down !      
+@questiondown{}     ?      upside-down ?      
+@aa{},@AA{}         aa,AA  A,a with circle    
+@ae{},@AE{}         ae,AE  ae,AE ligatures    
+@dotless{i}         i      dotless i          
+@dotless{j}         j      dotless j          
+@l{},@L{}           l/,L/  suppressed-L,l     
+@o{},@O{}           o/,O/  O,o with slash     
+@oe{},@OE{}         oe,OE  OE,oe ligatures    
+@ss{}               ss     es-zet or sharp S  
+
+
+File: texinfo,  Node: Dots Bullets,  Next: TeX and copyright,  Prev: Inserting Accents,  Up: Insertions
+
+Inserting Ellipsis, Dots, and Bullets
+=====================================
+
+  An "ellipsis" (a line of dots) is not typeset as a string of periods,
+so a special command is used for ellipsis in Texinfo.  The `@bullet'
+command is special, too.  Each of these commands is followed by a pair
+of braces, `{}', without any whitespace between the name of the command
+and the braces.  (You need to use braces with these commands because
+you can use them next to other text; without the braces, the formatters
+would be confused.  *Note @-Command Syntax: Command Syntax, for further
+information.)
+
+* Menu:
+
+* dots::                        How to insert dots ...
+* bullet::                      How to insert a bullet.
+
+
+File: texinfo,  Node: dots,  Next: bullet,  Prev: Dots Bullets,  Up: Dots Bullets
+
+`@dots'{} (...)
+---------------
+
+  Use the `@dots{}' command to generate an ellipsis, which is three
+dots in a row, appropriately spaced, like this: `...'.  Do not simply
+write three periods in the input file; that would work for the Info
+file output, but would produce the wrong amount of space between the
+periods in the printed manual.
+
+  Similarly, the `@enddots{}' command generates an end-of-sentence
+ellipsis (four dots) ....
+
+
+File: texinfo,  Node: bullet,  Prev: dots,  Up: Dots Bullets
+
+`@bullet'{} (*)
+---------------
+
+  Use the `@bullet{}' command to generate a large round dot, or the
+closest possible thing to one.  In Info, an asterisk is used.
+
+  Here is a bullet: *
+
+  When you use `@bullet' in `@itemize', you do not need to type the
+braces, because `@itemize' supplies them.  (*Note `@itemize': itemize.)
+
+
+File: texinfo,  Node: TeX and copyright,  Next: pounds,  Prev: Dots Bullets,  Up: Insertions
+
+Inserting TeX and the Copyright Symbol
+======================================
+
+  The logo `TeX' is typeset in a special fashion and it needs an
+@-command.  The copyright symbol, `(C)', is also special.  Each of
+these commands is followed by a pair of braces, `{}', without any
+whitespace between the name of the command and the braces.
+
+* Menu:
+
+* tex::                         How to insert the TeX logo.
+* copyright symbol::            How to use `@copyright'{}.
+
+
+File: texinfo,  Node: tex,  Next: copyright symbol,  Prev: TeX and copyright,  Up: TeX and copyright
+
+`@TeX'{} (TeX)
+--------------
+
+  Use the `@TeX{}' command to generate `TeX'.  In a printed manual,
+this is a special logo that is different from three ordinary letters.
+In Info, it just looks like `TeX'.  The `@TeX{}' command is unique
+among Texinfo commands in that the `T' and the `X' are in upper case.
+
+
+File: texinfo,  Node: copyright symbol,  Prev: tex,  Up: TeX and copyright
+
+`@copyright'{} ((C))
+--------------------
+
+  Use the `@copyright{}' command to generate `(C)'.  In a printed
+manual, this is a `c' inside a circle, and in Info, this is `(C)'.
+
+
+File: texinfo,  Node: pounds,  Next: minus,  Prev: TeX and copyright,  Up: Insertions
+
+`@pounds'{} (#): Pounds Sterling
+================================
+
+  Use the `@pounds{}' command to generate `#'.  In a printed manual,
+this is the symbol for the currency pounds sterling.  In Info, it is a
+`#'.  Other currency symbols are unfortunately not available.
+
+
+File: texinfo,  Node: minus,  Next: math,  Prev: pounds,  Up: Insertions
+
+`@minus'{} (-): Inserting a Minus Sign
+======================================
+
+  Use the `@minus{}' command to generate a minus sign.  In a
+fixed-width font, this is a single hyphen, but in a proportional font,
+the symbol is the customary length for a minus sign--a little longer
+than a hyphen, shorter than an em-dash:
+
+     `-' is a minus sign generated with `@minus{}',
+     
+     `-' is a hyphen generated with the character `-',
+     
+     `---' is an em-dash for text.
+
+In the fixed-width font used by Info, `@minus{}' is the same as a
+hyphen.
+
+  You should not use `@minus{}' inside `@code' or `@example' because
+the width distinction is not made in the fixed-width font they use.
+
+  When you use `@minus' to specify the mark beginning each entry in an
+itemized list, you do not need to type the braces (*note `@itemize':
+itemize..)
+
+
+File: texinfo,  Node: math,  Next: Glyphs,  Prev: minus,  Up: Insertions
+
+`@math': Inserting Mathematical Expressions
+===========================================
+
+  You can write a short mathematical expression with the `@math'
+command.  Write the mathematical expression between braces, like this:
+
+     @math{(a + b)(a + b) = a^2 + 2ab + b^2}
+
+This produces the following in Info:
+
+     (a + b)(a + b) = a^2 + 2ab + b^2
+
+  Thus, the `@math' command has no effect on the Info output.
+
+  For complex mathematical expressions, you can also use TeX directly
+(*note Raw Formatter Commands::.).  When you use TeX directly, remember
+to write the mathematical expression between one or two `$'
+(dollar-signs) as appropriate.
+
+
+File: texinfo,  Node: Glyphs,  Next: Images,  Prev: math,  Up: Insertions
+
+Glyphs for Examples
+===================
+
+  In Texinfo, code is often illustrated in examples that are delimited
+by `@example' and `@end example', or by `@lisp' and `@end lisp'.  In
+such examples, you can indicate the results of evaluation or an
+expansion using `=>' or `==>'.  Likewise, there are commands to insert
+glyphs to indicate printed output, error messages, equivalence of
+expressions, and the location of point.
+
+  The glyph-insertion commands do not need to be used within an
+example, but most often they are.  Every  glyph-insertion command is
+followed by a pair of left- and right-hand braces.
+
+* Menu:
+
+* Glyphs Summary::
+* result::                      How to show the result of expression.
+* expansion::                   How to indicate an expansion.
+* Print Glyph::                 How to indicate printed output.
+* Error Glyph::                 How to indicate an error message.
+* Equivalence::                 How to indicate equivalence.
+* Point Glyph::                 How to indicate the location of point.
+
+
+File: texinfo,  Node: Glyphs Summary,  Next: result,  Prev: Glyphs,  Up: Glyphs
+
+Glyphs Summary
+--------------
+
+  Here are the different glyph commands:
+
+=>
+     `@result{}' points to the result of an expression.
+
+==>
+     `@expansion{}' shows the results of a macro expansion.
+
+-|
+     `@print{}' indicates printed output.
+
+error-->
+     `@error{}' indicates that the following text is an error message.
+
+==
+     `@equiv{}' indicates the exact equivalence of two forms.
+
+-!-
+     `@point{}' shows the location of point.
+
+* Menu:
+
+* result::
+* expansion::
+* Print Glyph::
+* Error Glyph::
+* Equivalence::
+* Point Glyph::
+
+
+File: texinfo,  Node: result,  Next: expansion,  Prev: Glyphs Summary,  Up: Glyphs
+
+`@result{}' (=>): Indicating Evaluation
+---------------------------------------
+
+  Use the `@result{}' command to indicate the result of evaluating an
+expression.
+
+  The `@result{}' command is displayed as `=>' in Info and as a double
+stemmed arrow in the printed output.
+
+  Thus, the following,
+
+     (cdr '(1 2 3))
+          => (2 3)
+
+may be read as "`(cdr '(1 2 3))' evaluates to `(2 3)'".
+
+
+File: texinfo,  Node: expansion,  Next: Print Glyph,  Prev: result,  Up: Glyphs
+
+`@expansion{}' (==>): Indicating an Expansion
+---------------------------------------------
+
+  When an expression is a macro call, it expands into a new expression.
+You can indicate the result of the expansion with the `@expansion{}'
+command.
+
+  The `@expansion{}' command is displayed as `==>' in Info and as a
+long arrow with a flat base in the printed output.
+
+  For example, the following
+
+     @lisp
+     (third '(a b c))
+          @expansion{} (car (cdr (cdr '(a b c))))
+          @result{} c
+     @end lisp
+
+produces
+
+     (third '(a b c))
+          ==> (car (cdr (cdr '(a b c))))
+          => c
+
+which may be read as:
+
+     `(third '(a b c))' expands to `(car (cdr (cdr '(a b c))))'; the
+     result of evaluating the expression is `c'.
+
+Often, as in this case, an example looks better if the `@expansion{}'
+and `@result{}' commands are indented five spaces.
+
+
+File: texinfo,  Node: Print Glyph,  Next: Error Glyph,  Prev: expansion,  Up: Glyphs
+
+`@print{}' (-|): Indicating Printed Output
+------------------------------------------
+
+  Sometimes an expression will print output during its execution.  You
+can indicate the printed output with the `@print{}' command.
+
+  The `@print{}' command is displayed as `-|' in Info and similarly, as
+a horizontal dash butting against a vertical bar, in the printed output.
+
+  In the following example, the printed text is indicated with `-|',
+and the value of the expression follows on the last line.
+
+     (progn (print 'foo) (print 'bar))
+          -| foo
+          -| bar
+          => bar
+
+In a Texinfo source file, this example is written as follows:
+
+     @lisp
+     (progn (print 'foo) (print 'bar))
+          @print{} foo
+          @print{} bar
+          @result{} bar
+     @end lisp
+
+
+File: texinfo,  Node: Error Glyph,  Next: Equivalence,  Prev: Print Glyph,  Up: Glyphs
+
+`@error{}' (error-->): Indicating an Error Message
+--------------------------------------------------
+
+  A piece of code may cause an error when you evaluate it.  You can
+designate the error message with the `@error{}' command.
+
+  The `@error{}' command is displayed as `error-->' in Info and as the
+word `error' in a box in the printed output.
+
+  Thus,
+
+     @lisp
+     (+ 23 'x)
+     @error{} Wrong type argument: integer-or-marker-p, x
+     @end lisp
+
+produces
+
+     (+ 23 'x)
+     error--> Wrong type argument: integer-or-marker-p, x
+
+This indicates that the following error message is printed when you
+evaluate the expression:
+
+     Wrong type argument: integer-or-marker-p, x
+
+  `error-->' itself is not part of the error message.
+
+
+File: texinfo,  Node: Equivalence,  Next: Point Glyph,  Prev: Error Glyph,  Up: Glyphs
+
+`@equiv{}' (==): Indicating Equivalence
+---------------------------------------
+
+  Sometimes two expressions produce identical results.  You can
+indicate the exact equivalence of two forms with the `@equiv{}' command.
+
+  The `@equiv{}' command is displayed as `==' in Info and as a three
+parallel horizontal lines in the printed output.
+
+  Thus,
+
+     @lisp
+     (make-sparse-keymap) @equiv{} (list 'keymap)
+     @end lisp
+
+produces
+
+     (make-sparse-keymap) == (list 'keymap)
+
+This indicates that evaluating `(make-sparse-keymap)' produces
+identical results to evaluating `(list 'keymap)'.
+
+
+File: texinfo,  Node: Point Glyph,  Prev: Equivalence,  Up: Glyphs
+
+`@point{}' (-!-): Indicating Point in a Buffer
+----------------------------------------------
+
+  Sometimes you need to show an example of text in an Emacs buffer.  In
+such examples, the convention is to include the entire contents of the
+buffer in question between two lines of dashes containing the buffer
+name.
+
+  You can use the `@point{}' command to show the location of point in
+the text in the buffer.  (The symbol for point, of course, is not part
+of the text in the buffer; it indicates the place *between* two
+characters where point is located.)
+
+  The `@point{}' command is displayed as `-!-' in Info and as a small
+five pointed star in the printed output.
+
+  The following example shows the contents of buffer `foo' before and
+after evaluating a Lisp command to insert the word `changed'.
+
+     ---------- Buffer: foo ----------
+     This is the -!-contents of foo.
+     ---------- Buffer: foo ----------
+
+     (insert "changed ")
+          => nil
+     ---------- Buffer: foo ----------
+     This is the changed -!-contents of foo.
+     ---------- Buffer: foo ----------
+
+  In a Texinfo source file, the example is written like this:
+
+     @example
+     ---------- Buffer: foo ----------
+     This is the @point{}contents of foo.
+     ---------- Buffer: foo ----------
+     
+     (insert "changed ")
+          @result{} nil
+     ---------- Buffer: foo ----------
+     This is the changed @point{}contents of foo.
+     ---------- Buffer: foo ----------
+     @end example
+
+
+File: texinfo,  Node: Images,  Prev: Glyphs,  Up: Insertions
+
+Inserting Images
+================
+
+  You can insert an image in an external file with the `@image' command:
+
+     @image{FILENAME, [WIDTH], [HEIGHT]}
+
+  The FILENAME argument is mandatory, and must not have an extension,
+because the different processors support different formats: TeX reads
+the file `FILENAME.eps' (Encapsulated PostScript format); `makeinfo'
+uses `FILENAME.txt' verbatim for Info output (more or less as if it was
+an `@example').  HTML output requires `FILENAME.jpg'.
+
+  The optional WIDTH and HEIGHT arguments specify the size to scale the
+image to (they are ignored for Info output).  If they are both
+specified, the image is presented in its natural size (given in the
+file); if only one is specified, the other is scaled proportionately;
+and if both are specified, both are respected, thus possibly distorting
+the original image by changing its aspect ratio.
+
+  The WIDTH and HEIGHT may be specified using any valid TeX dimension,
+namely:
+
+pt
+     point (72.27pt = 1in)
+
+pc
+     pica (1pc = 12pt)
+
+bp
+     big point (72bp = 1in)
+
+in
+     inch
+
+cm
+     centimeter (2.54cm = 1in)
+
+mm
+     millimeter (10mm = 1cm)
+
+dd
+     did^ot point (1157dd = 1238pt)
+
+cc
+     cicero (1cc = 12dd)
+
+sp
+     scaled point (65536sp = 1pt)
+
+  For example, the following will scale a file `ridt.eps' to one inch
+vertically, with the width scaled proportionately:
+
+     @image{ridt,,1in}
+
+  For `@image' to work with TeX, the file `epsf.tex' must be installed
+somewhere that TeX can find it.  This file is included in the Texinfo
+distribution and is available from `ftp://ftp.tug.org/tex/epsf.tex'.
+
+
+File: texinfo,  Node: Breaks,  Next: Definition Commands,  Prev: Insertions,  Up: Top
+
+Making and Preventing Breaks
+****************************
+
+  Usually, a Texinfo file is processed both by TeX and by one of the
+Info formatting commands.  Line, paragraph, or page breaks sometimes
+occur in the `wrong' place in one or other form of output.  You must
+ensure that text looks right both in the printed manual and in the Info
+file.
+
+  For example, in a printed manual, page breaks may occur awkwardly in
+the middle of an example; to prevent this, you can hold text together
+using a grouping command that keeps the text from being split across
+two pages.  Conversely, you may want to force a page break where none
+would occur normally.  Fortunately, problems like these do not often
+arise.  When they do, use the break, break prevention, or pagination
+commands.
+
+* Menu:
+
+* Break Commands::              Cause and prevent splits.
+* Line Breaks::                 How to force a single line to use two lines.
+* - and hyphenation::           How to tell TeX about hyphenation points.
+* w::                           How to prevent unwanted line breaks.
+* sp::                          How to insert blank lines.
+* page::                        How to force the start of a new page.
+* group::                       How to prevent unwanted page breaks.
+* need::                        Another way to prevent unwanted page breaks.
+
+
+File: texinfo,  Node: Break Commands,  Next: Line Breaks,  Prev: Breaks,  Up: Breaks
+
+The Break Commands
+==================
+
+  The break commands create or allow line and paragraph breaks:
+
+`@*'
+     Force a line break.
+
+`@sp N'
+     Skip N blank lines.
+
+`@-'
+     Insert a discretionary hyphen.
+
+`@hyphenation{HY-PHEN-A-TED WORDS}'
+     Define hyphen points in HY-PHEN-A-TED WORDS.
+
+  The line-break-prevention command holds text together all on one line:
+
+`@w{TEXT}'
+     Prevent TEXT from being split and hyphenated across two lines.
+
+  The pagination commands apply only to printed output, since Info
+files do not have pages.
+
+`@page'
+     Start a new page in the printed manual.
+
+`@group'
+     Hold text together that must appear on one printed page.
+
+`@need MILS'
+     Start a new printed page if not enough space on this one.
+
+
+File: texinfo,  Node: Line Breaks,  Next: - and hyphenation,  Prev: Break Commands,  Up: Breaks
+
+`@*': Generate Line Breaks
+==========================
+
+  The `@*' command forces a line break in both the printed manual and
+in Info.
+
+  For example,
+
+     This line @* is broken @*in two places.
+
+produces
+
+     This line
+      is broken
+     in two places.
+
+(Note that the space after the first `@*' command is faithfully carried
+down to the next line.)
+
+  The `@*' command is often used in a file's copyright page:
+
+     This is edition 2.0 of the Texinfo documentation,@*
+     and is for ...
+
+In this case, the `@*' command keeps TeX from stretching the line
+across the whole page in an ugly manner.
+
+     *Please note:* Do not write braces after an `@*' command; they are
+     not needed.
+
+     Do not write an `@refill' command at the end of a paragraph
+     containing an `@*' command; it will cause the paragraph to be
+     refilled after the line break occurs, negating the effect of the
+     line break.
+
+
+File: texinfo,  Node: - and hyphenation,  Next: w,  Prev: Line Breaks,  Up: Breaks
+
+`@-' and `@hyphenation': Helping TeX hyphenate
+==============================================
+
+  Although TeX's hyphenation algorithm is generally pretty good, it
+does miss useful hyphenation points from time to time.  (Or, far more
+rarely, insert an incorrect hyphenation.)  So, for documents with an
+unusual vocabulary or when fine-tuning for a printed edition, you may
+wish to help TeX out.  Texinfo supports two commands for this:
+
+`@-'
+     Insert a discretionary hyphen, i.e., a place where TeX can (but
+     does not have to) hyphenate.  This is especially useful when you
+     notice an overfull hbox is due to TeX missing a hyphenation (*note
+     Overfull hboxes::.).  TeX will not insert any hyphenation points
+     in a word containing `@-'.
+
+`@hyphenation{HY-PHEN-A-TED WORDS}'
+     Tell TeX how to hyphenate HY-PHEN-A-TED WORDS.  As shown, you put
+     a `-' at each hyphenation point.  For example:
+          @hyphenation{man-u-script man-u-scripts}
+      TeX only uses the specified hyphenation points when the words
+     match exactly, so give all necessary variants.
+
+  Info output is not hyphenated, so these commands have no effect there.
+
+
+File: texinfo,  Node: w,  Next: sp,  Prev: - and hyphenation,  Up: Breaks
+
+`@w'{TEXT}: Prevent Line Breaks
+===============================
+
+  `@w{TEXT}' outputs TEXT and prohibits line breaks within TEXT.
+
+  You can use the `@w' command to prevent TeX from automatically
+hyphenating a long name or phrase that happens to fall near the end of a
+line.
+
+     You can copy GNU software from @w{@samp{ftp.gnu.ai.mit.edu}}.
+
+produces
+
+     You can copy GNU software from `ftp.gnu.ai.mit.edu'.
+
+     *Caution:* Do not write an `@refill' command at the end of a
+     paragraph containing an `@w' command; it will cause the paragraph
+     to be refilled and may thereby negate the effect of the `@w'
+     command.
+
+
+File: texinfo,  Node: sp,  Next: page,  Prev: w,  Up: Breaks
+
+`@sp' N: Insert Blank Lines
+===========================
+
+  A line beginning with and containing only `@sp N' generates N blank
+lines of space in both the printed manual and the Info file.  `@sp'
+also forces a paragraph break.  For example,
+
+     @sp 2
+
+generates two blank lines.
+
+  The `@sp' command is most often used in the title page.
+
+
+File: texinfo,  Node: page,  Next: group,  Prev: sp,  Up: Breaks
+
+`@page': Start a New Page
+=========================
+
+  A line containing only `@page' starts a new page in a printed manual.
+The command has no effect on Info files since they are not paginated.
+An `@page' command is often used in the `@titlepage' section of a
+Texinfo file to start the copyright page.
+
+
+File: texinfo,  Node: group,  Next: need,  Prev: page,  Up: Breaks
+
+`@group': Prevent Page Breaks
+=============================
+
+  The `@group' command (on a line by itself) is used inside an
+`@example' or similar construct to begin an unsplittable vertical
+group, which will appear entirely on one page in the printed output.
+The group is terminated by a line containing only `@end group'.  These
+two lines produce no output of their own, and in the Info file output
+they have no effect at all.
+
+  Although `@group' would make sense conceptually in a wide variety of
+contexts, its current implementation works reliably only within
+`@example' and variants, and within `@display', `@format', `@flushleft'
+and `@flushright'.  *Note Quotations and Examples::.  (What all these
+commands have in common is that each line of input produces a line of
+output.)  In other contexts, `@group' can cause anomalous vertical
+spacing.
+
+  This formatting requirement means that you should write:
+
+     @example
+     @group
+     ...
+     @end group
+     @end example
+
+with the `@group' and `@end group' commands inside the `@example' and
+`@end example' commands.
+
+  The `@group' command is most often used to hold an example together
+on one page.  In this Texinfo manual, more than 100 examples contain
+text that is enclosed between `@group' and `@end group'.
+
+  If you forget to end a group, you may get strange and unfathomable
+error messages when you run TeX.  This is because TeX keeps trying to
+put the rest of the Texinfo file onto the one page and does not start
+to generate error messages until it has processed considerable text.
+It is a good rule of thumb to look for a missing `@end group' if you
+get incomprehensible error messages in TeX.
+

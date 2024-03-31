@@ -1,0 +1,661 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE> Emotion Engine Tools User's Guide</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="ECOS" WIDTH="100%" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR>
+<TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">
+Emotion Engine Tools User's Guide</P>
+</TH></TR>
+<TR><TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEcontents.html">
+contents</A>
+</P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="DVPassembler.html">
+previous&nbsp;page</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="Debugger.html">
+next&nbsp;page</A></P>
+</TD>
+</TR></TABLE>
+<HR ALIGN="center">
+</DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-462370"></A><A NAME="marker-491482"></A><A NAME="17029"></A>Linker</H1>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-460709"></A><A NAME="14556"></A>SKY-specific command-line options</H3>
+<P CLASS="Body">
+<A NAME="pgfId-460710"></A>For a list of available generic linker options, refer to &quot;Command Language&quot; in <EM CLASS="Emphasis">
+Using LD</EM>
+ in <STRONG CLASS="BoldEmphasis">
+GNUPro Utilities</STRONG>
+. There are no SKY-specific command-line linker options.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-496445"></A>Linker script</H3>
+<P CLASS="Body">
+<A NAME="pgfId-496590"></A>The GNU Linker uses a linker script to determine how to process each section in an object file, and how to lay out the executable. The linker script is a declarative program consisting of a number of directives. For instance, the <KBD CLASS="Code">
+ENTRY()</KBD>
+ directive specifies the symbol in the executable that will be the executable's entry point.</P>
+<P CLASS="Body">
+<A NAME="pgfId-661009"></A>Note: Sections <KBD CLASS="Code">
+.lit4 </KBD>
+and <KBD CLASS="Code">
+.lit8 </KBD>
+are used for storing integer and double literals. From their position in the linker script, they appear to be referenced via <KBD CLASS="Code">
+_gp.</KBD>
+ The sections <KBD CLASS="Code">
+.rdata </KBD>
+and <KBD CLASS="Code">
+.rodata </KBD>
+are used to store read-only data.</P>
+<P CLASS="Body">
+<A NAME="pgfId-815454"></A>The following linker script is the contents of <KBD CLASS="Code">
+sky.ld</KBD>
+</P>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803310"></A>/* This is just the basic idt.ld linker script file, except that it has</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803312"></A>   a different OUTPUT_ARCH to force the linker into EE mode which</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803314"></A>   uses 32bit addresses.  */</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803316"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803318"></A>ENTRY(_start)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803320"></A>OUTPUT_ARCH(&quot;mips:5900&quot;)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803322"></A>OUTPUT_FORMAT(&quot;elf32-littlemips&quot;)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803324"></A>GROUP(-lc -lidt -lgcc)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803326"></A>SEARCH_DIR(.)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803328"></A>__DYNAMIC  =  0;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803330"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803332"></A>/*</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803334"></A>* Allocate the stack to be at the top of memory, since the stack grows</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803336"></A>* down.  (The first access will pre-decrement to the top of memory.)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803338"></A>*/</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803340"></A>PROVIDE (__stack = 0);</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803342"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803344"></A>/*</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803346"></A>* The following two init_hook symbols are referenced by the supplied</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803348"></A>* crt0 startup code.  If they are set to a non-zero value by</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803350"></A>* linking in a routine by that name, they will be called during startup.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803352"></A>* If some other startup code is used, the following definitions are</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803354"></A>* not needed.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803356"></A>*/</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803358"></A>PROVIDE (hardware_init_hook = 0);</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803360"></A>PROVIDE (software_init_hook = 0);</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803362"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803364"></A>SECTIONS</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803366"></A>{</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803368"></A>  . = 0x00010000;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803370"></A>  .text : {</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803372"></A>     _ftext = . ;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803374"></A>    *(.init)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803376"></A>     eprol  =  .;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803378"></A>    *(.text)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803380"></A>    *(.mips16.fn.*)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803382"></A>    *(.mips16.call.*)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803384"></A>    *(.rel.sdata)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803386"></A>    *(.fini)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803388"></A>     etext  =  .;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803390"></A>     _etext  =  .;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803392"></A>  }</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803394"></A>  . = .;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803396"></A>  .rdata : {</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803398"></A>    *(.rdata)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803400"></A>  }</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803402"></A>   _fdata = ALIGN(16);</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803404"></A>  .data : {</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803406"></A>    *(.data)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803408"></A>    CONSTRUCTORS</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803410"></A>  }</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803412"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803414"></A>/*</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803416"></A>* The processor has a number of instructions that can access data more</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803418"></A>* efficiently with a restricted offset range, in this case +-32K.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803420"></A>* Therefore, small data items are collected together in memory and</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803422"></A>* accessed relative to _gp.  Since the maximum size of the data is 64K, </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803424"></A>* we ensure that all of that data can be accessed by setting _gp to the </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803426"></A>* middle of the area (beginning + 32K).</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803428"></A>*/</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803430"></A>  . = ALIGN(8);</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803432"></A>  _gp = . + 0x8000;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803434"></A>  __global = _gp;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803436"></A>  .lit8 : {</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803438"></A>    *(.lit8)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803440"></A>  }</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803442"></A>  .lit4 : {</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803444"></A>    *(.lit4)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803446"></A>  }</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803448"></A>  .sdata : {</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803450"></A>    *(.sdata)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803452"></A>  }</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803454"></A>  . = ALIGN(4);</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803456"></A>   edata  =  .;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803458"></A>   _edata  =  .;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803460"></A>   _fbss = .;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803462"></A>  .sbss : {</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803464"></A>    *(.sbss)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803466"></A>    *(.scommon)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803468"></A>  }</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803470"></A>  .bss : {</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803472"></A>    _bss_start = . ;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803474"></A>    *(.bss)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803476"></A>    *(COMMON)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803478"></A>  }</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803480"></A>   end = .;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803482"></A>   _end = .;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803484"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803486"></A>  /* DVP overlay support */</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803488"></A>  .DVP.ovlytab 0 : { *(.DVP.ovlytab) }</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803490"></A>  .DVP.ovlystrtab 0 : { *(.DVP.ovlystrtab) }</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803492"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803494"></A>  /* interrupt vectors, for BEV=0 */</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803496"></A>  .eit_v 0x80000180 : { *(.eit_v) }</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-803498"></A>}</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-614090"></A><KBD CLASS="Code">
+</KBD>
+&nbsp;</P>
+<HR ALIGN="center">
+<TABLE CLASS="ECOS" WIDTH="100%" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">Emotion Engine Tools User's Guide</P>
+</TH></TR>
+<TR><TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEcontents.html">
+contents</A></P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="DVPassembler.html">
+previous&nbsp;page</A></P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="Debugger.html">
+next&nbsp;page</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

@@ -1,0 +1,708 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE> Emotion Engine Tools User's Guide</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="ECOS" WIDTH="100%" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR>
+<TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">
+Emotion Engine Tools User's Guide</P>
+</TH></TR>
+<TR><TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEcontents.html">
+contents</A>
+</P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="Linker.html">
+previous&nbsp;page</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="AppendA.html">
+next&nbsp;page</A></P>
+</TD>
+</TR></TABLE>
+<HR ALIGN="center">
+</DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-500358"></A><A NAME="marker-500357"></A><A NAME="42423"></A>Debugger</H1>
+<P CLASS="Body">
+<A NAME="pgfId-534076"></A>The debug environment is based on GDB, a powerful debugger that has already been ported to many platforms. </P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-490814"></A><A NAME="30836"></A>Examining source files</H3>
+<P CLASS="Body">
+<A NAME="pgfId-490926"></A>You can use the line numbers of source files to locate instructions in memory. Conversely, any memory resident instruction (excluding those allocated on the heap) can be related back to its original source line. </P>
+<P CLASS="Body">
+<A NAME="pgfId-490929"></A>CPU contexts are used to distinguish between multiple address spaces. This affects the interpretation of the commands that examine source. GDB normally maintains the concept of a current source file and line number. With multiple contexts, this concept is extended so that there is now a current source file and line number for each context.</P>
+<P CLASS="Body">
+<A NAME="pgfId-534001"></A>The detailed behavior of each command and/or argument is as follows:</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-490931"></A><KBD CLASS="Code">
+list [</KBD><A NAME="marker-535894"></A><KBD CLASS="CodeVariant">linespec</KBD><KBD CLASS="Code">]</KBD>
+ </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-490932"></A>Prints lines from the source file relative to the current CPU context, where <KBD CLASS="CodeVariant">
+linespec</KBD>
+ is one of the following:</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-490935"></A><KBD CLASS="Code">
+[first][,last]</KBD>
+ </P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-490936"></A>Specifies a range of line numbers of the current source file in the current CPU context. If the CPU context is <KBD CLASS="Code">
+auto,</KBD>
+ the current source file is the last source file referenced in any context. </P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-490937"></A>Either <KBD CLASS="Code">
+first</KBD>
+ or <KBD CLASS="Code">
+last</KBD>
+ or both may be omitted. If both are omitted, the last line number in the current CPU context is used.</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-490938"></A><KBD CLASS="Code">
++|-offset</KBD>
+ </P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-532087"></A>Specifies an offset (either forward or back) from the last line printed in the current CPU context.</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-532088"></A><KBD CLASS="Code">
+file:</KBD>
+<KBD CLASS="CodeVariant">
+linenum</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-532089"></A>Specifies a line number in the source file <KBD CLASS="Code">
+file</KBD>. This <KBD CLASS="Code">
+file </KBD>
+and the <KBD CLASS="CodeVariant">
+linenum </KBD>
+specified in the command becomes the current source location for the current CPU context.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-822684"></A>For example, <A NAME="marker-822683"></A>context <KBD CLASS="Code">
+vu1</KBD>
+ could have <KBD CLASS="Code">
+foo.vuasm:23</KBD>
+ associated with it; and context <KBD CLASS="Code">
+master</KBD>
+ could have <KBD CLASS="Code">
+main.c:124</KBD>
+ as its <KBD CLASS="CodeVariant">
+file:linenum</KBD>. If you are in context <KBD CLASS="Code">
+master</KBD>
+ and specify <KBD CLASS="Code">
+list malloc</KBD>, the new <KBD CLASS="CodeVariant">
+file:linenum</KBD>
+ for the <KBD CLASS="Code">
+master</KBD>
+ context would become <KBD CLASS="Code">
+malloc.c:1028</KBD>
+ (assuming that is where <KBD CLASS="Code">
+malloc</KBD>
+ is located). The <KBD CLASS="CodeVariant">
+file:linenum</KBD>
+ for context <KBD CLASS="Code">
+vu1</KBD>
+ would not change. </P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-615742"></A>The term &quot;current&quot; applies to both the CPU context and the <KBD CLASS="CodeVariant">
+file:linenum.</KBD>
+ This is important if you specify a <KBD CLASS="Code">
+list</KBD>
+ (or break) command whose <KBD CLASS="CodeVariant">
+linespec </KBD>
+is relative to a source location.</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-835638"></A><KBD CLASS="Code">
+[file:]</KBD>
+<KBD CLASS="CodeVariant">
+function</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-490943"></A>Lists lines starting at <KBD CLASS="CodeVariant">
+function.</KBD>
+ The <KBD CLASS="Code">
+file</KBD>
+ specifier can be used if <KBD CLASS="CodeVariant">
+function</KBD>
+ is multiply defined or in a different file from the current source file.  </P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-490944"></A><KBD CLASS="Code">
+*address</KBD>
+ </P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-490818"></A>Specifies the line containing <KBD CLASS="Code">
+address</KBD>
+ in the program. </P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-490820"></A>Stopping and continuing<A NAME="marker-821211"></A></H3>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-490863"></A>Stack frames</H4>
+<P CLASS="Body">
+<A NAME="pgfId-490864"></A>Stack frames for assembly source files are not supported. For assembly source, GDB always assumes frame 0 (the innermost frame). </P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-491065"></A><A NAME="marker-524463"></A>Breakpoints</H4>
+<P CLASS="Body">
+<A NAME="pgfId-491077"></A>The <A NAME="marker-515589"></A>breakpoint commands are:</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-491078"></A><KBD CLASS="Code">
+break [</KBD><A NAME="marker-535895"></A><KBD CLASS="CodeVariant"> file</KBD><KBD CLASS="Code">:]</KBD>
+<KBD CLASS="CodeVariant">
+function</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-491079"></A>Stop on entry to the specified function. The optional <KBD CLASS="Code">
+file</KBD>
+ specifier is not required unless the function is defined in multiple files. Functions in assembler source are identified using the <KBD CLASS="Code">
+.func</KBD>
+ and <KBD CLASS="Code">
+.endfunc</KBD>
+ assembler directives. For more information, refer to <A HREF="DVPassembler.html#27097" CLASS="XRef">Directives</A>.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-491082"></A><KBD CLASS="Code">
+break +|-offset</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-491083"></A>Set a breakpoint <KBD CLASS="Code">
+offset</KBD>
+ lines forward or backward from the position at which execution stopped. The position is relative to the current CPU context.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-491084"></A><KBD CLASS="Code">
+break [</KBD><KBD CLASS="CodeVariant">file</KBD><KBD CLASS="Code">
+:]</KBD>
+<KBD CLASS="CodeVariant">
+linenum</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-491085"></A>Set a breakpoint at the specified line number of <KBD CLASS="CodeVariant">
+file.</KBD>
+ If the <KBD CLASS="CodeVariant">
+file </KBD>
+specifier is omitted, GDB uses the last source file whose text was printed. This method of setting breakpoints is applicable to both C/C++ and assembler source.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-491086"></A><KBD CLASS="Code">
+break *</KBD>
+<KBD CLASS="CodeVariant">
+address</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-491087"></A>Set a breakpoint at <KBD CLASS="CodeVariant">
+address</KBD>.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-491090"></A><KBD CLASS="Code">
+break</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-491091"></A>The breakpoint is set at the next instruction in the selected stack frame. If the frame is the innermost, the breakpoint is set at the current location (useful inside loops).</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-665469"></A><KBD CLASS="Code">
+watch </KBD>
+<A NAME="marker-665468"></A><KBD CLASS="CodeVariant">
+expr</KBD>
+<KBD CLASS="Code">
+ </KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-665470"></A>Execution stops when <KBD CLASS="CodeVariant">
+expr </KBD>
+is written into and its value changes. </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-491096"></A><KBD CLASS="Code">
+info break [n] </KBD>
+<A NAME="marker-535897"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-491097"></A>Show the current breakpoint settings.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-491098"></A><KBD CLASS="Code">
+clear </KBD>
+<A NAME="marker-535898"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-491099"></A>Delete any breakpoints at the next instruction to be executed in the selected stack frame. </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-491100"></A><KBD CLASS="Code">
+clear [</KBD>
+<KBD CLASS="CodeVariant">
+file</KBD>
+<KBD CLASS="Code">
+:]</KBD>
+<KBD CLASS="CodeVariant">
+linenum </KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-491101"></A>Delete any breakpoints at the specified line number of <KBD CLASS="CodeVariant">
+file.</KBD>
+ If the <KBD CLASS="CodeVariant">
+file </KBD>
+specifier is omitted, GDB uses the last source file whose text was printed.</P>
+<P CLASS="Body">
+<A NAME="pgfId-491102"></A>Breakpoint conditions and commands work as usual, but the expressions should be legal in the current context.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-491103"></A>Resuming execution</H4>
+<P CLASS="Body">
+<A NAME="pgfId-830627"></A>The GDB commands that resume execution are usually specified in terms of source lines. For high-level languages, a single source line can require many machine instructions to implement; for assembly programs, each instruction is normally a separate source line. The exception is if the assembler source line is a macro that expands to multiple instructions.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-830631"></A><KBD CLASS="Code">
+step [count]</KBD>
+<A NAME="marker-830630"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-491107"></A>Continue the program until it has executed <KBD CLASS="Code">
+count</KBD>
+ source lines (one line, if <KBD CLASS="Code">
+count</KBD>
+ is omitted).</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-491108"></A><KBD CLASS="Code">
+next [count]</KBD>
+<A NAME="marker-535900"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-491109"></A>Like step, but any functions encountered are executed without stopping.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-491110"></A><KBD CLASS="Code">
+finish</KBD>
+<A NAME="marker-535901"></A> </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-491111"></A>Continue until just after the function in the selected stack frame returns. For high-level source, the return value (if any) is printed. For assembly source, there is only the inner-most frame, which never returns.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-491112"></A><KBD CLASS="Code">
+until</KBD>
+<A NAME="marker-535902"></A> </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-491113"></A>Continue running until a source line past the current line, in the current stack frame, is reached.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-491114"></A><KBD CLASS="Code">
+until location</KBD>
+<A NAME="marker-535903"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-491069"></A>Continue running until either the specified location is reached, or the current stack frame returns. Location is any of the forms acceptable to <KBD CLASS="Code">
+break,</KBD>
+ and so the same context resolution rules apply.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-491348"></A><A NAME="marker-524464"></A>Examining registers</H3>
+<P CLASS="Body">
+<A NAME="pgfId-830643"></A>Each of the Emotion Engine and VU registers has a unique global name. The Emotion Engine registers have the standard unprefixed MIPS names (for example, <KBD CLASS="Code">
+t2</KBD>
+ or <KBD CLASS="Code">
+t2h</KBD>). The VU register names are prefixed with the CPU number(for example, <KBD CLASS="Code">
+vu1_vi01</KBD>). </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-491356"></A><KBD CLASS="Code">
+info registers</KBD>
+<A NAME="marker-535904"></A> </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-615911"></A>With no arguments, show integer and special purpose registers. Since the VUs are primarily floating-point processors, the vector registers are also displayed.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-615907"></A>This command also accepts a list of individual register names.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-605821"></A>Because the VU floating point registers are vector registers, GDB permits the use of vector register names to specify that all four elements of the vector should be printed. See the description of the <KBD CLASS="Code">
+printvector</KBD>
+ command below for more details.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-822930"></A><KBD CLASS="Code">
+info all-registers</KBD>
+<A NAME="marker-822929"></A> </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-822931"></A>Same as <KBD CLASS="Code">
+info registers,</KBD>
+ except that when no arguments are specified the display includes the floating point registers, as well as the integer and control registers.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-491361"></A><KBD CLASS="CodeVariant">
+&lt;expr&gt;</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-491362"></A>Register values may be used in expressions by prefixing the register name with a  <KBD CLASS="Code">
+$</KBD>
+ (for example, <KBD CLASS="Code">
+print $vu1_vi10</KBD>). Note that vector registers are not legal expressions; <KBD CLASS="CodeVariant">
+&lt;expr&gt;</KBD>
+ must have a single-valued result.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-605891"></A><KBD CLASS="Code">
+printvector reg [...reg]</KBD>
+<A NAME="marker-638302"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-605892"></A>This command is similar to <KBD CLASS="Code">
+info register reg</KBD>
+ in that it prints the value of the register specified as its argument. In particular, it allows <KBD CLASS="Code">
+reg</KBD>
+ to be a vector register. As a convenience, this command has the alias <KBD CLASS="Code">
+pv</KBD>.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-605897"></A><KBD CLASS="Code">
+set printvector-order [wzyx|xyzw]</KBD>
+<A NAME="marker-638303"></A></P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-609375"></A>Set the order in which the elements of a vector register are printed. Without an argument, the command resets the order to the default <KBD CLASS="Code">
+wzyx</KBD>
+ order.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-609376"></A>The setting of this variable affects the order of all commands that print vector registers. These commands include <KBD CLASS="Code">
+info registers, printvector,</KBD>
+ and <KBD CLASS="Code">
+sim pipe.</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-822936"></A>      The following session demonstrates how these commands may be used:</P>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-609503"></A><KBD CLASS="CodeOutput">
+(gdb)</KBD>
+ info register vu1_vf00</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-609505"></A><KBD CLASS="CodeOutput">
+vu1_vf00wzyx: 1 0 0 0 </KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-609509"></A><KBD CLASS="CodeOutput">
+(gdb)</KBD>
+ printvector vf04</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-609511"></A><KBD CLASS="CodeOutput">
+vu1_vf04wzyx: 1 0.5 2 2</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-609513"></A><KBD CLASS="CodeOutput">
+(gdb)</KBD>
+ set printvector-order xyzw</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-609515"></A><KBD CLASS="CodeOutput">
+(gdb)</KBD>
+ pv 4</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-609517"></A><KBD CLASS="CodeOutput">
+vu1_vf04xyzw: 2 2 0.5 1</KBD>
+</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-822937"></A>COP2 registers are the VU0 status and control registers as viewed from the Emotion Engine CPU. These registers are displayed as part of the VU0 and VU1 register sets (for example, <KBD CLASS="Code">
+vu0_clip</KBD>
+ or <KBD CLASS="Code">
+vu1_cmsar</KBD>
+) and may be accessed from GDB by their symbolic names.</P>
+<P CLASS="Body">
+<A NAME="pgfId-822938"></A>DMA registers have no symbolic names. They are examined and set using their memory-mapped addresses.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-820795"></A>Examining the Emotion Engine SIMD Registers<A NAME="marker-821210"></A></H3>
+<P CLASS="Body">
+<A NAME="pgfId-820877"></A>There are some differences between registers that are used in the ordinary way, and registers that are used to hold SIMD values.</P>
+<P CLASS="Body">
+<A NAME="pgfId-820875"></A>When debugging ordinary MIPS assembly code, you might use the following to print the value of register <KBD CLASS="Code">
+$a0</KBD>
+ as an integer:</P>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-820921"></A><KBD CLASS="CodeOutput">
+(gdb)</KBD>
+ print $a0</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-820923"></A><KBD CLASS="CodeOutput">
+$1 = 9</KBD>
+</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-820964"></A>However, if you are debugging SIMD code that uses <KBD CLASS="Code">
+$a0</KBD>
+ to hold a vector value, you can add a `<KBD CLASS="Code">
+v</KBD>
+' to end of the register name to see its value as a vector.  </P>
+<P CLASS="Body">
+<A NAME="pgfId-821209"></A>For example:</P>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-820987"></A><KBD CLASS="CodeOutput">
+(gdb)</KBD>
+ print $a0v</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-820989"></A><KBD CLASS="CodeOutput">
+$2 = {v2di = {-1, 9},</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-820991"></A><KBD CLASS="CodeOutput">
+      v2si = {-1, -1},</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-820993"></A><KBD CLASS="CodeOutput">
+      v4si = {-1, -1, 9, 0},</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-820995"></A><KBD CLASS="CodeOutput">
+      v8hi = {-1, -1, -1, -1, 9, 0, 0, 0},</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen">
+<A NAME="pgfId-820997"></A><KBD CLASS="CodeOutput">
+      v16qi = {-1, -1, -1, -1, -1, -1, -1, -1, 9, 0, 0, 0, 0, 0, 0, 0}}</KBD>
+</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-820821"></A>This shows the contents of <KBD CLASS="Code">
+$a0</KBD>
+ as a vector register in all the SIMD modes supported by the Emotion Engine: a pair of 64-bit integers, four 32-bit integers, and so on.</P>
+<P CLASS="Body">
+<A NAME="pgfId-821019"></A>If you know that <KBD CLASS="Code">
+$a0</KBD>
+ is being used to hold four 32-bit values, then you can specify the mode explicitly, by selecting a particular element from <KBD CLASS="Code">
+$a0v</KBD>
+'s value: </P>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-821027"></A><KBD CLASS="CodeOutput">
+(gdb)</KBD>
+ print $a0v.v4si</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-821029"></A><KBD CLASS="CodeOutput">
+$3 = {-1, -1, 9, 0}</KBD>
+</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-820832"></A>This provides a less cluttered display. This value is an ordinary array, so you can subscript it to refer to a particular element:</P>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-821036"></A><KBD CLASS="CodeOutput">
+(gdb)</KBD>
+ print $a0v.v4si[2]</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-821038"></A><KBD CLASS="CodeOutput">
+$4 = 9</KBD>
+</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-820838"></A>You can assign to components of vector registers in the usual way:</P>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-821041"></A><KBD CLASS="CodeOutput">
+(gdb)</KBD>
+ set variable $a0v.v4si[2] = 10</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-821043"></A><KBD CLASS="CodeOutput">
+(gdb)</KBD>
+ print $a0v.v4si</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-821045"></A><KBD CLASS="CodeOutput">
+$5 = {-1, -1, 10, 0}</KBD>
+</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-820844"></A>If the register holds a vector of unsigned values, you can use the print command with the `<KBD CLASS="Code">/u</KBD>' format:</P>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-821048"></A><KBD CLASS="CodeOutput">
+(gdb)</KBD>
+ print/u $a0v.v4si</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeScreen2">
+<A NAME="pgfId-821050"></A><KBD CLASS="CodeOutput">
+$6 = {4294967295, 4294967295, 10, 0}</KBD>
+</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-820850"></A>In general, for every general-purpose Emotion Engine register <KBD CLASS="Code">
+$X,</KBD>
+ GDB now has a new <EM CLASS="Emphasis">
+pseudoregister</EM>
+ called <KBD CLASS="Code">
+$Xv,</KBD>
+ whose value is a union containing five members, one for each SIMD mode supported by the Emotion Engine:</P>
+<TABLE BORDER="1">
+<CAPTION>
+<P CLASS="TableTitle">
+<A NAME="pgfId-821082"></A>Pseudoregisters</P>
+</CAPTION>
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-821086"></A>Pseudoregister</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-821088"></A>Value</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-821090"></A><KBD CLASS="Code">
+v2di</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellSmall">
+<A NAME="pgfId-821092"></A>the register's contents as two 64-bit (&quot;double&quot;) integers</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-821094"></A><KBD CLASS="Code">
+v2si</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellSmall">
+<A NAME="pgfId-821096"></A>the register's contents as two 32-bit (&quot;single&quot;) integers</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-821098"></A><KBD CLASS="Code">
+v4si</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellSmall">
+<A NAME="pgfId-821100"></A>the register's contents as four 32-bit (&quot;single&quot;) integers</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-821102"></A><KBD CLASS="Code">
+v8hi</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellSmall">
+<A NAME="pgfId-821104"></A>the register's contents as eight 32-bit (&quot;half&quot;) integers</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-821106"></A><KBD CLASS="Code">
+v16qi</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellSmall">
+<A NAME="pgfId-821108"></A>the register's contents as sixteen 32-bit (&quot;quarter&quot;) integers</P>
+</TD>
+</TR>
+</TABLE>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-710799"></A>Examining data</H3>
+<P CLASS="Body">
+<A NAME="pgfId-710800"></A>The <KBD CLASS="Code">
+print </KBD>
+<KBD CLASS="CodeVariant">
+&lt;expr&gt;</KBD>
+ command works as usual, although high-level type information is not recorded for variables that are declared in assembler source files. The cast operator of GDB can be used to overcome this restriction for primitive types, and even for complex types provided they have been declared somewhere in the high-level source part of the program. </P>
+<HR ALIGN="center">
+<TABLE CLASS="ECOS" WIDTH="100%" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">Emotion Engine Tools User's Guide</P>
+</TH></TR>
+<TR><TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEcontents.html">
+contents</A></P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="Linker.html">
+previous&nbsp;page</A></P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="AppendA.html">
+next&nbsp;page</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

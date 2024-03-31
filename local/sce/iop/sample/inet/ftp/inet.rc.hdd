@@ -1,0 +1,10 @@
+reset 0 0
+
+mstart /usr/local/sce/iop/modules/inet.irx
+mstart /usr/local/sce/iop/modules/netcnf.irx icon=host1:../../../../ee/sample/inet/setapp/SYS_NET.ICO iconsys=host1:../../../../ee/sample/inet/setapp/icon.sys
+mstart /usr/local/sce/iop/modules/inetctl.irx -no_decode host1:/usr/local/sce/conf/net/net005.cnf
+mstart /usr/local/sce/iop/modules/dev9.irx
+mstart /usr/local/sce/iop/modules/smap.irx
+mstart /usr/local/sce/iop/modules/atad.irx
+mstart /usr/local/sce/iop/modules/hdd.irx -o 4 -n 10
+mstart /usr/local/sce/iop/modules/pfs.irx -m 4 -o 10 -n 24

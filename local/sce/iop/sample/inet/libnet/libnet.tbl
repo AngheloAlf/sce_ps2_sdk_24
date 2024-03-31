@@ -1,0 +1,14 @@
+# libnet
+#	tbl file
+#	Copyright (C) 1999  Sony Computer Entertainment Inc.,
+#	All rights reserved.
+
+Libname	libnet
+
+Version	1.1
+
+Entry/5	start
+Entry	-
+Entry	-
+Entry	-
+

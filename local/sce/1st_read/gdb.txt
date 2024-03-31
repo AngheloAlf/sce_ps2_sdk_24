@@ -1,0 +1,80 @@
+[SCE CONFIDENTIAL DOCUMENT]
+"PlayStation 2" Programmer Tool Tool Chain EE 2.96-ee-001003-1
+                Copyright (C) 2002 Sony Computer Entertainment Inc.
+                                                   All Rights Reserved
+
+----------------------------------------------------------------------
+About GDB
+----------------------------------------------------------------------
+
+The GDB supports debugging of the programs running on the target 
+hardware with limitations imposed from Release 0.3.0.
+
+----------------------------------------------------------------------
+Operating Instructions
+----------------------------------------------------------------------
+
+1. Activate the gdb.
+
+  $ ee-gdb Program to be debugged
+
+  When the command name is different from the name of GDB itself, 
+  activation results in error "ide_initialize_paths failed".  In this 
+  case, take steps to activate it; by using the complete path name of 
+  the GDB, for example.  
+  It is also possible to activate the GDB via the command line 
+  interface by specifying the -nw option.
+
+ 2. Connect to the dsnetm with the target command.
+
+  (gdb) target deci2
+ 
+  If the machine, on which the dsnetm is running, is different from 
+  the one, on which the gdb is running, specify the hostname the dsnetm 
+  is operating with as well.
+
+  (gdb) target deci2 hostname
+
+3. Load the program to the target hardware with the load command.
+
+  (gdb) load
+
+4. Debug the program by using a command of the gdb.
+
+5. To execute the program again after it has finished its execution, 
+   execute the target command again, and then execute the reset 
+   command and load command. 
+
+  (gdb) target deci2
+  (gdb) reset
+  (gdb) load
+
+----------------------------------------------------------------------
+Notes
+----------------------------------------------------------------------
+
+1. The GDB does not support the standard input.  Besides, it is not 
+   intended to support the standard input in the future. 
+
+2. As for the flash ROM image, the one released at the same time as 
+   the GDB is necessary. 
+
+3. The GDB does not support debugging of the VU1 program.  The other 
+   simulator-specific functions cannot be used either (though their 
+   operations seem useable). 
+
+4. The program compiled by specifying the optimization option can 
+   also be debugged.  In this case, however, it is possible that 
+   the execution sequence of the program might seem different from 
+   the source program and a line executed only once might seem to have 
+   been executed twice or more.  The reason is that the execution 
+   sequence is changed and machine instruction for one line is 
+   distributed according to the optimization of the compiler.  
+   Therefore, these symptoms are not bugs.
+
+5. The GDB does not reset the target hardware on starting.  To use 
+   the GDB immediately after the program is executed on the target 
+   hardware, use the dsreset command, or activate the GDB, execute 
+   the target command and use the reset command. 
+
+   

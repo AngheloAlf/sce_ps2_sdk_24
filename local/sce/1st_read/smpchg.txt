@@ -1,0 +1,492 @@
+[SCE CONFIDENTIAL DOCUMENT]
+"PlayStation 2" Programmer Tool Runtime Library Release 2.5
+                Copyright (C) 2002 Sony Computer Entertainment Inc.
+                                                   All Rights Reserved
+							     Mar. 2002
+
+                         Sample Changes and New Additions of Functions
+========================================================================
+Precautions
+------------------------------------------------------------------------
+< Sample Program of Network Configuration GUI Library >
+- Sample program of the network configuration GUI library are not 
+  contained in this release. However, they will be released as a separate 
+  package after the version 2.5 is released.
+
+- As of this release, libnet sample programs are released as libraries. 
+  The following libnet programs contained in the releases up to and 
+  including 2.4.3 have been transferred to the respective OLD directories.
+
+  ee/sample/inet/libnet		->	ee/sample/inet/OLD/libnet
+  iop/sample/inet/libnet	->	iop/sample/inet/OLD/libnet
+
+  Configuration of the libraries and source files is as follows. Refer 
+  to libchg_j.txt for details of changes made in the libnet libraries.
+
+  Libraries:		        Source files:			
+  ee/lib/libnet.a		ee/src/lib/libnet
+  iop/modules/libnet.irx	iop/src/modules/libnet
+
+- Since the libnet samples have been changed into libraries, 
+  the configuration under the inet directory has been divided into 
+  functions.
+   
+  Programs that use the libnet libraries:  
+  ee/sample/inet/ball_game	->  ee/sample/inet/libnet/ball_game
+  ee/sample/inet/echo_server	->  ee/sample/inet/libnet/echo_server
+  ee/sample/inet/http_get	->  ee/sample/inet/libnet/http_get
+  ee/sample/inet/load_test	->  ee/sample/inet/libnet/load_test
+
+  Programs that use libinsck library:
+  ee/sample/inet/socket/echo_server ->  ee/sample/inet/libinsck/echo_server
+  ee/sample/inet/socket/http_get    ->  ee/sample/inet/libinsck/http_get
+
+  Program that use libhttp library: 
+  ee/sample/inet/libhttp  ->  ee/sample/netglue/libhttp
+
+- Since the use of an986.irx in titles is prohibited (See [Tech Notes] 
+  on the Developer Support Web site as of Nov. 22, 2000 for details),
+  the an986.irx is not included under sce/iop/modules in the release
+  package. The an986.irx can be downloaded from the Developer Support
+  Web site. 
+ 
+- To use USB modem drivers, we recommend you obtain the driver provided 
+  by the Tools & Middleware licensees by downloading from the Developer
+  Support Web Site.
+
+- In some cases, it may take minutes for the USB Ethernet adapter
+  to be recognized after replacing with a different adaptor.
+  If the adapter does not work properly, and it is not due to a hardware
+  problem, please contact SCE.
+
+- To use VU Command Line, download from the VCL project on the Developer
+  Support Web site. 
+
+========================================================================
+Sample Changes and New Additions Since Release 2.4
+------------------------------------------------------------------------
+<Release 2.5>
+ee/sample/inet/original/event
+iop/sample/inet/event
+- The sample that retrieves an event occurred by the connection to the 
+  network using the libnet library or connecting/disconnecting hardware, 
+  and displays the event on the screen has been added.
+
+ee/sample/netcnfif
+- The sample that uses common network configuration interface library 
+  has been added.
+
+  Note:
+  This program is equivalent of the setapp sample divided into 
+  functions released up to and including Release 2.4.3, therefore, 
+  the setapp program has been moved to the OLD directory as below.
+  
+  ee/sample/inet/setapp		->	ee/sample/inet/OLD/setapp
+
+ee/sample/advanced/dynamics 
+- Rigid Body Dynamics simulation sample program has been added.
+
+ee/sample/graphics/hig
+- The following sample programs have been added:
+
+  sample26.c	Sample of object clipping
+  sample27.c	Sample that displays images at slower frame rate
+  sample28.c	Sample that uses vertex color
+  sample29.c	Sample of cloning by using micro-code
+
+- The following micro-codes have been added:
+
+  vu1clone.vsm/vcl	  Micro-code that draws after transferring an 
+			  object as per specified matrix within VU1
+  vu1noshade.vsm/vcl	  Micro-code that does not perform lighting 
+ 			  calculation for the vertex color
+  vu1vertexCspec.vsm/vcl  Micro-code that uses vertex color instead of 
+			  defuse color
+
+- The following data have been added. 
+  data/radtea.bin
+  data/tree.bin
+  data/clip.bin
+
+iop/sample/sound/sfxbasic/
+- The sample that uses CSL MIDI stream generation (modmsin) and CSL
+  sound effects stream generation (modsein) module has been added.
+
+iop/sample/sound/msbasic/ 
+- The sample that uses CSL MIDI stream generation (modmsin) module has 
+  been added.
+
+<Release 2.4.3>
+- iop/sample/usb/usbspkr
+  A sample program to perform Isochronous transfer has been added.
+
+- ee/sample/advanced/collision
+  A sample program to judge collision has been added.
+
+- ee/sample/advanced/anti/silhouette
+  A sample program to perform antialiasing to object edges via a 
+  two-dimensional filter has been added.
+
+- ee/sample/graphics/hig/sample24.c
+  A rendering sample program using a fisheye lens effect has been added.
+
+- ee/sample/graphics/hig/ample25.c
+  A sample program to clone an object has been added.
+
+<Release 2.4.2>
+- Following sample programs of the HTTP library have been added.
+
+  ee/sample/inet/libhttp/auth      Sample of authentication processing
+  ee/sample/inet/libhttp/base64    Sample of BASE64 processing
+  ee/sample/inet/libhttp/blocking  Blocking version of http_test 
+  ee/sample/inet/libhttp/chunk     Sample of chunk transfer processing
+  ee/sample/inet/libhttp/cookie    Sample of cookie processing
+  ee/sample/inet/libhttp/mime      Gets a specified URI and performs 
+				   MIME processing  
+  ee/sample/inet/libhttp/normal    Performs GET, HEAD, or POST for a 
+				   specified URI  			    
+  ee/sample/inet/libhttp/proxy     Gets a specified URI via proxy
+  ee/sample/inet/libhttp/qp        Sample of quoted-printable processing
+  ee/sample/inet/libhttp/redirect  Sample of redirection processing
+  ee/sample/inet/libhttp/urlesc    Sample of URL escape and unescape 
+				   processing
+
+<Release 2.4.1>
+- The following sample programs that use the basic graphics library have 
+  been added.
+     ee/sample/graphics/gp/balls       	Sample of balls
+     ee/sample/graphics/gp/filter      	Sample of image filtering process
+     ee/sample/graphics/gp/multiwin    	Sample that operates using HiG GS 
+					service drawing environment
+     ee/sample/graphics/gp/texsort     	Sample of texture sort
+     ee/sample/graphics/gp/withhig     	Sample of combination with HiG  
+     ee/sample/graphics/gp/zsort       	Z sort sample
+
+------------------------------------------------------------------------
+Sample Changes and New Additions Since Release 2.4.3
+------------------------------------------------------------------------
+data/sound/wave/knot.vag
+data/sound/wave/ps_mono.vb
+- There was no 'all 0' block at the top of the waveform data. 
+  This problem has been fixed.
+
+ee/sample/sk/ctrlsq
+- With specifying data file names, the host1: has been modified to host0:.
+ 
+- With EE Kernel Library, the description has been changed along with 
+  the specification change in the ThreadParam structure.
+
+- The usage examples of PitchBend and Expression processes have been added.
+ 
+ee/sample/sk/playsq
+- With specifying data file names, the host1: has been modified to host0:.
+
+- With EE Kernel Library, the description has been modified along with 
+  the specification change in the ThreadParam structure.
+
+ee/sample/sound/ezmidi
+iop/sample/sound/ezmidi
+- MIDI messages had been generated by MIDI stream generation on EE and
+  when the messages were transferred from the EE to IOP, they were 
+  ended up being processed in the IOP during the transfer. 
+  This problem has been fixed.
+
+ee/sample/graphics/hig/micro/vu1shadowTex.vsm
+- The texture setting did not turn off, so rendering was applied 
+  directly to the shadowed objects including the texture, which resulted
+  a failure in generating monochrome shadowed texture. 
+  This problem has been fixed.
+
+- vcl 1.28 was used to recreate the texture.
+
+ee/sample/inet/libnet/echo_server
+- Error handling for sceInetOpen() in PassiveOpenThread() has been added.
+
+ee/sample/graphics/scis_vu1
+- There was VU1 code that created a hazard defending on the condition,
+  which could have caused a failure. This problem has been fixed. 
+
+ee/sample/usb/libusbkb
+- With main.c, the size of argument for sceSifLoadModule(), which loads 
+  usbkb.irx module has been modified.
+
+ee/sample/ilink
+- The determination process after executing sceSifUnloadModule() was 
+  not correct. This problem has been fixed.
+
+ee/sample/advanced/collision
+- The collision determination failure in the sample has been fixed. 
+
+iop/sample/sound/ezmidi
+- A part of sceHSyn function has been changed so that it can be called 
+  in an interrupt-disabled state. 
+
+iop/sample/sound/bypass16
+- With the transferred interrupt handler being used, it has been modified
+  to return 0 by all means.
+
+iop/sample/sound/ezadpcm
+- With the transferred interrupt handler being used, it has been modified
+  to return 0 by all means.
+
+iop/sample/sound/ezbgm
+- With the transferred interrupt handler and SPU2 interrupt handler 
+  being used, it has been modified to return 0 by all means. 
+
+iop/sample/sound/voice
+- With the transferred interrupt handler and SPU2 interrupt handler 
+  being used, they have been modified to return 0 by all means.
+
+iop/sample/inet/inetlog
+iop/sample/inet/ping
+- The argument, thstack=<stack> which enables to adjust stack size 
+  has been added.
+
+iop/sample/sound/enadpcm
+- Along with the modification of data/sound/wave/knot.vag data, 
+  the specified size in the main.c has also been modified.
+
+iop/sample/usb/usbspker
+- With usbspkr.c, the value for the member, num_packets in 
+  sceUsbdMultiIsochronousRequest structure has been changed from 
+  sceUsbd_MAX_ISOCH_PACKETS to FRAME_PER_REQ.
+
+iop/sample/ilink/ilsample.c
+iop/sample/sif/sifrpc/iopmain.c
+- The functions used for the process have been changed from 
+  CpuDisableIntr() and CpuEnableIntr() to CpuSuspendIntr() and 
+  CpuResumeIntr().
+
+ee/sample/hdd/shell
+iop/sample/hdd/shell
+- For opening the file of destination of copy command, SCE_TRUNC mode 
+  has been added.
+
+ee/sample/hdd/async
+- The priority of main thread has been changed.
+
+ee/sample/graphics/hig/data
+- With the data used in sample5.c, all vertex color has been 
+  standardized to be 255.0 or less. 
+ 
+ee/sample/graphics/hig
+- The micro-codes have been recreated by using the vcl1.28. 
+
+ee/sample/mpeg/mgepvu1
+- With cscvu1.c, there was a failure in the process in cscVu1SetTag_frfl().
+  This problem has been fixed.
+
+- With EE Kernel Library, the description has been changed along with 
+  the specification change in the ThreadParam structure.
+
+ee/sample/mpeg/mgepstr
+- With EE Kernel Library, the description has been changed along with 
+  the specification change in the ThreadParam structure. 
+
+ee/sample/cdvd/smp_ee
+ee/sample/cdvd/fio_ee
+- With the libraries, along with the support for Dual Layer disc, its 
+  process has been added. 
+
+ee/sample/netglue/libhttp/auth
+- With the library, along with the addition of sceHTTPVerifyAuthInfo(), 
+  its process has been added. 
+
+- cnonce field was handled incorrectly at digest authentication. 
+  This problem has been fixed.
+
+  ee/sample/netglue/libhttp/auth
+  ee/sample/netglue/libhttp/blocking
+  ee/sample/netglue/libhttp/cookie
+  ee/sample/netglue/libhttp/mime
+  ee/sample/netglue/libhttp/normal
+  ee/sample/netglue/libhttp/proxy
+  ee/sample/netglue/libhttp/redirect
+
+- Along with the change of length field in sceHTTPResponse structure 
+  to sceHTTPSize_t, the sample program has also been modified.
+
+========================================================================
+Sample Changes and New Additions in Provisional Release since Release 2.4
+------------------------------------------------------------------------
+<Release 2.4.1>
+ee/sample/inet/socket/echo_server 
+  The process to call ExitThread() has been changed to a process to call 
+  ExitDeleteThread() and sceInsockTerminate(0); has been changed to 
+  process release of calling resource. 
+
+ee/sample/mpeg/ezmpegstr
+  The program may hang occasionally due to a problem of management of non-
+  multiplex buffer.
+
+<Release 2.4.2>
+ee/sample/inet/setapp
+iop/sample/inet/setapp
+- At the connection test, even if the telephone number [1-3] was set, 
+  the number could not be redialed. This problem has been fixed.
+
+ee/sample/mpeg/ezmpegstr
+- With clearBackground() in playpss.c, a display list could not be 
+  created correctly. This problem has been fixed. 
+
+ee/sample/graphics/hig
+- In the files of sample10.c and sample11.c, old macro definition, 
+  *_PROCESS has been changed to new macro definition, SCE_HIG_*_PROCESS.
+  For compatibility, both macros are used for the library header file 
+  (libhig.h) in this release. However, be sure to use the new macro 
+  eventually as the old macro definition *_PROCESS will be deleted from 
+  the next release.
+
+ee/sample/graphics/hig/data
+- With shadowmapmap1.s, the texture function is the data, which would 
+  not be affected by a light source. Thereby, DECAL has been modified 
+  to MODULATE.
+
+- If data/*.s was converted to *.bin by using ee-objcopy in Tool Chain 
+  EE 2.96-ee-001003, an invalid binary with the first several bytes
+  cleared to 0 has been generated. This problem has been fixed.   
+
+iop/sample/inet/ntguicnf/setinit
+- In network configuration GUI library, when an attempt was made to 
+  connect by returning to the sample after selecting the telephone 
+  number [1-3], the number could not be redialed. 
+  This problem has been fixed. 
+
+ee/sample/inet/libnet
+iop/sample/inet/libnet
+- The following functions have been added for "up" and "down" of the 
+  interface.
+     up_interface()
+     down_interface()
+     load_set_conf_only()
+     wait_get_addr_only()
+     get_interface_id()
+
+- extern C has been added to the declaration that had no "extern C."
+
+  ee/sample/inet/echo_server
+  ee/sample/inet/http_get
+  ee/sample/inet/ball_game
+  ee/sample/inet/load_test/client
+  ee/sample/inet/load_test/daemon
+  ee/sample/inet/socket/echo_server
+  ee/sample/inet/socket/http_get
+
+- A feature that brings the interface "down" was added to the above 
+  programs. Also, initialization and termination methods for libnet have
+  been standardized.
+
+<Release 2.4.3>
+- ee/sample/graphics/gp/multiwin 
+  This sample program has been changed due to the new addition of 
+  functions to the basic graphics library (libgp). 
+
+- ee/sample/graphics/hig/sample6.c, sample8.c, sample16.c, sample18.c
+  ee/sample/graphics/hig/sample19.c, sample20.c, sample21.c, sample22.c
+  ee/sample/graphics/hig/sample23.c, util.h
+
+  1. The extern __attribute__(.vudata) declaration has been removed. 
+  2. Fogging and antialiasing features have been added to sample6.c. 
+  3. sample8.c has been changed to a data rewriting sample using a data 
+     access feature.
+ 
+- ee/sample/graphics/hig/camera.c
+  The inline function performing external reference with extern has 
+  been removed. 
+
+- ee/sample/inet/libhttp/auth
+  ee/sample/inet/libhttp/blocking
+  ee/sample/inet/libhttp/chunk
+  ee/sample/inet/libhttp/cookie
+  ee/sample/inet/libhttp/mime
+  ee/sample/inet/libhttp/normal
+  ee/sample/inet/libhttp/proxy
+  ee/sample/inet/libhttp/redirect
+  ee/sample/inet/libhttp/qp
+
+  1. With auth, blocking, chunk, cookie, mime, normal, proxy, and 
+     redirect samples, the type of end callback function has been 
+     changed to add a user-defined argument at the time of registration. 
+
+  2. The redirect sample omitted freeing resources. It has been corrected.
+
+  3. With the chunk sample, the type of chunk receive function has been 
+     changed to add a user-defined argument at the time of registration.
+
+  4. #include <libhttp.h> has been added to the qp sample. 
+     A line break process was omitted while decoding. This problem has 
+     been fixed. 
+
+- ee/sample/inet/socket/http_get
+  This sample program has been changed to specify SHUT_RDWR, not 2, to 
+  the argument how of shutdown(). 
+
+- ee/sample/inet/socket/echo_server
+  This sample program has been changed to specify SHUT_RDWR, not 2, to 
+  the argument how of shutdown(). 
+  A process to free the stack area has also been added. 
+
+- ee/sample/inet/echo_server
+  1. maxCount of fin_sema in main.c has been changed to MAX_CONNECTION. 
+
+  2. The relationship between end of thread and thread stack release has 
+     been corrected. 
+
+- ee/sample/inet/ntguicnf
+  1. Changes made to the USE_USBKB macro were not reflected in 
+     SCE_NETGUICNF_FLAG_USE_USB_KB in the flag member of 
+     the sceNetGuiCnf_Arg structure. This problem has been fixed. 
+
+  2. A change has been made to the network configuration GUI library to 
+     return the selected combination name, hardware setting name, network 
+     service provider setting name, and the device in which settings are 
+     stored. Due to this change, this sample program has been changed.  
+     
+- ee/sample/graphics/jointm/intr_key/runtime
+  Transfer packets were occasionally rewritten during DMA transfer 
+  depending on the timing. This problem has been fixed. 
+
+- ee/sample/graphics/jointm/intr_key/runtime
+  ee/sample/basic3d/vu1
+  ee/sample/graphics/mipmap 
+
+  VIF input occasionally rewrote the VUMEM in active use depending on the 
+  timing. This problem has been fixed. 
+
+- ee/sample/advanced/anti/refmap-448
+  ee/sample/advanced/anti/refmap-4times
+  ee/sample/advanced/anti/refmap-noAA
+  ee/sample/advanced/anti/refmap-onepass-AAline
+  ee/sample/advanced/anti/texmap-onepass-AAline
+  ee/sample/basic3d/vu1
+  ee/sample/graphics/bumpmap
+  ee/sample/graphics/clip_vu1
+  ee/sample/graphics/jointm/intr_key/runtime
+  ee/sample/graphics/mipmap
+  ee/sample/graphics/point_l
+  ee/sample/graphics/refmap
+  ee/sample/graphics/spot_l
+  ee/sample/graphics/tex_swap
+
+  The microprograms in the above samples lacked a slot for an instruction 
+  that is necessary between an instruction for setting branch conditions 
+  and conditional branch instruction. 
+
+- ee/sample/mc/basic 
+  This sample program has been modified due to the change of libmc.h. 
+
+- ee(iop)/sample/ilink
+  Processes to unload ilink.irx and ilsock.irx modules have been added. 
+
+- iop/sample/usb/activate/readme.txt
+  A description on execution of make run has been added.
+
+- iop/sample/usb/usbmouse
+  iop/sample/usb/usbkeybd
+  iop/sample/usb/selfunld
+
+  If USB devices are connected and disconnected repeatedly when the 
+  number of USB ports is more than the maximum number of connectable 
+  devices set by the user, the system sometimes hung up. This problem 
+  has been fixed.
+

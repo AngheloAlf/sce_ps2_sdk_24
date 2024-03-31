@@ -1,0 +1,150 @@
+This is Info file cgen.info, produced by Makeinfo version 1.68 from the
+input file ../../../src/cgen/doc/cgen.texi.
+
+START-INFO-DIR-ENTRY
+* Cgen: (cgen).                 The Cpu tools GENerator.
+END-INFO-DIR-ENTRY
+
+   Copyright (C) 2000 Red Hat, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the entire resulting derived work is distributed under the terms
+of a permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions.
+
+
+Indirect:
+cgen.info-1: 823
+cgen.info-2: 46229
+cgen.info-3: 93882
+cgen.info-4: 142910
+cgen.info-5: 192488
+
+Tag Table:
+(Indirect)
+Node: Top823
+Node: Introduction1625
+Node: Overview1893
+Node: Goal2272
+Node: Why do it?3850
+Node: Maybe it should not be done?5033
+Node: How ambitious is CGEN?6314
+Node: More complicated simulators6842
+Node: Profiling tools11109
+Node: Program analysis tools12910
+Node: ABI description13470
+Node: Machine generated architecture reference material14792
+Node: Tools like what NJMCT provides15546
+Node: Input to a compiler's backend15945
+Node: Hardware/software codesign18489
+Node: What is missing that should be there soon?19544
+Node: CPU description language21266
+Node: Language requirements22745
+Node: Layout26086
+Node: Language problems27511
+Node: Opcodes support30244
+Node: Simulator support30503
+Node: Testing support30811
+Node: Assembler/disassembler testing31365
+Node: Simulator testing34849
+Node: Implementation language36577
+Node: Running CGEN38984
+Node: RTL39241
+Node: RTL Introduction40357
+Node: Trade-offs43041
+Node: Rules and notes44037
+Node: Definitions45336
+Node: Attributes46229
+Node: Architecture variants51503
+Node: define-arch51855
+Node: define-isa53736
+Node: define-cpu58484
+Node: define-mach61306
+Node: Model variants61985
+Node: Hardware elements65847
+Node: Instruction fields76083
+Node: Enumerated constants84474
+Node: Instruction operands86613
+Node: Derived operands91040
+Node: Instructions93882
+Node: Macro-instructions100145
+Node: Modes101821
+Node: Expressions104048
+Node: Macro-expressions112842
+Node: Preprocessor macros113464
+Node: Defining a preprocessor macro114664
+Node: Using preprocessor macros115236
+Node: Macro expansion115773
+Node: Default argument values116263
+Node: Multiple output expressions116919
+Node: Symbol concatenation117779
+Node: String concatenation118384
+Node: Convert a number to a hex119146
+Node: Convert a string to uppercase119673
+Node: Convert a string to lowercase120017
+Node: Getting part of a string120366
+Node: List splicing120917
+Node: Number generation123462
+Node: Mapping a macro over a list123923
+Node: Applying a macro to a list124642
+Node: Defining a macro inline125460
+Node: Passing macros as arguments126790
+Node: Porting127652
+Node: Introduction to porting128181
+Node: Supported Guile versions130041
+Node: Running configure130683
+Node: Writing a CPU description file131322
+Node: Conventions132737
+Node: Writing define-arch134351
+Node: Writing define-isa134743
+Node: Writing define-cpu135188
+Node: Writing define-mach136249
+Node: Writing define-model136569
+Node: Writing define-hardware137297
+Node: Writing define-ifield138391
+Node: Writing define-normal-insn-enum138995
+Node: Writing define-operand139846
+Node: Writing define-insn140605
+Node: Writing define-macro-insn142291
+Node: Using define-pmacro142910
+Node: Interactive development144369
+Node: Doing an opcodes port146230
+Node: Doing a GAS port147694
+Node: Building a GAS test suite151246
+Node: Doing a simulator port152509
+Node: Building a simulator test suite158270
+Node: Opcodes159856
+Node: Generated files160239
+Node: The .opc file161686
+Node: Special assembler parsing needs164717
+Node: Simulation166241
+Node: Writing an application167532
+Node: File Layout168204
+Node: File Generation Process168883
+Node: Coding Conventions171638
+Node: Accessing Loaded Data172263
+Node: Name References175604
+Node: String Building176303
+Node: COS178077
+Node: Glossary182027
+Node: Miscellaneous notes182801
+Node: Description language notes183853
+Node: CGEN architecture notes185652
+Node: COS notes187364
+Node: RTL notes187844
+Node: Guile implementation notes188748
+Node: Code generation notes189391
+Node: Machine generated files notes189594
+Node: Implementation language notes189969
+Node: Credits192488
+Node: Index193147
+
+End Tag Table

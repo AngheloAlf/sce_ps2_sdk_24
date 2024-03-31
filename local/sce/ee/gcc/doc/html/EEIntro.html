@@ -1,0 +1,216 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE> Emotion Engine Tools User's Guide</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="ECOS" WIDTH="100%" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR>
+<TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">
+Emotion Engine Tools User's Guide</P>
+</TH></TR>
+<TR><TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEcontents.html">
+contents</A>
+</P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEcontents.html">
+previous&nbsp;page</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEprocedures.html">
+next&nbsp;page</A></P>
+</TD>
+</TR></TABLE>
+<HR ALIGN="center">
+</DIV>
+<H1 CLASS="IntroTitle">
+<A NAME="pgfId-463820"></A>Introduction<DIV>
+<IMG SRC="botclear.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-463821"></A>Welcome to Red Hat's GNUPro Toolkit Emotion Engine Tools User's Guide. The GNUPro Toolkit from Red Hat is a complete solution for C and C++ development for the Emotion Engine and co-processors. The tools include the compiler,interactive debugger, and utilities libraries.</P>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-500481"></A>Tool <A NAME="marker-500480"></A>Naming Conventions</H1>
+<P CLASS="Body">
+<A NAME="pgfId-513849"></A>Cross-development tools in the Red Hat GNUPro Toolkit normally have names that reflect the target processor. This allows you to install more than one set of tools in the same binary directory, including both native and cross-development tools.</P>
+<P CLASS="Body">
+<A NAME="pgfId-513087"></A>The complete tool name is a three-part hyphenated string. The first part indicates the processor family (e.g. <KBD CLASS="Code">
+ee</KBD>
+ for the Emotion Engine). The second part is the generic tool name (e.g. <KBD CLASS="Code">
+gcc</KBD>). For example, the GCC compiler for the Emotion Engine is:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-513091"></A>   ee-gcc</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-513524"></A>The SKY package includes the following supported tools: </P>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-525108"></A>Tool Description</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-525110"></A>Tool Name</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-525113"></A><A NAME="marker-525112"></A>GCC compiler</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-525118"></A><KBD CLASS="Code">
+ee-gcc</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-525120"></A>C++ compiler</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-525125"></A><KBD CLASS="Code">
+ee-c++</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-525128"></A><A NAME="marker-525127"></A>GAS assemblers</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-525136"></A><KBD CLASS="Code">
+ee-as<BR>
+ee-dvp-as</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-525138"></A>GNU LD linker</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-525143"></A><KBD CLASS="Code">
+ee-ld</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-525153"></A>Binary utilities</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-525158"></A><KBD CLASS="Code">
+ee-addr2line<BR>
+ee-ar<BR>
+ee-c++filt<BR>
+ee-gasp<BR>
+ee-nm<BR>
+ee-objcopy<BR>
+ee-objdump<BR>
+ee-ranlib<BR>
+ee-readelf<BR>
+ee-size<BR>
+ee-strings<BR>
+ee-strip</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-525194"></A><A NAME="marker-525193"></A>GDB debugger</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-525199"></A><KBD CLASS="Code">
+ee-gdb</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-525201"></A>Linker script</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-525206"></A><KBD CLASS="Code">
+sky.ld</KBD>
+</P>
+</TD>
+</TR>
+</TABLE>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-461300"></A>Case <A NAME="marker-461666"></A>Sensitivity</H1>
+<P CLASS="Body">
+<A NAME="pgfId-461399"></A>The following strings are case-sensitive:</P>
+<UL>
+<LI>
+<A NAME="pgfId-461428"></A>command line options</LI>
+<LI>
+<A NAME="pgfId-461435"></A>assembler labels</LI>
+<LI>
+<A NAME="pgfId-461443"></A>linker script commands</LI>
+<LI>
+<A NAME="pgfId-461447"></A>section names</LI>
+<LI>
+<A NAME="pgfId-461467"></A>file names</LI>
+</UL>
+<P CLASS="Body">
+<A NAME="pgfId-461459"></A>The following strings are not case-sensitive:</P>
+<UL>
+<LI>
+<A NAME="pgfId-461460"></A>gdb commands</LI>
+<LI>
+<A NAME="pgfId-461965"></A>assembler instructions and register names</LI>
+</UL>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-461966"></A>Environment Summary</H2>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-461967"></A>Processor versions</H3>
+<P CLASS="Body">
+<A NAME="pgfId-513220"></A>Emotion Engine and custom co-processors</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-461304"></A>Object file format</H3>
+<P CLASS="Body">
+<A NAME="pgfId-461395"></A>The SKY tools support the <A NAME="marker-461668"></A>ELF object file format. Refer to Chapter 4, <STRONG CLASS="BoldEmphasis">
+System V Application Binary Interface</STRONG>
+ (Prentice Hall, 1990). </P>
+<HR ALIGN="center">
+<TABLE CLASS="ECOS" WIDTH="100%" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">Emotion Engine Tools User's Guide</P>
+</TH></TR>
+<TR><TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEcontents.html">
+contents</A></P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEcontents.html">
+previous&nbsp;page</A></P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEprocedures.html">
+next&nbsp;page</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

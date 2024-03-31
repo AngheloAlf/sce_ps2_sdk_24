@@ -1,0 +1,16 @@
+# <Sony Computer Entertainment Inc.>
+
+type ppp
+-dhcp
+auth_name "User ID"
+auth_key "Password"
+peer_name "*"
+-want.prc_nego
+-want.acc_nego
+-want.accm_nego
+want.dns1_nego
+want.dns2_nego
+allow.auth chap/pap
+pppoe
+mtu 1454
+route add -net 0.0.0.0 netmask 0.0.0.0

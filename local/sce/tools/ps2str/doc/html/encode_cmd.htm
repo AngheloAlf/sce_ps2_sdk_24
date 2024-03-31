@@ -1,0 +1,177 @@
+<html>
+
+<head>
+<title>encode command</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+</head>
+
+<body>
+
+<h1>encode command</h1>    
+<hr>    
+<h2>Purpose</h2>    
+<p> Perform ADPCM compression and conversion to SPU stream
+file format (*.ads) from uncompressed audio data. 
+<p> Note: Only WAV files with straight PCM are supported. That is, the WAV file must have "fmt tag = 1".</p> 
+<p> </p>  
+<h2>Format</h2>  
+<h3>command section</h3>    
+<p> encode (Abbreviated form: e)</p>    
+<p> </p>
+<h3>options section</h3>    
+<table border="1">    
+  <tr>    
+    <td>Options</td>    
+    <td>Meaning</td>    
+  </tr>    
+  <tr>    
+    <td>-o</td>    
+    <td>Overwrite if output file already exists</td>    
+  </tr>    
+  <tr>    
+    <td>-d [directory]</td>  
+    <td>Specify output directory.</td>  
+  </tr>  
+  <tr>  
+    <td>-v</td>  
+    <td>Provide detailed progress report</td>  
+  </tr>  
+  <tr>  
+    <td>-aiff</td>  
+    <td>Treat input file as a Macintosh AIFF     
+      file.</td>    
+  </tr>    
+  <tr>    
+    <td>-wave</td>   
+    <td>Treat input file as a Windows WAVE
+      file.</td>    
+  </tr>    
+  <tr>    
+    <td>-raw</td>  
+    <td>Treat input file as Raw PCM file.</td>   
+  </tr>   
+  <tr>    
+    <td>-a</td>  
+    <td>Perform ADPCM compression.</td>  
+  </tr>  
+  <tr>  
+    <td>-8</td>  
+    <td>Treat input sample as 8-bit PCM.</td>  
+  </tr>  
+  <tr>  
+    <td>-16</td>  
+    <td>Treat input sample as 16-bit PCM.</td>  
+  </tr>  
+  <tr>  
+    <td>-le</td>  
+    <td>Treat input sample as little endian
+      (Intel format).</td>  
+  </tr>  
+  <tr>  
+    <td>-be</td>  
+    <td>Treat input sample as big endian 
+      (Motorola format).</td>  
+  </tr>  
+  <tr>  
+    <td>-st</td>  
+    <td>Treat input sample as stereo.</td>  
+  </tr>  
+  <tr>  
+    <td>-mn</td>  
+    <td>Treat input sample as monaural.</td>  
+  </tr>  
+  <tr>  
+    <td>-sn</td>  
+    <td>Treat input sample as signed integers.</td>  
+  </tr>  
+  <tr>  
+    <td>-us</td>  
+    <td>Treat input sample as unsigned integers.</td>  
+  </tr>  
+  <tr>  
+    <td>-sr: sampling rate</td>  
+    <td>Specify the sampling rate for the sample.</td>  
+  </tr>  
+  <tr>  
+    <td>-is: interleave size</td>  
+    <td>Specify the interleave size used for the output.</td>  
+  </tr>  
+  <tr>  
+    <td>-sba: address</td> 
+    <td>Set loop_start_block_address for the
+      SPU stream file header.</td>  
+  </tr>  
+  <tr>  
+    <td>-eba: address</td> 
+    <td>Set loop_end_block_address for the
+      SPU stream file header.</td>  
+  </tr>  
+</table>  
+<p> If an option for specifying the file format is omitted, auto-detection
+will determine if the file is an AIFF or WAVE file. An error will be
+generated if the file is neither.</p>    
+<p> If
+the input is a raw file, sampling format (e.g., sampling rate) should be
+set in the options. For AIFF or WAVE files, this will be
+reflected in the file header information.</p>  
+<p> </p>  
+<h4>Parameter values when options are omitted</h4>  
+<table border="1">
+  <tr>
+    <td>Sampling bits</td>
+    <td>16 bit (raw format)</td>
+  </tr>
+  <tr>
+    <td>Sampling format</td>
+    <td>Stereo, little endian, signed (raw format)</td>
+  </tr>
+  <tr>
+    <td>Sampling rate</td>
+    <td>Settings required (raw format)</td>
+  </tr>
+  <tr>
+    <td>Interleave size</td>
+    <td>512 byte (PCM), 32 byte (ADPCM)</td>
+  </tr>
+  <tr>
+    <td>loop_start_block_address</td>
+    <td>0xffffffff (no loop)</td>
+  </tr>
+  <tr>
+    <td>loop_end_block_address</td>
+    <td>0xffffffff (no loop)</td>
+  </tr>
+</table>
+<p> </p>  
+<h3>target file section</h3>    
+<table border="1">    
+  <tr>    
+    <td>Parameter 1</td>    
+    <td>Audio file serving as conversion source file</td>    
+  </tr>    
+  <tr>    
+    <td>Parameter 2 (optional)</td>    
+    <td>Audio file     
+      (If omitted, the output file will be the conversion source
+       filename with an ads extension.)</td>    
+  </tr>    
+</table>    
+<p> </p>
+<p> </p>
+<p><strong>[EOF]</strong></p>
+<p>Last update:<!--webbot bot="Timestamp" startspan S-Type="EDITED"
+S-Format="%Y/%m/%d" -->1999/09/27<!--webbot bot="Timestamp" i-CheckSum="12959"
+endspan -->
+</p>
+<HR>
+<DIV ALIGN="right">
+<ADDRESS>
+    SCEI CONFIDENTIAL
+    <BR>Copyright (c) 1999 Sony Computer Entertainment Inc.  All Rights Reserved.</BR>
+</ADDRESS>
+</DIV>
+</body>
+
+</html>

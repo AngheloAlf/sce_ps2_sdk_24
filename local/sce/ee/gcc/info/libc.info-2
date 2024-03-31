@@ -1,0 +1,1534 @@
+This is Info file libc.info, produced by Makeinfo version 1.68 from the
+input file ../../../../src/newlib/libc/libc.texinfo.
+
+START-INFO-DIR-ENTRY
+* libc::                        The ANSI C library.
+END-INFO-DIR-ENTRY
+
+   This file documents the ANSI C library.
+
+   Copyright (C) 1992, 1993 Cygnus Support
+
+   `libc' includes software developed by the University of California,
+Berkeley and its contributors.
+
+   libc includes software developed by Martin Jackson, Graham Haley and
+Steve Chamberlain of Tadpole Technology and released to Cygnus.
+
+   libc uses floating point converstion software developed at AT&T,
+which includes this copyright information:
+
+   The author of this software is David M. Gay.
+
+   Copyright (c) 1991 by AT&T.
+
+   Permission to use, copy, modify, and distribute this software for any
+purpose without fee is hereby granted, provided that this entire notice
+is included in all copies of any software which is or includes a copy
+or modification of this software and in all copies of the supporting
+documentation for such software.
+
+   THIS SOFTWARE IS BEING PROVIDED "AS IS", WITHOUT ANY EXPRESS OR
+IMPLIED  WARRANTY.  IN PARTICULAR, NEITHER THE AUTHOR NOR AT&T MAKES ANY
+REPRESENTATION OR WARRANTY OF ANY KIND CONCERNING THE MERCHANTABILITY
+OF THIS SOFTWARE OR ITS FITNESS FOR ANY PARTICULAR PURPOSE.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, subject to the
+terms of the GNU General Public License, which includes the provision
+that the entire resulting derived work is distributed under the terms
+of a permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions.
+
+
+File: libc.info,  Node: isascii,  Next: iscntrl,  Prev: isalpha,  Up: Ctype
+
+`isascii'--ASCII character predicate
+====================================
+
+*Synopsis*
+     #include <ctype.h>
+     int isascii(int C);
+   *Description*
+`isascii' is a macro which returns non-zero when C is an ASCII
+character, and 0 otherwise.  It is defined for all integer values.
+
+   You can use a compiled subroutine instead of the macro definition by
+undefining the macro using ``#undef isascii''.
+
+*Returns*
+`isascii' returns non-zero if the low order byte of C is in the range 0
+to 127 (`0x00'-`0x7F').
+
+*Portability*
+`isascii' is ANSI C.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: iscntrl,  Next: isdigit,  Prev: isascii,  Up: Ctype
+
+`iscntrl'--control character predicate
+======================================
+
+*Synopsis*
+     #include <ctype.h>
+     int iscntrl(int C);
+   *Description*
+`iscntrl' is a macro which classifies ASCII integer values by table
+lookup.  It is a predicate returning non-zero for control characters,
+and 0 for other characters.  It is defined only when `isascii'(C) is
+true or C is EOF.
+
+   You can use a compiled subroutine instead of the macro definition by
+undefining the macro using ``#undef iscntrl''.
+
+*Returns*
+`iscntrl' returns non-zero if C is a delete character or ordinary
+control character (`0x7F' or `0x00'-`0x1F').
+
+*Portability*
+`iscntrl' is ANSI C.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: isdigit,  Next: islower,  Prev: iscntrl,  Up: Ctype
+
+`isdigit'--decimal digit predicate
+==================================
+
+*Synopsis*
+     #include <ctype.h>
+     int isdigit(int C);
+   *Description*
+`isdigit' is a macro which classifies ASCII integer values by table
+lookup.  It is a predicate returning non-zero for decimal digits, and 0
+for other characters.  It is defined only when `isascii'(C) is true or
+C is EOF.
+
+   You can use a compiled subroutine instead of the macro definition by
+undefining the macro using ``#undef isdigit''.
+
+*Returns*
+`isdigit' returns non-zero if C is a decimal digit (`0'-`9').
+
+*Portability*
+`isdigit' is ANSI C.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: islower,  Next: isprint,  Prev: isdigit,  Up: Ctype
+
+`islower'--lower-case character predicate
+=========================================
+
+*Synopsis*
+     #include <ctype.h>
+     int islower(int C);
+   *Description*
+`islower' is a macro which classifies ASCII integer values by table
+lookup.  It is a predicate returning non-zero for minuscules
+(lower-case alphabetic characters), and 0 for other characters.  It is
+defined only when `isascii'(C) is true or C is EOF.
+
+   You can use a compiled subroutine instead of the macro definition by
+undefining the macro using ``#undef islower''.
+
+*Returns*
+`islower' returns non-zero if C is a lower case letter (`a'-`z').
+
+*Portability*
+`islower' is ANSI C.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: isprint,  Next: ispunct,  Prev: islower,  Up: Ctype
+
+`isprint', `isgraph'--printable character predicates
+====================================================
+
+*Synopsis*
+     #include <ctype.h>
+     int isprint(int C);
+     int isgraph(int C);
+   *Description*
+`isprint' is a macro which classifies ASCII integer values by table
+lookup.  It is a predicate returning non-zero for printable characters,
+and 0 for other character arguments.  It is defined only when
+`isascii'(C) is true or C is EOF.
+
+   You can use a compiled subroutine instead of the macro definition by
+undefining either macro using ``#undef isprint'' or ``#undef isgraph''.
+
+*Returns*
+`isprint' returns non-zero if C is a printing character,
+(`0x20'-`0x7E').  `isgraph' behaves identically to `isprint', except
+that the space character (`0x20') is excluded.
+
+*Portability*
+`isprint' and `isgraph' are ANSI C.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: ispunct,  Next: isspace,  Prev: isprint,  Up: Ctype
+
+`ispunct'--punctuation character predicate
+==========================================
+
+*Synopsis*
+     #include <ctype.h>
+     int ispunct(int C);
+   *Description*
+`ispunct' is a macro which classifies ASCII integer values by table
+lookup.  It is a predicate returning non-zero for printable punctuation
+characters, and 0 for other characters.  It is defined only when
+`isascii'(C) is true or C is EOF.
+
+   You can use a compiled subroutine instead of the macro definition by
+undefining the macro using ``#undef ispunct''.
+
+*Returns*
+`ispunct' returns non-zero if C is a printable punctuation character
+(`isgraph(C) && !isalnum(C)').
+
+*Portability*
+`ispunct' is ANSI C.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: isspace,  Next: isupper,  Prev: ispunct,  Up: Ctype
+
+`isspace'--whitespace character predicate
+=========================================
+
+*Synopsis*
+     #include <ctype.h>
+     int isspace(int C);
+   *Description*
+`isspace' is a macro which classifies ASCII integer values by table
+lookup.  It is a predicate returning non-zero for whitespace
+characters, and 0 for other characters.  It is defined only when
+`isascii'(C) is true or C is EOF.
+
+   You can use a compiled subroutine instead of the macro definition by
+undefining the macro using ``#undef isspace''.
+
+*Returns*
+`isspace' returns non-zero if C is a space, tab, carriage return, new
+line, vertical tab, or formfeed (`0x09'-`0x0D', `0x20').
+
+*Portability*
+`isspace' is ANSI C.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: isupper,  Next: isxdigit,  Prev: isspace,  Up: Ctype
+
+`isupper'--uppercase character predicate
+========================================
+
+*Synopsis*
+     #include <ctype.h>
+     int isupper(int C);
+   *Description*
+`isupper' is a macro which classifies ASCII integer values by table
+lookup.  It is a predicate returning non-zero for upper-case letters
+(`A'-`Z'), and 0 for other characters.  It is defined only when
+`isascii'(C) is true or C is EOF.
+
+   You can use a compiled subroutine instead of the macro definition by
+undefining the macro using ``#undef isupper''.
+
+*Returns*
+`isupper' returns non-zero if C is a upper case letter (A-Z).
+
+*Portability*
+`isupper' is ANSI C.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: isxdigit,  Next: toascii,  Prev: isupper,  Up: Ctype
+
+`isxdigit'--hexadecimal digit predicate
+=======================================
+
+*Synopsis*
+     #include <ctype.h>
+     int isxdigit(int C);
+   *Description*
+`isxdigit' is a macro which classifies ASCII integer values by table
+lookup.  It is a predicate returning non-zero for hexadecimal digits,
+and `0' for other characters.  It is defined only when `isascii'(C) is
+true or C is EOF.
+
+   You can use a compiled subroutine instead of the macro definition by
+undefining the macro using ``#undef isxdigit''.
+
+*Returns*
+`isxdigit' returns non-zero if C is a hexadecimal digit (`0'-`9',
+`a'-`f', or `A'-`F').
+
+*Portability*
+`isxdigit' is ANSI C.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: toascii,  Next: tolower,  Prev: isxdigit,  Up: Ctype
+
+`toascii'--force integers to ASCII range
+========================================
+
+*Synopsis*
+     #include <ctype.h>
+     int toascii(int C);
+   *Description*
+`toascii' is a macro which coerces integers to the ASCII range (0-127)
+by zeroing any higher-order bits.
+
+   You can use a compiled subroutine instead of the macro definition by
+undefining this macro using ``#undef toascii''.
+
+*Returns*
+`toascii' returns integers between 0 and 127.
+
+*Portability*
+`toascii' is not ANSI C.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: tolower,  Next: toupper,  Prev: toascii,  Up: Ctype
+
+`tolower'--translate characters to lower case
+=============================================
+
+*Synopsis*
+     #include <ctype.h>
+     int tolower(int C);
+     int _tolower(int C);
+   *Description*
+`tolower' is a macro which converts upper-case characters to lower
+case, leaving all other characters unchanged.  It is only defined when
+C is an integer in the range `EOF' to `255'.
+
+   You can use a compiled subroutine instead of the macro definition by
+undefining this macro using ``#undef tolower''.
+
+   `_tolower' performs the same conversion as `tolower', but should
+only be used when C is known to be an uppercase character (`A'-`Z').
+
+*Returns*
+`tolower' returns the lower-case equivalent of C when it is a character
+between `A' and `Z', and C otherwise.
+
+   `_tolower' returns the lower-case equivalent of C when it is a
+character between `A' and `Z'.  If C is not one of these characters,
+the behaviour of `_tolower' is undefined.
+
+*Portability*
+`tolower' is ANSI C.  `_tolower' is not recommended for portable
+programs.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: toupper,  Prev: tolower,  Up: Ctype
+
+`toupper'--translate characters to upper case
+=============================================
+
+*Synopsis*
+     #include <ctype.h>
+     int toupper(int C);
+     int _toupper(int C);
+   *Description*
+`toupper' is a macro which converts lower-case characters to upper
+case, leaving all other characters unchanged.  It is only defined when
+C is an integer in the range `EOF' to `255'.
+
+   You can use a compiled subroutine instead of the macro definition by
+undefining this macro using ``#undef toupper''.
+
+   `_toupper' performs the same conversion as `toupper', but should
+only be used when C is known to be a lowercase character (`a'-`z').
+
+*Returns*
+`toupper' returns the upper-case equivalent of C when it is a character
+between `a' and `z', and C otherwise.
+
+   `_toupper' returns the upper-case equivalent of C when it is a
+character between `a' and `z'.  If C is not one of these characters,
+the behaviour of `_toupper' is undefined.
+
+*Portability*
+`toupper' is ANSI C.  `_toupper' is not recommended for portable
+programs.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: Stdio,  Next: Strings,  Prev: Ctype,  Up: Top
+
+Input and Output (`stdio.h')
+****************************
+
+This chapter comprises functions to manage files or other input/output
+streams. Among these functions are subroutines to generate or scan
+strings according to specifications from a format string.
+
+   The underlying facilities for input and output depend on the host
+system, but these functions provide a uniform interface.
+
+   The corresponding declarations are in `stdio.h'.
+
+   The reentrant versions of these functions use macros
+
+     _stdin_r(REENT)
+     _stdout_r(REENT)
+     _stderr_r(REENT)
+
+instead of the globals `stdin', `stdout', and `stderr'.  The argument
+<[reent]> is a pointer to a reentrancy structure.
+
+* Menu:
+
+* clearerr::    Clear file or stream error indicator
+* fclose::      Close a file
+* feof::        Test for end of file
+* ferror::      Test whether read/write error has occurred
+* fflush::      Flush buffered file output
+* fgetc::       Get a character from a file or stream
+* fgetpos::     Record position in a stream or file
+* fgets::       Get character string from a file or stream
+* fiprintf::    Write formatted output to file (integer only)
+* fopen::       Open a file
+* fdopen::	Turn an open file into a stream
+* fputc::       Write a character on a stream or file
+* fputs::       Write a character string in a file or stream
+* fread::       Read array elements from a file
+* freopen::     Open a file using an existing file descriptor
+* fseek::       Set file position
+* fsetpos::     Restore position of a stream or file
+* ftell::       Return position in a stream or file
+* fwrite::      Write array elements from memory to a file or stream
+* getc::        Get a character from a file or stream (macro)
+* getchar::     Get a character from standard input (macro)
+* gets::        Get character string from standard input (obsolete)
+* getw::        Get a word (int) from a file or stream
+* iprintf::     Write formatted output (integer only)
+* mktemp::      Generate unused file name
+* perror::      Print an error message on standard error
+* putc::        Write a character on a stream or file (macro)
+* putchar::     Write a character on standard output (macro)
+* puts::        Write a character string on standard output
+* putw::        Write a word (int) to a file or stream
+* remove::      Delete a file's name
+* rename::      Rename a file
+* rewind::      Reinitialize a file or stream
+* setbuf::      Specify full buffering for a file or stream
+* setvbuf::     Specify buffering for a file or stream
+* siprintf::    Write formatted output (integer only)
+* printf::      Write formatted output
+* scanf::       Scan and format input
+* tmpfile::     Create a temporary file
+* tmpnam::      Generate name for a temporary file
+* vprintf::     Format variable argument list
+
+
+File: libc.info,  Node: clearerr,  Next: fclose,  Up: Stdio
+
+`clearerr'--clear file or stream error indicator
+================================================
+
+   *Synopsis*
+     #include <stdio.h>
+     void clearerr(FILE *FP);
+   *Description*
+The `stdio' functions maintain an error indicator with each file
+pointer FP, to record whether any read or write errors have occurred on
+the associated file or stream.  Similarly, it maintains an end-of-file
+indicator to record whether there is no more data in the file.
+
+   Use `clearerr' to reset both of these indicators.
+
+   See `ferror' and `feof' to query the two indicators.
+
+*Returns*
+`clearerr' does not return a result.
+
+*Portability*
+ANSI C requires `clearerr'.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: fclose,  Next: feof,  Prev: clearerr,  Up: Stdio
+
+`fclose'--close a file
+======================
+
+*Synopsis*
+     #include <stdio.h>
+     int fclose(FILE *FP);
+   *Description*
+If the file or stream identified by FP is open, `fclose' closes it,
+after first ensuring that any pending data is written (by calling
+`fflush(FP)').
+
+*Returns*
+`fclose' returns `0' if successful (including when FP is `NULL' or not
+an open file); otherwise, it returns `EOF'.
+
+*Portability*
+`fclose' is required by ANSI C.
+
+   Required OS subroutines: `close', `fstat', `isatty', `lseek',
+`read', `sbrk', `write'.
+
+
+File: libc.info,  Node: feof,  Next: ferror,  Prev: fclose,  Up: Stdio
+
+`feof'--test for end of file
+============================
+
+*Synopsis*
+     #include <stdio.h>
+     int feof(FILE *FP);
+   *Description*
+`feof' tests whether or not the end of the file identified by FP has
+been reached.
+
+*Returns*
+`feof' returns `0' if the end of file has not yet been reached; if at
+end of file, the result is nonzero.
+
+*Portability*
+`feof' is required by ANSI C.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: ferror,  Next: fflush,  Prev: feof,  Up: Stdio
+
+`ferror'--test whether read/write error has occurred
+====================================================
+
+*Synopsis*
+     #include <stdio.h>
+     int ferror(FILE *FP);
+   *Description*
+The `stdio' functions maintain an error indicator with each file
+pointer FP, to record whether any read or write errors have occurred on
+the associated file or stream.  Use `ferror' to query this indicator.
+
+   See `clearerr' to reset the error indicator.
+
+*Returns*
+`ferror' returns `0' if no errors have occurred; it returns a nonzero
+value otherwise.
+
+*Portability*
+ANSI C requires `ferror'.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: fflush,  Next: fgetc,  Prev: ferror,  Up: Stdio
+
+`fflush'--flush buffered file output
+====================================
+
+*Synopsis*
+     #include <stdio.h>
+     int fflush(FILE *FP);
+   *Description*
+The `stdio' output functions can buffer output before delivering it to
+the host system, in order to minimize the overhead of system calls.
+
+   Use `fflush' to deliver any such pending output (for the file or
+stream identified by FP) to the host system.
+
+   If FP is `NULL', `fflush' delivers pending output from all open
+files.
+
+*Returns*
+`fflush' returns `0' unless it encounters a write error; in that
+situation, it returns `EOF'.
+
+*Portability*
+ANSI C requires `fflush'.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: fgetc,  Next: fgetpos,  Prev: fflush,  Up: Stdio
+
+`fgetc'--get a character from a file or stream
+==============================================
+
+*Synopsis*
+     #include <stdio.h>
+     int fgetc(FILE *FP);
+   *Description*
+Use `fgetc' to get the next single character from the file or stream
+identified by FP.  As a side effect, `fgetc' advances the file's
+current position indicator.
+
+   For a macro version of this function, see `getc'.
+
+*Returns*
+The next character (read as an `unsigned char', and cast to `int'),
+unless there is no more data, or the host system reports a read error;
+in either of these situations, `fgetc' returns `EOF'.
+
+   You can distinguish the two situations that cause an `EOF' result by
+using the `ferror' and `feof' functions.
+
+*Portability*
+ANSI C requires `fgetc'.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: fgetpos,  Next: fgets,  Prev: fgetc,  Up: Stdio
+
+`fgetpos'--record position in a stream or file
+==============================================
+
+*Synopsis*
+     #include <stdio.h>
+     int fgetpos(FILE *FP, fpos_t *POS);
+   *Description*
+Objects of type `FILE' can have a "position" that records how much of
+the file your program has already read.  Many of the `stdio' functions
+depend on this position, and many change it as a side effect.
+
+   You can use `fgetpos' to report on the current position for a file
+identified by FP; `fgetpos' will write a value representing that
+position at `*POS'.  Later, you can use this value with `fsetpos' to
+return the file to this position.
+
+   In the current implementation, `fgetpos' simply uses a character
+count to represent the file position; this is the same number that
+would be returned by `ftell'.
+
+*Returns*
+`fgetpos' returns `0' when successful.  If `fgetpos' fails, the result
+is `1'.  Failure occurs on streams that do not support positioning; the
+global `errno' indicates this condition with the value `ESPIPE'.
+
+*Portability*
+`fgetpos' is required by the ANSI C standard, but the meaning of the
+value it records is not specified beyond requiring that it be
+acceptable as an argument to `fsetpos'.  In particular, other
+conforming C implementations may return a different result from `ftell'
+than what `fgetpos' writes at `*POS'.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: fgets,  Next: fiprintf,  Prev: fgetpos,  Up: Stdio
+
+`fgets'--get character string from a file or stream
+===================================================
+
+*Synopsis*
+     #include <stdio.h>
+     char *fgets(char *BUF, int N, FILE *FP);
+   *Description*
+Reads at most N-1 characters from FP until a newline is found. The
+characters including to the newline are stored in BUF. The buffer is
+terminated with a 0.
+
+*Returns*
+`fgets' returns the buffer passed to it, with the data filled in. If
+end of file occurs with some data already accumulated, the data is
+returned with no other indication. If no data are read, NULL is
+returned instead.
+
+*Portability*
+`fgets' should replace all uses of `gets'. Note however that `fgets'
+returns all of the data, while `gets' removes the trailing newline
+(with no indication that it has done so.)
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: fiprintf,  Next: fopen,  Prev: fgets,  Up: Stdio
+
+`fiprintf'--format output to file (integer only)
+================================================
+
+*Synopsis*
+     #include <stdio.h>
+     
+     int fiprintf(FILE *FD, const char *FORMAT, ...);
+   *Description*
+`fiprintf' is a restricted version of `fprintf': it has the same
+arguments and behavior, save that it cannot perform any floating-point
+formatting--the `f', `g', `G', `e', and `F' type specifiers are not
+recognized.
+
+*Returns*
+`fiprintf' returns the number of bytes in the output string, save that
+the concluding `NULL' is not counted.  `fiprintf' returns when the end
+of the format string is encountered.  If an error occurs, `fiprintf'
+returns `EOF'.
+
+*Portability*
+`fiprintf' is not required by ANSI C.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: fopen,  Next: fdopen,  Prev: fiprintf,  Up: Stdio
+
+`fopen'--open a file
+====================
+
+*Synopsis*
+     #include <stdio.h>
+     FILE *fopen(const char *FILE, const char *MODE);
+     
+     FILE *_fopen_r(void *REENT,
+         const char *FILE, const char *MODE);
+   *Description*
+`fopen' initializes the data structures needed to read or write a file.
+Specify the file's name as the string at FILE, and the kind of access
+you need to the file with the string at MODE.
+
+   The alternate function `_fopen_r' is a reentrant version.  The extra
+argument REENT is a pointer to a reentrancy structure.
+
+   Three fundamental kinds of access are available: read, write, and
+append.  `*MODE' must begin with one of the three characters ``r'',
+``w'', or ``a'', to select one of these:
+
+`r'
+     Open the file for reading; the operation will fail if the file does
+     not exist, or if the host system does not permit you to read it.
+
+`w'
+     Open the file for writing *from the beginning* of the file:
+     effectively, this always creates a new file.  If the file whose
+     name you specified already existed, its old contents are discarded.
+
+`a'
+     Open the file for appending data, that is writing from the end of
+     file.  When you open a file this way, all data always goes to the
+     current end of file; you cannot change this using `fseek'.
+
+   Some host systems distinguish between "binary" and "text" files.
+Such systems may perform data transformations on data written to, or
+read from, files opened as "text".  If your system is one of these,
+then you can append a ``b'' to any of the three modes above, to specify
+that you are opening the file as a binary file (the default is to open
+the file as a text file).
+
+   ``rb'', then, means "read binary"; ``wb'', "write binary"; and
+``ab'', "append binary".
+
+   To make C programs more portable, the ``b'' is accepted on all
+systems, whether or not it makes a difference.
+
+   Finally, you might need to both read and write from the same file.
+You can also append a ``+'' to any of the three modes, to permit this.
+(If you want to append both ``b'' and ``+'', you can do it in either
+order: for example, `"rb+"' means the same thing as `"r+b"' when used
+as a mode string.)
+
+   Use `"r+"' (or `"rb+"') to permit reading and writing anywhere in an
+existing file, without discarding any data; `"w+"' (or `"wb+"') to
+create a new file (or begin by discarding all data from an old one)
+that permits reading and writing anywhere in it; and `"a+"' (or
+`"ab+"') to permit reading anywhere in an existing file, but writing
+only at the end.
+
+*Returns*
+`fopen' returns a file pointer which you can use for other file
+operations, unless the file you requested could not be opened; in that
+situation, the result is `NULL'.  If the reason for failure was an
+invalid string at MODE, `errno' is set to `EINVAL'.
+
+*Portability*
+`fopen' is required by ANSI C.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `open', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: fdopen,  Next: fputc,  Prev: fopen,  Up: Stdio
+
+`fdopen'--turn open file into a stream
+======================================
+
+*Synopsis*
+     #include <stdio.h>
+     FILE *fdopen(int FD, const char *MODE);
+     FILE *_fdopen_r(void *REENT,
+         int FD, const char *MODE);
+   *Description*
+`fdopen' produces a file descriptor of type `FILE *', from a descriptor
+for an already-open file (returned, for example, by the system
+subroutine `open' rather than by `fopen').  The MODE argument has the
+same meanings as in `fopen'.
+
+*Returns*
+File pointer or `NULL', as for `fopen'.
+
+*Portability*
+`fdopen' is ANSI.
+
+
+File: libc.info,  Node: fputc,  Next: fputs,  Prev: fdopen,  Up: Stdio
+
+`fputc'--write a character on a stream or file
+==============================================
+
+*Synopsis*
+     #include <stdio.h>
+     int fputc(int CH, FILE *FP);
+   *Description*
+`fputc' converts the argument CH from an `int' to an `unsigned char',
+then writes it to the file or stream identified by FP.
+
+   If the file was opened with append mode (or if the stream cannot
+support positioning), then the new character goes at the end of the
+file or stream.  Otherwise, the new character is written at the current
+value of the position indicator, and the position indicator oadvances
+by one.
+
+   For a macro version of this function, see `putc'.
+
+*Returns*
+If successful, `fputc' returns its argument CH.  If an error
+intervenes, the result is `EOF'.  You can use ``ferror(FP)'' to query
+for errors.
+
+*Portability*
+`fputc' is required by ANSI C.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: fputs,  Next: fread,  Prev: fputc,  Up: Stdio
+
+`fputs'--write a character string in a file or stream
+=====================================================
+
+*Synopsis*
+     #include <stdio.h>
+     int fputs(const char *S, FILE *FP);
+   *Description*
+`fputs' writes the string at S (but without the trailing null) to the
+file or stream identified by FP.
+
+*Returns*
+If successful, the result is `0'; otherwise, the result is `EOF'.
+
+*Portability*
+ANSI C requires `fputs', but does not specify that the result on
+success must be `0'; any non-negative value is permitted.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: fread,  Next: freopen,  Prev: fputs,  Up: Stdio
+
+`fread'--read array elements from a file
+========================================
+
+*Synopsis*
+     #include <stdio.h>
+     size_t fread(void *BUF, size_t SIZE, size_t COUNT,
+         FILE *FP);
+   *Description*
+`fread' attempts to copy, from the file or stream identified by FP,
+COUNT elements (each of size SIZE) into memory, starting at BUF.
+`fread' may copy fewer elements than COUNT if an error, or end of file,
+intervenes.
+
+   `fread' also advances the file position indicator (if any) for FP by
+the number of *characters* actually read.
+
+*Returns*
+The result of `fread' is the number of elements it succeeded in reading.
+
+*Portability*
+ANSI C requires `fread'.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: freopen,  Next: fseek,  Prev: fread,  Up: Stdio
+
+`freopen'--open a file using an existing file descriptor
+========================================================
+
+*Synopsis*
+     #include <stdio.h>
+     FILE *freopen(const char *FILE, const char *MODE,
+         FILE *FP);
+   *Description*
+Use this variant of `fopen' if you wish to specify a particular file
+descriptor FP (notably `stdin', `stdout', or `stderr') for the file.
+
+   If FP was associated with another file or stream, `freopen' closes
+that other file or stream (but ignores any errors while closing it).
+
+   FILE and MODE are used just as in `fopen'.
+
+*Returns*
+If successful, the result is the same as the argument FP.  If the file
+cannot be opened as specified, the result is `NULL'.
+
+*Portability*
+ANSI C requires `freopen'.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `open', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: fseek,  Next: fsetpos,  Prev: freopen,  Up: Stdio
+
+`fseek'--set file position
+==========================
+
+*Synopsis*
+     #include <stdio.h>
+     int fseek(FILE *FP, long OFFSET, int WHENCE)
+   *Description*
+Objects of type `FILE' can have a "position" that records how much of
+the file your program has already read.  Many of the `stdio' functions
+depend on this position, and many change it as a side effect.
+
+   You can use `fseek' to set the position for the file identified by
+FP.  The value of OFFSET determines the new position, in one of three
+ways selected by the value of WHENCE (defined as macros in ``stdio.h''):
+
+   `SEEK_SET'--OFFSET is the absolute file position (an offset from the
+beginning of the file) desired.  OFFSET must be positive.
+
+   `SEEK_CUR'--OFFSET is relative to the current file position.  OFFSET
+can meaningfully be either positive or negative.
+
+   `SEEK_END'--OFFSET is relative to the current end of file.  OFFSET
+can meaningfully be either positive (to increase the size of the file)
+or negative.
+
+   See `ftell' to determine the current file position.
+
+*Returns*
+`fseek' returns `0' when successful.  If `fseek' fails, the result is
+`EOF'.  The reason for failure is indicated in `errno': either `ESPIPE'
+(the stream identified by FP doesn't support repositioning) or `EINVAL'
+(invalid file position).
+
+*Portability*
+ANSI C requires `fseek'.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: fsetpos,  Next: ftell,  Prev: fseek,  Up: Stdio
+
+`fsetpos'--restore position of a stream or file
+===============================================
+
+*Synopsis*
+     #include <stdio.h>
+     int fsetpos(FILE *FP, const fpos_t *POS);
+   *Description*
+Objects of type `FILE' can have a "position" that records how much of
+the file your program has already read.  Many of the `stdio' functions
+depend on this position, and many change it as a side effect.
+
+   You can use `fsetpos' to return the file identified by FP to a
+previous position `*POS' (after first recording it with `fgetpos').
+
+   See `fseek' for a similar facility.
+
+*Returns*
+`fgetpos' returns `0' when successful.  If `fgetpos' fails, the result
+is `1'.  The reason for failure is indicated in `errno': either
+`ESPIPE' (the stream identified by FP doesn't support repositioning) or
+`EINVAL' (invalid file position).
+
+*Portability*
+ANSI C requires `fsetpos', but does not specify the nature of `*POS'
+beyond identifying it as written by `fgetpos'.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: ftell,  Next: fwrite,  Prev: fsetpos,  Up: Stdio
+
+`ftell'--return position in a stream or file
+============================================
+
+*Synopsis*
+     #include <stdio.h>
+     long ftell(FILE *FP);
+   *Description*
+Objects of type `FILE' can have a "position" that records how much of
+the file your program has already read.  Many of the `stdio' functions
+depend on this position, and many change it as a side effect.
+
+   The result of `ftell' is the current position for a file identified
+by FP.  If you record this result, you can later use it with `fseek' to
+return the file to this position.
+
+   In the current implementation, `ftell' simply uses a character count
+to represent the file position; this is the same number that would be
+recorded by `fgetpos'.
+
+*Returns*
+`ftell' returns the file position, if possible.  If it cannot do this,
+it returns `-1L'.  Failure occurs on streams that do not support
+positioning; the global `errno' indicates this condition with the value
+`ESPIPE'.
+
+*Portability*
+`ftell' is required by the ANSI C standard, but the meaning of its
+result (when successful) is not specified beyond requiring that it be
+acceptable as an argument to `fseek'.  In particular, other conforming
+C implementations may return a different result from `ftell' than what
+`fgetpos' records.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: fwrite,  Next: getc,  Prev: ftell,  Up: Stdio
+
+`fwrite'--write array elements
+==============================
+
+*Synopsis*
+     #include <stdio.h>
+     size_t fwrite(const void *BUF, size_t SIZE,
+         size_t COUNT, FILE *FP);
+   *Description*
+`fwrite' attempts to copy, starting from the memory location BUF, COUNT
+elements (each of size SIZE) into the file or stream identified by FP.
+`fwrite' may copy fewer elements than COUNT if an error intervenes.
+
+   `fwrite' also advances the file position indicator (if any) for FP
+by the number of *characters* actually written.
+
+*Returns*
+If `fwrite' succeeds in writing all the elements you specify, the
+result is the same as the argument COUNT.  In any event, the result is
+the number of complete elements that `fwrite' copied to the file.
+
+*Portability*
+ANSI C requires `fwrite'.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: getc,  Next: getchar,  Prev: fwrite,  Up: Stdio
+
+`getc'--read a character (macro)
+================================
+
+*Synopsis*
+     #include <stdio.h>
+     int getc(FILE *FP);
+   *Description*
+`getc' is a macro, defined in `stdio.h'.  You can use `getc' to get the
+next single character from the file or stream identified by FP.  As a
+side effect, `getc' advances the file's current position indicator.
+
+   For a subroutine version of this macro, see `fgetc'.
+
+*Returns*
+The next character (read as an `unsigned char', and cast to `int'),
+unless there is no more data, or the host system reports a read error;
+in either of these situations, `getc' returns `EOF'.
+
+   You can distinguish the two situations that cause an `EOF' result by
+using the `ferror' and `feof' functions.
+
+*Portability*
+ANSI C requires `getc'; it suggests, but does not require, that `getc'
+be implemented as a macro.  The standard explicitly permits macro
+implementations of `getc' to use the argument more than once;
+therefore, in a portable program, you should not use an expression with
+side effects as the `getc' argument.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: getchar,  Next: gets,  Prev: getc,  Up: Stdio
+
+`getchar'--read a character (macro)
+===================================
+
+*Synopsis*
+     #include <stdio.h>
+     int getchar(void);
+     
+     int _getchar_r(void *REENT);
+   *Description*
+`getchar' is a macro, defined in `stdio.h'.  You can use `getchar' to
+get the next single character from the standard input stream.  As a
+side effect, `getchar' advances the standard input's current position
+indicator.
+
+   The alternate function `_getchar_r' is a reentrant version.  The
+extra argument REENT is a pointer to a reentrancy structure.
+
+*Returns*
+The next character (read as an `unsigned char', and cast to `int'),
+unless there is no more data, or the host system reports a read error;
+in either of these situations, `getchar' returns `EOF'.
+
+   You can distinguish the two situations that cause an `EOF' result by
+using ``ferror(stdin)'' and ``feof(stdin)''.
+
+*Portability*
+ANSI C requires `getchar'; it suggests, but does not require, that
+`getchar' be implemented as a macro.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: gets,  Next: getw,  Prev: getchar,  Up: Stdio
+
+`gets'--get character string (obsolete, use `fgets' instead)
+============================================================
+
+*Synopsis*
+     #include <stdio.h>
+     
+     char *gets(char *BUF);
+     
+     char *_gets_r(void *REENT, char *BUF);
+   *Description*
+Reads characters from standard input until a newline is found.  The
+characters up to the newline are stored in BUF. The newline is
+discarded, and the buffer is terminated with a 0.
+
+   This is a *dangerous* function, as it has no way of checking the
+amount of space available in BUF. One of the attacks used by the
+Internet Worm of 1988 used this to overrun a buffer allocated on the
+stack of the finger daemon and overwrite the return address, causing
+the daemon to execute code downloaded into it over the connection.
+
+   The alternate function `_gets_r' is a reentrant version.  The extra
+argument REENT is a pointer to a reentrancy structure.
+
+*Returns*
+`gets' returns the buffer passed to it, with the data filled in. If end
+of file occurs with some data already accumulated, the data is returned
+with no other indication. If end of file occurs with no data in the
+buffer, NULL is returned.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: getw,  Next: iprintf,  Prev: gets,  Up: Stdio
+
+`getw'--read a word (int)
+=========================
+
+*Synopsis*
+     #include <stdio.h>
+     int getw(FILE *FP);
+   *Description*
+`getw' is a function, defined in `stdio.h'.  You can use `getw' to get
+the next word from the file or stream identified by FP.  As a side
+effect, `getw' advances the file's current position indicator.
+
+   RETURNS The next word (read as an `int'), unless there is no more
+data, or the host system reports a read error; in either of these
+situations, `getw' returns `EOF'.  Since `EOF' is a valid `int', you
+must use `ferror' or `feof' to distinguish these situations.
+
+*Portability*
+`getw' is a remnant of K&R C, it is not part of any ISO C Standard.
+`fread' should be used instead.  In fact, this implementation of `getw'
+is based upon `fread'.
+
+   Supporting OS subroutines required: `fread'.
+
+File: libc.info,  Node: iprintf,  Next: mktemp,  Prev: getw,  Up: Stdio
+
+`iprintf'--write formatted output (integer only)
+================================================
+
+*Synopsis*
+     #include <stdio.h>
+     
+     int iprintf(const char *FORMAT, ...);
+   *Description*
+`iprintf' is a restricted version of `printf': it has the same
+arguments and behavior, save that it cannot perform any floating-point
+formatting: the `f', `g', `G', `e', and `F' type specifiers are not
+recognized.
+
+*Returns*
+`iprintf' returns the number of bytes in the output string, save that
+the concluding `NULL' is not counted.  `iprintf' returns when the end
+of the format string is encountered.  If an error occurs, `iprintf'
+returns `EOF'.
+
+*Portability*
+`iprintf' is not required by ANSI C.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: mktemp,  Next: perror,  Prev: iprintf,  Up: Stdio
+
+`mktemp', `mkstemp'--generate unused file name
+==============================================
+
+*Synopsis*
+     #include <stdio.h>
+     char *mktemp(char *PATH);
+     int mkstemp(char *PATH);
+     
+     char *_mktemp_r(void *REENT, char *PATH);
+     int *_mkstemp_r(void *REENT, char *PATH);
+   *Description*
+`mktemp' and `mkstemp' attempt to generate a file name that is not yet
+in use for any existing file.  `mkstemp' creates the file and opens it
+for reading and writing; `mktemp' simply generates the file name.
+
+   You supply a simple pattern for the generated file name, as the
+string at PATH.  The pattern should be a valid filename (including path
+information if you wish) ending with some number of ``X'' characters.
+The generated filename will match the leading part of the name you
+supply, with the trailing ``X'' characters replaced by some combination
+of digits and letters.
+
+   The alternate functions `_mktemp_r' and `_mkstemp_r' are reentrant
+versions.  The extra argument REENT is a pointer to a reentrancy
+structure.
+
+*Returns*
+`mktemp' returns the pointer PATH to the modified string representing
+an unused filename, unless it could not generate one, or the pattern
+you provided is not suitable for a filename; in that case, it returns
+`NULL'.
+
+   `mkstemp' returns a file descriptor to the newly created file,
+unless it could not generate an unused filename, or the pattern you
+provided is not suitable for a filename; in that case, it returns `-1'.
+
+*Portability*
+ANSI C does not require either `mktemp' or `mkstemp'; the System V
+Interface Definition requires `mktemp' as of Issue 2.
+
+   Supporting OS subroutines required: `getpid', `open', `stat'.
+
+
+File: libc.info,  Node: perror,  Next: putc,  Prev: mktemp,  Up: Stdio
+
+`perror'--print an error message on standard error
+==================================================
+
+*Synopsis*
+     #include <stdio.h>
+     void perror(char *PREFIX);
+     
+     void _perror_r(void *REENT, char *PREFIX);
+   *Description*
+Use `perror' to print (on standard error) an error message
+corresponding to the current value of the global variable `errno'.
+Unless you use `NULL' as the value of the argument PREFIX, the error
+message will begin with the string at PREFIX, followed by a colon and a
+space (`: '). The remainder of the error message is one of the strings
+described for `strerror'.
+
+   The alternate function `_perror_r' is a reentrant version.  The
+extra argument REENT is a pointer to a reentrancy structure.
+
+*Returns*
+`perror' returns no result.
+
+*Portability*
+ANSI C requires `perror', but the strings issued vary from one
+implementation to another.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: putc,  Next: putchar,  Prev: perror,  Up: Stdio
+
+`putc'--write a character (macro)
+=================================
+
+*Synopsis*
+     #include <stdio.h>
+     int putc(int CH, FILE *FP);
+   *Description*
+`putc' is a macro, defined in `stdio.h'.  `putc' writes the argument CH
+to the file or stream identified by FP, after converting it from an
+`int' to an `unsigned char'.
+
+   If the file was opened with append mode (or if the stream cannot
+support positioning), then the new character goes at the end of the
+file or stream.  Otherwise, the new character is written at the current
+value of the position indicator, and the position indicator advances by
+one.
+
+   For a subroutine version of this macro, see `fputc'.
+
+*Returns*
+If successful, `putc' returns its argument CH.  If an error intervenes,
+the result is `EOF'.  You can use ``ferror(FP)'' to query for errors.
+
+*Portability*
+ANSI C requires `putc'; it suggests, but does not require, that `putc'
+be implemented as a macro.  The standard explicitly permits macro
+implementations of `putc' to use the FP argument more than once;
+therefore, in a portable program, you should not use an expression with
+side effects as this argument.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: putchar,  Next: puts,  Prev: putc,  Up: Stdio
+
+`putchar'--write a character (macro)
+====================================
+
+*Synopsis*
+     #include <stdio.h>
+     int putchar(int CH);
+     
+     int _putchar_r(void *REENT, int CH);
+   *Description*
+`putchar' is a macro, defined in `stdio.h'.  `putchar' writes its
+argument to the standard output stream, after converting it from an
+`int' to an `unsigned char'.
+
+   The alternate function `_putchar_r' is a reentrant version.  The
+extra argument REENT is a pointer to a reentrancy structure.
+
+*Returns*
+If successful, `putchar' returns its argument CH.  If an error
+intervenes, the result is `EOF'.  You can use ``ferror(stdin)'' to
+query for errors.
+
+*Portability*
+ANSI C requires `putchar'; it suggests, but does not require, that
+`putchar' be implemented as a macro.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+
+File: libc.info,  Node: puts,  Next: putw,  Prev: putchar,  Up: Stdio
+
+`puts'--write a character string
+================================
+
+*Synopsis*
+     #include <stdio.h>
+     int puts(const char *S);
+     
+     int _puts_r(void *REENT, const char *S);
+   *Description*
+`puts' writes the string at S (followed by a newline, instead of the
+trailing null) to the standard output stream.
+
+   The alternate function `_puts_r' is a reentrant version.  The extra
+argument REENT is a pointer to a reentrancy structure.
+
+*Returns*
+If successful, the result is a nonnegative integer; otherwise, the
+result is `EOF'.
+
+*Portability*
+ANSI C requires `puts', but does not specify that the result on success
+must be `0'; any non-negative value is permitted.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+
+File: libc.info,  Node: putw,  Next: remove,  Prev: puts,  Up: Stdio
+
+`putw'--write a word (int)
+==========================
+
+*Synopsis*
+     #include <stdio.h>
+     int putw(int W, FILE *FP);
+   *Description*
+`putw' is a function, defined in `stdio.h'.  You can use `putw' to
+write a word to the file or stream identified by FP.  As a side effect,
+`putw' advances the file's current position indicator.
+
+   RETURNS Zero on success, `EOF' on failure.
+
+*Portability*
+`putw' is a remnant of K&R C, it is not part of any ISO C Standard.
+`fwrite' should be used instead.  In fact, this implementation of
+`putw' is based upon `fwrite'.
+
+   Supporting OS subroutines required: `fwrite'.
+
+File: libc.info,  Node: remove,  Next: rename,  Prev: putw,  Up: Stdio
+
+`remove'--delete a file's name
+==============================
+
+*Synopsis*
+     #include <stdio.h>
+     int remove(char *FILENAME);
+     
+     int _remove_r(void *REENT, char *FILENAME);
+   *Description*
+Use `remove' to dissolve the association between a particular filename
+(the string at FILENAME) and the file it represents.  After calling
+`remove' with a particular filename, you will no longer be able to open
+the file by that name.
+
+   In this implementation, you may use `remove' on an open file without
+error; existing file descriptors for the file will continue to access
+the file's data until the program using them closes the file.
+
+   The alternate function `_remove_r' is a reentrant version.  The
+extra argument REENT is a pointer to a reentrancy structure.
+
+*Returns*
+`remove' returns `0' if it succeeds, `-1' if it fails.
+
+*Portability*
+ANSI C requires `remove', but only specifies that the result on failure
+be nonzero.  The behavior of `remove' when you call it on an open file
+may vary among implementations.
+
+   Supporting OS subroutine required: `unlink'.
+
+
+File: libc.info,  Node: rename,  Next: rewind,  Prev: remove,  Up: Stdio
+
+`rename'--rename a file
+=======================
+
+*Synopsis*
+     #include <stdio.h>
+     int rename(const char *OLD, const char *NEW);
+     
+     int _rename_r(void *REENT,
+         const char *OLD, const char *NEW);
+   *Description*
+Use `rename' to establish a new name (the string at NEW) for a file now
+known by the string at OLD.  After a successful `rename', the file is
+no longer accessible by the string at OLD.
+
+   If `rename' fails, the file named `*OLD' is unaffected.  The
+conditions for failure depend on the host operating system.
+
+   The alternate function `_rename_r' is a reentrant version.  The
+extra argument REENT is a pointer to a reentrancy structure.
+
+*Returns*
+The result is either `0' (when successful) or `-1' (when the file could
+not be renamed).
+
+*Portability*
+ANSI C requires `rename', but only specifies that the result on failure
+be nonzero.  The effects of using the name of an existing file as
+`*NEW' may vary from one implementation to another.
+
+   Supporting OS subroutines required: `link', `unlink', or `rename'.
+
+
+File: libc.info,  Node: rewind,  Next: setbuf,  Prev: rename,  Up: Stdio
+
+`rewind'--reinitialize a file or stream
+=======================================
+
+*Synopsis*
+     #include <stdio.h>
+     void rewind(FILE *FP);
+   *Description*
+`rewind' returns the file position indicator (if any) for the file or
+stream identified by FP to the beginning of the file.  It also clears
+any error indicator and flushes any pending output.
+
+*Returns*
+`rewind' does not return a result.
+
+*Portability*
+ANSI C requires `rewind'.
+
+   No supporting OS subroutines are required.
+
+
+File: libc.info,  Node: setbuf,  Next: setvbuf,  Prev: rewind,  Up: Stdio
+
+`setbuf'--specify full buffering for a file or stream
+=====================================================
+
+*Synopsis*
+     #include <stdio.h>
+     void setbuf(FILE *FP, char *BUF);
+   *Description*
+`setbuf' specifies that output to the file or stream identified by FP
+should be fully buffered.  All output for this file will go to a buffer
+(of size `BUFSIZ', specified in ``stdio.h'').  Output will be passed on
+to the host system only when the buffer is full, or when an input
+operation intervenes.
+
+   You may, if you wish, supply your own buffer by passing a pointer to
+it as the argument BUF.  It must have size `BUFSIZ'.  You can also use
+`NULL' as the value of BUF, to signal that the `setbuf' function is to
+allocate the buffer.
+
+*Warnings*
+You may only use `setbuf' before performing any file operation other
+than opening the file.
+
+   If you supply a non-null BUF, you must ensure that the associated
+storage continues to be available until you close the stream identified
+by FP.
+
+*Returns*
+`setbuf' does not return a result.
+
+*Portability*
+Both ANSI C and the System V Interface Definition (Issue 2) require
+`setbuf'.  However, they differ on the meaning of a `NULL' buffer
+pointer: the SVID issue 2 specification says that a `NULL' buffer
+pointer requests unbuffered output.  For maximum portability, avoid
+`NULL' buffer pointers.
+
+   Supporting OS subroutines required: `close', `fstat', `isatty',
+`lseek', `read', `sbrk', `write'.
+

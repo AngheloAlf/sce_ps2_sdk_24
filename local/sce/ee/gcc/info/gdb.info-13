@@ -1,0 +1,132 @@
+This is Info file ./gdb.info, produced by Makeinfo version 1.68 from
+the input file gdb.texinfo.
+
+INFO-DIR-SECTION Programming & development tools.
+START-INFO-DIR-ENTRY
+* Gdb: (gdb).                     The GNU debugger.
+END-INFO-DIR-ENTRY
+
+   This file documents the GNU debugger GDB.
+
+   This is the Eighth Edition, March 2000, of `Debugging with GDB: the
+GNU Source-Level Debugger' for GDB Version 5.0-ee-001003-1.
+
+   Copyright (C) 1988-2000 Free Software Foundation, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the entire resulting derived work is distributed under the terms
+of a permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions.
+
+
+File: gdb.info,  Node: Config Names,  Next: Configure Options,  Prev: Separate Objdir,  Up: Installing GDB
+
+Specifying names for hosts and targets
+======================================
+
+   The specifications used for hosts and targets in the `configure'
+script are based on a three-part naming scheme, but some short
+predefined aliases are also supported.  The full naming scheme encodes
+three pieces of information in the following pattern:
+
+     ARCHITECTURE-VENDOR-OS
+
+   For example, you can use the alias `sun4' as a HOST argument, or as
+the value for TARGET in a `--target=TARGET' option.  The equivalent
+full name is `sparc-sun-sunos4'.
+
+   The `configure' script accompanying GDB does not provide any query
+facility to list all supported host and target names or aliases.
+`configure' calls the Bourne shell script `config.sub' to map
+abbreviations to full names; you can read the script, if you wish, or
+you can use it to test your guesses on abbreviations--for example:
+
+     % sh config.sub i386-linux
+     i386-pc-linux-gnu
+     % sh config.sub alpha-linux
+     alpha-unknown-linux-gnu
+     % sh config.sub hp9k700
+     hppa1.1-hp-hpux
+     % sh config.sub sun4
+     sparc-sun-sunos4.1.1
+     % sh config.sub sun3
+     m68k-sun-sunos4.1.1
+     % sh config.sub i986v
+     Invalid configuration `i986v': machine `i986v' not recognized
+
+`config.sub' is also distributed in the GDB source directory
+(`gdb-5.0-ee-001003-1', for version 5.0-ee-001003-1).
+
+
+File: gdb.info,  Node: Configure Options,  Prev: Config Names,  Up: Installing GDB
+
+`configure' options
+===================
+
+   Here is a summary of the `configure' options and arguments that are
+most often useful for building GDB.  `configure' also has several other
+options not listed here.  *note (configure.info)What Configure Does::,
+for a full explanation of `configure'.
+
+     configure [--help]
+               [--prefix=DIR]
+               [--exec-prefix=DIR]
+               [--srcdir=DIRNAME]
+               [--norecursion] [--rm]
+               [--target=TARGET]
+               HOST
+
+You may introduce options with a single `-' rather than `--' if you
+prefer; but you may abbreviate option names if you use `--'.
+
+`--help'
+     Display a quick summary of how to invoke `configure'.
+
+`--prefix=DIR'
+     Configure the source to install programs and files under directory
+     `DIR'.
+
+`--exec-prefix=DIR'
+     Configure the source to install programs under directory `DIR'.
+
+`--srcdir=DIRNAME'
+     *Warning: using this option requires GNU `make', or another `make'
+     that implements the `VPATH' feature.*
+     Use this option to make configurations in directories separate
+     from the GDB source directories.  Among other things, you can use
+     this to build (or maintain) several configurations simultaneously,
+     in separate directories.  `configure' writes configuration
+     specific files in the current directory, but arranges for them to
+     use the source in the directory DIRNAME.  `configure' creates
+     directories under the working directory in parallel to the source
+     directories below DIRNAME.
+
+`--norecursion'
+     Configure only the directory level where `configure' is executed;
+     do not propagate configuration to subdirectories.
+
+`--target=TARGET'
+     Configure GDB for cross-debugging programs running on the specified
+     TARGET.  Without this option, GDB is configured to debug programs
+     that run on the same machine (HOST) as GDB itself.
+
+     There is no convenient way to generate a list of all available
+     targets.
+
+`HOST ...'
+     Configure GDB to run on the specified HOST.
+
+     There is no convenient way to generate a list of all available
+     hosts.
+
+   There are many other options available as well, but they are
+generally needed for special purposes only.
+

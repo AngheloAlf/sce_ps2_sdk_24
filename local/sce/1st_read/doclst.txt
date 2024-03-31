@@ -1,0 +1,471 @@
+[SCE CONFIDENTIAL DOCUMENT]
+"PlayStation 2" Programmer Tool Runtime Library Release 2.5
+                      Copyright (C) 2002 Sony Computer Entertainment Inc.
+                                                     All Rights Reserved
+							       Mar. 2002
+-------------------------------------------------------------------------
+Document Directory Structure
+-------------------------------------------------------------------------
+- The following files have been released in PDF format only, but can be 
+  referred to from HTML format.  
+      html/tips/gsknown.pdf
+      html/tips/analog.pdf
+      html/tips/usbkb.pdf
+
+- New files added since Release 2.4 are marked with an asterisk enclosed 
+  in brackets "(*)".  Documents marked with an asterisk without brackets 
+  "*" will not be released in March.
+ 
+doc
+|--doclst.txt
+|--text
+|   |--deci2
+|   |   |--dbgp.txt			DBGP Debug Protocol
+|   |   |--ee_dbgp.txt     		DBGP (EE thread expansion)
+|   |   |--dcmp.txt			DCMP
+|   |   |--deci2.txt		        DECI2 (Host-Target Communications
+|   |   |			        Environment)
+|   |   |--drfp.txt			DRFP (DECI2 Remote File Protocol)
+|   |   |--iloadp.txt		        ILOADP (DECI2 IOP Load Protocol)
+|   |   |--libd2.txt		        DECI2 Library Overview
+|   |   |--d2_rf.txt		        DECI2 Library Reference
+|   |   |--netmp.txt			NETMP
+|   |   +--ttyp.txt			TTYP
+|   |--ee
+|   |   |--libref (EE Library Reference)
+|   |   |   |--kernel
+|   |   |   |   |--ekrnl_rf.txt		EE Kernel
+|   |   |   |   +--io_rf.txt		Standard I/O Service Function
+|   |   |   |--sif
+|   |   |   |   |--scmd_rf.txt		SIF CMD
+|   |   |   |   |--sdma_rf.txt		SIF DMA
+|   |   |   |   |--srpc_rf.txt		SIF RPC
+|   |   |   |   |--emrpc_rf.txt		Multi-Thread SIF RPC
+|   |   |   |   +--iserv_rf.txt  	Standard IOP Service Function
+|   |   |   |--device
+|   |   |   |   |--ecdvd_rf.txt	   	CD(DVD)-ROM Library (EE)
+|   |   |   |   |--ehdd_rf.txt	   	Hard disk Library (EE)
+|   |   |   |   |--epfs_rf.txt          PlayStation File System (EE)
+|   |   |   |   |--mc_rf.txt		Memory Card Library
+|   |   |   |   |--mcx_rf.txt		PDA Library
+|   |   |   |   |--pad_rf.txt		Controller Library
+|   |   |   |   |--pad2_rf.txt	 	Controller Library2
+|   |   |   |   |--dbc_rf.txt	        DBC Library
+|   |   |   |   |--vib_rf.txt	 	Vibration Library
+|   |   |   |   |--mtap_rf.txt		Multitap Library
+|   |   |   |   +--usbkb_rf.txt     	USB Keyboard Library
+|   |   |   |--graphics
+|   |   |   |   |--graph_rf.txt		GS Basic Library (libgraph)
+|   |   |   |   |--gp_rf.txt   (*)	Basic Graphics Library (libgp)
+|   |   |   |   |--hig_rf.txt		High Level Graphics Library
+|   |   |   |   |--hip_rf.txt		High Level Graphics Plugin
+|   |   |   |   |			Library
+|   |   |   |   |--himem_rf.txt		Memory Area Control Service
+|   |   |   |   |--hidma_rf.txt		DMA Packet Control Service
+|   |   |   |   |--higs_rf.txt		GS Register Control Service
+|   |   |   |   +--vu0_rf.txt		VU0 Library
+|   |   |   |--movie
+|   |   |   |   |--mpeg_rf.txt		MPEG Library
+|   |   |   |   +--ipu_rf.txt		IPU Library
+|   |   |   +--sound
+|   |   |   |   |--sdr_rf.txt		Low Level Sound Library
+|   |   |   |   |--spu2m_rf.txt   	SPU2 Local Memory Control
+|   |   |   |   |			Library
+|   |   |   |   |--sk_rf.txt	  	Standard Kit Library/Sound System
+|   |   |   |   |--lout_rf.txt		CSL line-Out
+|   |   |   |   |--msin_rf.txt		CSL MIDI Stream Generation
+|   |   |   |   |--essyn_rf.txt		CSL Software Synthesizer
+|   |   |   |   |--sein_rf.txt	  	CLS Sound Effect Stream Generation
+|   |   |   |   +--librspu2.txt		Tentative Sound Library (Reference)
+|   |   |   |--inet
+|   |   |   |   |--libnt_rf.txt (*)	Libnet
+|   |   |   |   |--insck_rf.txt		Network Socket Library
+|   |   |   |   |--ntgui_rf.txt	 *	Network Setting GUI Library
+|   |   |   |   |--ntgui2_rf.txt *	Network Setting GUI Library 2
+|   |   |   |   |--edev9_rf.txt		dev9 Reference (for network)
+|   |   |   |   |--ntcif_rf.txt (*)	Common Network Configuration
+|   |   |   |   |			Interface Library
+|   |   |   |   |--http_rf.txt	(*)	HTTP Library
+|   |   |   |   +--ntglue_rf    (*)   	General-Purpose Network Wrapper API
+|   |   |   +--etc
+|   |   |       |--scf_rf.txt		System Configuration
+|   |   |       |--dev_rf.txt		Debugging Support Library for 
+|   |   |       |                       Development
+|   |   |       |--dma_rf.txt		DMA Basic Library
+|   |   |       |--pc_rf.txt		Performance Counter Library
+|   |   |       +--pkt_rf.txt		Packet Library
+|   |   +--overview (EE Library Overview)
+|   |       |--kernel
+|   |	    |	|--eekernel.txt		EE Kernel
+|   |	    |	+--libio.txt		Standard I/O Service Function
+|   |       |--sif
+|   |	    |	|--sif.txt		SIF System
+|   |	    |	+--libiserv.txt		Standard IOP Service Function
+|   |       |--device
+|   |	    |   |--libcdvd.txt		CD(DVD)-ROM Library
+|   |	    |   |--hdd.txt		Hard disk Library
+|   |	    |   |--pfs.txt		PlayStation File System
+|   |       |	|--libmc.txt		Memory Card Library
+|   |       |	|--libmcx.txt		PDA Library
+|   |       |	|--libpad.txt		Controller Library
+|   |       |	|--libpad2.txt	  	Controller Library 2
+|   |       |	|--libdbc.txt	  	DBC Library
+|   |       |	|--libvib.txt	  	Vibration Library
+|   |       |	|--libmtap.txt		Multi-Tap Library
+|   |       |   +--libusbkb.txt     	USB Keyboard Library
+|   |       |--graphics
+|   |       | 	|--libgraph.txt		GS Basic Library 
+|   |       |   |--libgp.txt   (*)      Basic Graphics Library (libgp)
+|   |       |	|--libhig.txt		High Level Graphics Library
+|   |       |	|--libhip.txt		High Level Graphics Plugin
+|   |       |   |			Library
+|   |       |	|--higserv.txt		High Level Graphics Library 
+|   |       |   |			Service Function
+|   |       |	+--libvu0.txt		VU0 Library
+|   |       |--movie
+|   |       |	|--libmpeg.txt		MPEG Library
+|   |       |	+--libipu.txt		IPU Library
+|   |       |--sound
+|   |       |	|--csl.txt		CSL Overview
+|   |       |	|--libsdr.txt		Low Level Sound Library
+|   |       |   |--libspu2m.txt    	SPU2 Local Memory Control Library
+|   |       |   |--libsk.txt  	        Standard Kit Library/
+|   |       |   |                       Sound System Overview
+|   |       |	|--liblout.txt		CSL Line-Out
+|   |       |	|--libmsin.txt		CSL MIDI Stream Generation
+|   |       |	+--libssyn.txt		CSL Software Synthesizer
+|   |       |--network
+|   |       |	|--libnet.txt   (*)	Libnet
+|   |       |	|--insock.txt		Network Socket Library
+|   |       |	|--ntguicnf.txt	 *	Network Setting GUI Library
+|   |       |	|--ntguicnf2.txt *	Network Setting GUI Library 2
+|   |       |	|--netcnfif.txt (*)     Common Network Configuration 
+|   |       |	|                       Interface Library
+|   |       |	|--libhttp.txt	(*)     HTTP Library
+|   |       |	+--ntglue.txt   (*)     General-Purpose Network Wrapper API
+|   |       +--etc
+|   |           |--libscf.txt		Configuration Library
+|   |       	|--libdev.txt		Debugging Support Library for 
+|   |           |                       Development
+|   |       	|--libdma.txt		DMA Basic Library
+|   |       	|--libpc.txt		Performance Counter Library
+|   |       	+--libpkt.txt		Packet Library
+|   |--general (EE/IOP Common Documents)
+|   |   |--setup.txt			Setup Guide to Development 
+|   |   |                               Environment
+|   |   |--hdd_rule.txt	           	Hard Disk Drive Operation Rule
+|   |   |--syshard.txt			Hardware Architecture Overview
+|   |   |--syssoft.txt			Library Overview
+|   |	|--systool.txt		   	Development Tool Overview
+|   |   +--yncf.txt          (*)	Your Network Configuration File
+|   |                                   Usage Rule
+|   |--iop
+|   |   |--libref (IOP Library Reference)
+|   |   |   |--kernel
+|   |   |   |	+--ikrnl_rf.txt		IOP Kernel
+|   |   |   |   +--c_rf.txt	   	C Standard Function
+|   |   |   |--sif
+|   |   |   |	|--scmd_rf.txt		SIF CMD
+|   |   |   |	|--sdma_rf.txt		SIF DMA
+|   |   |   |	|--srpc_rf.txt		SIF RPC
+|   |   |   |	+--imrpc_rf.txt		Multi-Thread SIF RPC
+|   |   |   |--sound
+|   |   |   |	|--sd_rf.txt		Low-Level Sound Library
+|   |   |   |	|--codec_rf.txt   	SPU2 Waveform Data Encoding Module
+|   |   |   |	|--hsyn_rf.txt		CSL Hardware Synthesizer
+|   |   |   |	|--issyn_rf.txt		CSL Software Synthesizer
+|   |   |   |	|--delay_rf.txt		CSL MIDI Delay
+|   |   |   |	|--msin_rf.txt		CSL MIDI Stream Generation
+|   |   |   |	|--midi_rf.txt		CSL MIDI Sequencer
+|   |   |   |	|--mono_rf.txt		CSL MIDI Monophonic
+|   |   |   |	|--sein_rf.txt   	CSL SE Stream Generation
+|   |   |   |	|--sesq_rf.txt    	CSL SE Sequencer
+|   |   |   |	+--libspu2.txt		Tentative Sound Library (Reference)
+|   |   |   |--device
+|   |   |   |	|--icdvd_rf.txt		CD(DVD)-ROM Library (IOP)
+|   |   |   |	|--ihdd_rf.txt		Hard Disk Library (IOP)
+|   |   |   |	|--ipfs_rf.txt		PlayStation File System (IOP)
+|   |   |   |	|--il_rf.txt		Driver Library for i.LINK 
+|   |   |   |	|--ilskt_rf.txt		Socket Library for i.LINK 
+|   |   |   |	|--usbd_rf.txt		USB Driver Library
+|   |   |   |	+--usbml_rf.txt		USB Module Autoloader
+|   |   |   +--inet
+|   |   |   	|--inet_rf.txt     	Network Library
+|   |   |   	|--inctl_rf.txt    	Network(INET) Setting Library
+|   |   |   	|--ntdev_rf.txt    	Network Device
+|   |   |   	|--modem_rf.txt    	Library for Modem Driver Development
+|   |	|   	+--ntcnf_rf.txt     	Common Network Setting Library
+|   |   +--overview (IOP Library Overview)
+|   |       |--kernel
+|   |       |	|--iopkernl.txt		IOP Kernel
+|   |       |	+--iop_prog.txt		IOP Programming  
+|   |	    |--sound
+|   |       |	|--libsd.txt		Low-Level Sound Library
+|   |       |   |--spucodec.txt   	SPU2 Waveform Data Encoding Module
+|   |       |	|--modhsyn.txt		CSL Hardware Synthesizer
+|   |       |	|--modssyn.txt		CSL Software Synthesizer
+|   |       |   |--moddelay.txt		CSL MIDI Delay
+|   |       |	|--modmsin.txt		CSL MIDI Stream Generation
+|   |       |	|--modmidi.txt		CSL MIDI Sequencer
+|   |       |   |--modmono.txt		CSL MIDI Monophonic
+|   |       |	|--modsein.txt		CSL SE Stream Generation
+|   |       |	+--modsesq.txt		CSL SE Sequencer
+|   |	    |--device
+|   |       |	|--ilink.txt		Driver Library for i.LINK 
+|   |       |	|--ilsocket.txt		Socket Library for i.LINK 
+|   |       |	|--usbd.txt		USB Driver Library
+|   |       |	+--usbml.txt		USB Module Autoloader
+|   |	    +--inet
+|   |	    	|--inet.txt 	  	Network Library
+|   |           |--inctl.txt	  	Network(INET) Setting Library
+|   |           |--netdev.txt	   	Network Device Library
+|   |	    	|--modem.txt	   	Library for Modem Driver Development
+|   |       	+--netcnf.txt	   	Common Network Setting Library
+|   |--tool (Utility)
+|   |    |--ee_util.txt		 	EE Programming Tool
+|   |    |--iop_util.txt	   	IOP Programming Tool
+|   |    |--dsnet.txt			DSNET Overview
+|   |    |--dsnet_rf.txt		dsedb/dsidb Command Reference
+|   |    |--thmon.txt			Simple Thread Monitor
+|   |    +--diskboot.txt		Disk Activation with DTL-T10000
+|   +--tips
+|        |--progtips.txt	 	Programming Tips
+|        |--graphtips.txt (*)		Graphics Tips
+|        +--movtips.txt	 	 	Tips on Creation and Playback of 
+|                                       Animation
++--html
+    |--index.htm
+    |--category.htm			Index by Categories
+    |--develop.htm			Index by Fields of Development
+    |--alphabet			        Alphabetical Index
+    |--link				Index by Usage
+    |--list				Document List
+    |--logo
+    |--changes				Change History
+    |--deci2
+    |   |--gif
+    |   |--index.htm
+    |   |--main.htm
+    |   |--menu.htm
+    |   |--dbgp.htm
+    |   |--ee_dbgp.htm
+    |   |--dcmp.htm
+    |   |--deci2.htm
+    |   |--drfp.htm
+    |   |--iloadp.htm
+    |   |--libd2.htm
+    |   |--d2_rf.htm
+    |   |--netmp.htm
+    |   +--ttyp.htm
+    |--ee
+    |   |--libref
+    |   |   |--gif
+    |   |   |--index.htm
+    |   |   |--main.htm
+    |   |   |--category.htm
+    |   |   |--ekrnl_rf.htm
+    |   |   |--io_rf.htm
+    |   |   |--scmd_rf.htm
+    |   |   |--sdma_rf.htm
+    |   |   |--srpc_rf.htm
+    |   |   |--iserv_rf.htm
+    |   |   |--ecdvd_rf.htm
+    |   |   |--ehdd_rf.htm 
+    |   |   |--epfs_rf.htm 
+    |   |   |--mc_rf.htm
+    |   |   |--mcx_rf.htm
+    |   |   |--pad_rf.htm
+    |   |   |--pad2_rf.htm
+    |   |   |--dbc_rf.htm 
+    |   |   |--vib_rf.htm
+    |   |   |--mtap_rf.htm
+    |   |   |--usbkb_rf.htm
+    |   |   |--graph_rf.htm
+    |   |   |--gp_rf.htm   (*)
+    |   |   |--hig_rf.htm
+    |   |   |--hip_rf.htm
+    |   |   |--himem_rf.htm
+    |   |   |--hidma_rf.htm
+    |   |   |--higs_rf.htm
+    |   |   |--vu0_rf.htm
+    |   |   |--mpeg_rf.htm
+    |   |   |--ipu_rf.htm
+    |   |   |--sdr_rf.htm
+    |   |   |--spu2m_rf.htm
+    |   |   |--sk_rf.htm
+    |   |   |--lout_rf.htm
+    |   |   |--msin_rf.htm
+    |   |   |--essyn_rf.htm
+    |   |   |--sein_rf.htm
+    |   |   |--librspu2.htm 
+    |   |   |--libnt_rf.htm (*)
+    |   |   |--insck_rf.htm
+    |   |   |--ntgui_rf.htm  *
+    |   |   |--ntgui2_rf.htm *
+    |   |   |--edev9_rf.htm
+    |   |   |--ntcif_rf.htm (*)
+    |   |   |--http_rf.htm  (*)
+    |   |   |--ntglue_rf.htm(*)
+    |   |   |--scf_rf.htm
+    |   |   |--dev_rf.htm
+    |   |   |--dma_rf.htm
+    |   |   |--pc_rf.htm
+    |   |   +--pkt_rf.htm
+    |   +--overview
+    |       |--gif
+    |       |--index.htm
+    |       |--main.htm
+    |       |--category.htm
+    |       |--eekernel.htm
+    |       |--libio.htm
+    |       |--sif.htm
+    |       |--libiserv.htm
+    |       |--libcdvd.htm
+    |       |--hdd.htm
+    |       |--pfs.htm
+    |       |--libmc.htm
+    |       |--libmcx.htm
+    |       |--libpad.htm
+    |       |--libpad2.htm
+    |       |--libdbc.htm
+    |       |--libvib.htm
+    |       |--libmtap.htm
+    |       |--libusbkb.htm
+    |       |--libgraph.htm
+    |       |--libgp.htm   (*)
+    |       |--libhig.htm
+    |       |--libhip.htm
+    |       |--higserv.htm
+    |       |--libvu0.htm
+    |       |--libmpeg.htm
+    |       |--libipu.htm
+    |       |--csl.htm
+    |       |--libsdr.htm
+    |       |--libspu2m.htm
+    |       |--libsk.htm
+    |       |--liblout.htm
+    |       |--libmsin.htm
+    |       |--libssyn.htm
+    |       |--libnet.htm   (*)
+    |       |--insock.htm
+    |       |--ntguicnf.htm  *
+    |       |--ntguicnf2.htm *
+    |       |--netcnfif.htm (*)
+    |       |--libhttp.htm  (*)
+    |       |--ntglue.htm   (*)
+    |       |--libscf.htm
+    |       |--libdev.htm
+    |       |--libdma.htm
+    |       |--libpc.htm
+    |       +--libpkt.htm
+    |--general
+    |   |--gif
+    |   |--index.htm
+    |   |--menu.htm
+    |   |--main.htm
+    |   |--setup.htm
+    |   |--hdd_rule.htm
+    |   |--syshard.htm
+    |   |--syssoft.htm
+    |   |--systool.htm
+    |   +--yncf.htm (*)
+    |--iop
+    |   |--libref 
+    |   |   |--gif
+    |   |   |--index.htm
+    |   |   |--category.htm
+    |   |   |--main.htm
+    |   |   |--ikrnl_rf.htm
+    |   |   |--c_rf.htm
+    |   |   |--imrpc_rf.htm
+    |   |   |--sd_rf.htm
+    |   |   |--codec_rf.htm
+    |   |   |--hsyn_rf.htm
+    |   |   |--issyn_rf.htm
+    |   |   |--delay_rf.htm
+    |   |   |--midi_rf.htm
+    |   |   |--mono_rf.htm
+    |   |   |--sesq_rf.htm
+    |   |   |--libspu2.htm
+    |   |   |--icdvd._rf.htm
+    |   |   |--ihdd_rf.htm
+    |   |   |--ipfs_rf.htm
+    |   |   |--il_rf.htm
+    |   |   |--ilskt_rf.htm
+    |   |   |--usbd_rf.htm
+    |   |   |--usbml_rf.htm
+    |   |   |--inet_rf.htm
+    |   |   |--inctl_rf.htm
+    |   |   |--ntdev_rf.htm
+    |   |   |--modem_rf.htm
+    |   |   +--ntcnf_rf.htm
+    |   +--overview
+    |       |--gif
+    |       |--index.htm
+    |       |--category.htm
+    |       |--main.htm
+    |       |--iopkernl.htm
+    |       |--iop_prog.htm
+    |       |--libsd.htm
+    |       |--spucodec.htm
+    |       |--modhsyn.htm
+    |       |--modssyn.htm
+    |       |--moddelay.htm
+    |       |--modmsin.htm
+    |       |--modmidi.htm
+    |       |--modmono.htm
+    |       |--modsein.htm
+    |       |--modsesq.htm
+    |       |--ilink.htm
+    |       |--ilsocket.htm
+    |       |--usbd.htm
+    |       |--usbml.htm
+    |       |--inet.htm
+    |       |--inctl.htm
+    |       |--netdev.htm
+    |       |--modem.htm
+    |       +--netcnf.htm
+    |--format
+    |   |--gif
+    |   |--index.htm
+    |   |--main.htm
+    |   |--menu.htm
+    |   |--sformat.htm		Sound Format
+    |   |--gformat.htm		Graphic Format
+    |   |--hmd.htm		Hmd Format
+    |   +--mvformat.htm		Stream Format
+    |--tool
+    |   |--gif
+    |   |--index.htm
+    |   |--main.htm
+    |   |--menu.htm
+    |   |--ee_util.htm
+    |   |--iop_util.htm
+    |   |--dsnet.htm
+    |   |--dsnet_rf.htm
+    |   |--thmon.htm
+    |   +--diskboot.htm
+    |--tips
+    |   |--gif
+    |   |--index.htm
+    |   |--main.htm
+    |   |--menu.htm
+    |   |--graphtips.htm (*)
+    |   |--progtips.htm
+    |   |--movtips.htm
+    |   |--gsknhow.pdf	  		Know-How for Speeding up GS Drawing
+    |   |--analog.pdf	        	Analog Button Features Overview
+    |   +--usbkb.pdf            	USB Keyboard Layout
+    +--pdadoc
+        |--pda
+    	|   |--gif
+    	|   |--index.htm
+    	|   |--main.htm
+    	|   |--menu.htm
+    	|   |--pdaspec1.htm		PDA Specifications
+    	|   |--pdaspec2.htm		Details of Device Registers
+    	|   |--pdaspec3.htm		Device Register List
+    	|   |--kernel.htm		PDA Kernel Specifications
+    	|   +--fat.htm			Memory Card File System
+        +--arm 	 	        	ARM Architecture Reference Manual
+

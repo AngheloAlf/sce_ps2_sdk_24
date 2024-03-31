@@ -1,0 +1,1547 @@
+This is Info file cgen.info, produced by Makeinfo version 1.68 from the
+input file ../../../src/cgen/doc/cgen.texi.
+
+START-INFO-DIR-ENTRY
+* Cgen: (cgen).                 The Cpu tools GENerator.
+END-INFO-DIR-ENTRY
+
+   Copyright (C) 2000 Red Hat, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the entire resulting derived work is distributed under the terms
+of a permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions.
+
+
+File: cgen.info,  Node: Attributes,  Next: Architecture variants,  Prev: Definitions,  Up: RTL
+
+Attributes
+==========
+
+   Attributes are used throughout for specifying various properties.
+For portability reasons attributes can only have 32 bit integral values
+(signed or unsigned).
+
+   There are four kinds of attributes: boolean, integer, enumerated,
+and bitset.  Boolean attributes can be achieved via others, but they
+occur frequently enough that they are special cased (and one bit can be
+used to record them).  Bitset attributes are a useful simplification
+when one wants to indicate an object can be in one of many states (e.g.
+an instruction may be supported by multiple machines).
+
+   String attributes might be a useful addition.  Another useful
+addition might be functional attributes (the attribute is computed at
+run-time - currently all attributes are computed at compile time).  One
+way to implement functional attributes would be to record the
+attributes as byte-code and lazily evaluate them, caching the results
+as appropriate.  The syntax has been carefully done to not preclude
+either as an upward compatible extension.
+
+   Attributes must be defined before they can be used.  There are
+several predefined attributes for entry types that need them
+(instruction field, hardware, operand, and instruction).  Predefined
+attributes are documented in each relevant section below.
+
+   In C applications an enum is created that defines all the attributes.
+Applications that wish to be architecture independent need the attribute
+to have the same value across all architectures.  This is achieved by
+giving the attribute the INDEX attribute, which specifies the enum value
+must be fixed across all architectures.
+
+   Convention requires attribute names consist of uppercase letters,
+numbers, "-", and "_", and must begin with a letter.  To be consistent
+with Scheme, "-" is preferred over "_".
+
+Boolean Attributes
+------------------
+
+   Boolean attributes are defined with:
+
+     (define-attribute
+       (type boolean)
+       (for user-list)
+       (name attribute-name)
+       (comment "attribute comment")
+       (attrs attribute-attributes)
+     )
+
+   The default value of boolean attributes is always false.  This can be
+relaxed, but it's one extra complication that is currently unnecessary.
+Boolean attributes are specified in either of two forms: (NAME expr),
+and NAME, !NAME.  The first form is the canonical form.  The latter two
+are shorthand versions.  `NAME' means "true" and `!NAME' means "false".
+`expr' is an expression that evaluates to 0 for false and non-zero for
+true (1).
+
+   `user-list' is a space separated list of entry types that will use
+the attribute.  Possible values are: `attr', `enum', `cpu', `mach',
+`model', `ifield', `hardware', `operand', `insn' and `macro-insn'.  If
+omitted all are considered users of the attribute.
+
+Integer Attributes
+------------------
+
+   Integer attributes are defined with:
+
+     (define-attribute
+       (type integer)
+       (for user-list)
+       (name attribute-name)
+       (comment "attribute comment")
+       (attrs attribute-attributes)
+       (default expr)
+     )
+
+   If omitted, the default is 0.
+
+   (*note: The details of `expr' is still undecided.  For now it must be
+an integer.)
+
+   Integer attributes are specified with (NAME expr).
+
+Enumerated Attributes
+---------------------
+
+   Enumerated attributes are the same as integer attributes except the
+range of possible values is restricted and each value has a name.
+Enumerated attributes are defined with
+
+     (define-attribute
+       (type enum)
+       (for user-list)
+       (name attribute-name)
+       (comment "attribute comment")
+       (attrs attribute-attributes)
+       (values enum-value1 enum-value2 ...)
+       (default expr)
+     )
+
+   If omitted, the default is the first specified value.
+
+   (*note: The details of `expr' is still undecided.  For now it must
+be the name of one of the specified values.)
+
+   Enum attributes are specified with (NAME expr).
+
+Bitset Attributes
+-----------------
+
+   Bitset attributes are for situations where you want to indicate
+something is a subset of a small set of possibilities.  The MACH
+attribute uses this for example to allow specifying which of the
+various machines support a particular insn.  (*note: At present the
+maximum number of possibilities is 32.  This is an implementation
+restriction which can be relaxed, but there's currently no rush.)
+
+   Bitset attributes are defined with:
+
+     (define-attribute
+       (type bitset)
+       (for user-list)
+       (name attribute-name)
+       (comment "attribute comment")
+       (attrs attribute-attributes)
+       (values enum-value1 enum-value2 ...)
+       (default default-name)
+     )
+
+   `default-name' must be the name of one of the specified values.  If
+omitted, it is the first value.
+
+   Bitset attributes are specified with `(NAME val1,val2,...)'.  There
+must be no spaces in "`val1,val2,...'" and each value must be a valid
+Scheme symbol.
+
+   (*note: it's not clear whether allowing arbitrary expressions will be
+useful here, but doing so is not precluded.  For now each value must be
+the name of one of the specified values.)
+
+   ---------- Footnotes ----------
+
+   (1) The details of `expr' is still undecided.
+
+
+File: cgen.info,  Node: Architecture variants,  Next: Model variants,  Prev: Attributes,  Up: RTL
+
+Architecture Variants
+=====================
+
+   The base architecture and its variants are described in four parts:
+`define-arch', `define-isa', `define-cpu', and `define-mach'.
+
+* Menu:
+
+* define-arch::
+* define-isa::
+* define-cpu::
+* define-mach::
+
+
+File: cgen.info,  Node: define-arch,  Next: define-isa,  Up: Architecture variants
+
+define-arch
+-----------
+
+   `define-arch' describes the overall architecture, and must be
+present.
+
+   The syntax of `define-arch' is:
+
+     (define-arch
+       (name architecture-name) ; e.g. m32r
+       (comment "description")  ; e.g. "Mitsubishi M32R"
+       (attrs attribute-list)
+       (default-alignment aligned|unaligned|forced)
+       (insn-lsb0? #f|#t)
+       (machs mach-name-list)
+       (isas isa-name-list)
+     )
+
+default-alignment
+.................
+
+   Specify the default alignment to use when fetching data (and
+instructions) from memory.  At present this can't be overridden, but
+support can be added if necessary.  The default is `aligned'.
+
+insn-lsb0?
+..........
+
+   Specifies whether the most significant or least significant bit in a
+word is bit number 0.  Generally this should conform to the convention
+in the architecture manual.  This is independent of endianness and is an
+architecture wide specification.  There is no support for using
+different bit numbering conventions within an architecture.
+
+   Instruction fields are always numbered beginning with the most
+significant bit.  That is, the `start' of a field is always its most
+significant bit.  For example, a 4 bit field in the uppermost bits of a
+32 bit instruction would have a start/length of (31 4) when insn-lsb0? =
+`#t', and (0 4) when insn-lsb0? = `#f'.
+
+mach-name-list
+..............
+
+   The list of names of machines in the architecture.  There should be
+one entry for each `define-mach'.
+
+isa-name-list
+.............
+
+   The list of names of instruction sets in the architecture.  There
+must be one for each `define-isa'.  An example of an architecture with
+more than one is the ARM which has a 32 bit instruction set and a 16
+bit "Thumb" instruction set (the sizes here refer to instruction size).
+
+
+File: cgen.info,  Node: define-isa,  Next: define-cpu,  Prev: define-arch,  Up: Architecture variants
+
+define-isa
+----------
+
+   `define-isa' describes aspects of the instruction set.  A minimum of
+one ISA must be defined.
+
+   The syntax of `define-isa' is:
+
+     (define-isa
+       (name isa-name)
+       (comment "description")
+       (attrs attribute-list)
+       (default-insn-word-bitsize n)
+       (default-insn-bitsize n)
+       (base-insn-bitsize n)
+       (decode-assist (b0 b1 b2 ...)) ; optional
+       (liw-insns n)
+       (parallel-insns n)
+       (condition ifield-name expr)
+       (setup-semantics expr)
+       (decode-splits decode-split-list)
+       ; ??? missing here are fetch/execute specs
+     )
+
+default-insn-word-bitsize
+.........................
+
+   Specifies the default size of an instruction word in bits.  This
+affects the numbering of field bits in words beyond the base
+instruction.  *Note Instruction fields:: for more information.
+
+   ??? There is currently no explicit way to specify a different
+instruction word bitsize for particular instructions, it is derived
+from the instruction field specs.
+
+default-insn-bitsize
+....................
+
+   The default size of an instruction in bits. It is generally the size
+of the smallest instruction. It is used when parsing instruction fields.
+It is also used by the disassembler to know how many bytes to skip for
+unrecognized instructions.
+
+base-insn-bitsize
+.................
+
+   The minimum size of an instruction, in bits, to fetch during
+execution.  If the architecture has a variable length instruction set,
+this is the size of the initial word to fetch.  There is no need to
+specify the maximum length of an instruction, that can be computed from
+the instructions.  Examples:
+
+i386
+     8
+
+M68k
+     16
+
+SPARC
+     32
+
+M32R
+     32
+
+   The M32R case is interesting because instructions can be 16 or 32
+bits.  However instructions on 32 bit boundaries can always be fetched
+32 bits at a time as 16 bit instructions always come in pairs.
+
+decode-assist
+.............
+
+   Override CGEN's guess about which bits to initially use to decode the
+instruction.  For example on the SPARC these are bits: 31 30 24 23 22
+21 20 19.  The entire decoder can be machine generated, so this field
+is entirely optional.  The intent of `decode-assist' is to give the
+machine generated code a head start, to prime the built-in heuristics.
+
+   ??? It might be useful to provide greater control, but this is
+sufficient for now.
+
+   It is okay if the opcode bits are over-specified for some
+instructions.  It is also okay if the opcode bits are under-specified
+for some instructions.  The machine generated decoder will properly
+handle both these situations.  Just pick a useful number of bits that
+distinguishes most instructions.  It is usually best to not pick more
+than 8 bits to keep the size of the initial decode table down.
+
+   Bit numbering is defined by the `insn-lsb0?' field.
+
+liw-insns
+.........
+
+   The number of instructions the CPU always fetches at once.  This is
+intended for architectures like the M32R, and does not refer to a CPU's
+ability to pre-fetch instructions.  The default is 1.
+
+parallel-insns
+..............
+
+   The maximum number of instructions the CPU can execute in parallel.
+The default is 1.
+
+   ??? Rename this to `max-parallel-insns'?
+
+condition
+.........
+
+   Some architectures like ARM and ARC conditionally execute every
+instruction based on the condition specified by one instruction field.
+The `condition' spec exists to support these architectures.
+`ifield-name' is the name of the instruction field denoting the
+condition and `expression' is an RTL expressions that returns the value
+of the condition (false=zero, true=non-zero).
+
+setup-semantics
+...............
+
+   Specify a statement to be performed prior to executing particular
+instructions.  This is used, for example, on the ARM where the value of
+the program counter (general register 15) is a function of the
+instruction (it is either pc+8 or pc+12, depending on the instruction).
+
+decode-splits
+.............
+
+   Specify a list of field names and values to split instructions up by.
+This is used, for example, on the ARM where the behavior of some
+instructions is quite different when the destination register is r15
+(the pc).
+
+   The syntax is:
+
+     (decode-splits
+       (ifield1-name
+        constraints
+        ((split1-name (value1 value2 ...)) (split2-name ...)))
+       (ifield2-name
+        ...)
+     )
+
+   `constraints' is work-in-progress and should be `()' for now.
+
+   One copy of each instruction satisfying `constraint' is made for
+each specified split.  The semantics of each copy are then simplified
+based on the known values of the specified instruction field.
+
+
+File: cgen.info,  Node: define-cpu,  Next: define-mach,  Prev: define-isa,  Up: Architecture variants
+
+define-cpu
+----------
+
+   `define-cpu' defines a "CPU family" which is a programmer specified
+collection of related machines.  What constitutes a family is
+work-in-progress however it is intended to distinguish things like
+sparc32 vs sparc64.  Machines in a family are sufficiently similar that
+the simulator semantic code can handle any differences at run time.  At
+least that's the current idea.  A minimum of one CPU family must be
+defined.  (1)
+
+   The syntax of `define-cpu' is:
+
+     (define-cpu
+       (name cpu-name)
+       (comment "description")
+       (attrs attribute-list)
+       (endian big|little|either)
+       (insn-endian big|little|either)
+       (data-endian big|little|either)
+       (float-endian big|little|either)
+       (word-bitsize n)
+       (parallel-insns n)
+       (file-transform transformation)
+     )
+
+endian
+......
+
+   The endianness of the architecture is one of three values: `big',
+`little' and `either'.
+
+   An architecture may have multiple endiannesses, including one for
+each of: instructions, integers, and floats (not that that's intended
+to be the complete list).  These are specified with `insn-endian',
+`data-endian', and `float-endian' respectively.
+
+   Possible values for `insn-endian' are: `big', `little', and
+`either'.  If missing, the value is taken from `endian'.
+
+   Possible values for `data-endian' and `float-endian' are: `big',
+`big-words', `little', `little-words' and `either'.  If `big-words'
+then each word is little-endian.  If `little-words' then each word is
+big-endian.  If missing, the value is taken from `endian'.
+
+   ??? Support for these is work-in-progress.  All forms are recognized
+by the `.cpu' file reader, but not all are supported internally.
+
+word-bitsize
+............
+
+   The number of bits in a word.  In GCC, this is `BITS_PER_WORD'.
+
+parallel-insns
+..............
+
+   This is the same as the `parallel-insns' spec of `define-isa'.  It
+allows a CPU family to override the value.
+
+file-transform
+..............
+
+   Specify the file name transformation of generated code.
+
+   Each generated file has a named related to the ISA or CPU family.
+Sometimes generated code needs to know the name of another generated
+file (e.g. #include's).  At present `file-transform' specifies the
+suffix.
+
+   For example, M32R/x generated files have an `x' suffix, as in
+`cpux.h' for the `cpu.h' header.  This is indicated with
+`(file-transform "x")'.
+
+   ??? Ideally generated code wouldn't need to know anything about file
+names.  This breaks down for #include's.  It can be fixed with symlinks
+or other means.
+
+   ---------- Footnotes ----------
+
+   (1) FIXME: Using "cpu" in "cpu-family" here is confusing.  Need a
+better name.  Maybe just "family"?
+
+
+File: cgen.info,  Node: define-mach,  Prev: define-cpu,  Up: Architecture variants
+
+define-mach
+-----------
+
+   `define-mach' defines a distinct variant of a CPU.  It currently has
+a one-to-one correspondence with BFD's "mach number".  A minimum of one
+mach must be defined.
+
+   The syntax of `define-mach' is:
+
+     (define-mach
+       (name mach-name)
+       (comment "description")
+       (attrs attribute-list)
+       (cpu cpu-family-name)
+       (bfd-name "bfd-name")
+       (isas isa-name-list)
+     )
+
+bfd-name
+........
+
+   The name of the mach as used by BFD.  If not specified the name of
+the mach is used.
+
+isas
+....
+
+   List of names of ISA's the machine supports.
+
+
+File: cgen.info,  Node: Model variants,  Next: Hardware elements,  Prev: Architecture variants,  Up: RTL
+
+Model Variants
+==============
+
+   For each `machine', as defined here, there is one or more `models'.
+There must be at least one model for each machine.  (*note: There could
+be a default, but requiring one doesn't involve that much extra typing
+and forces the programmer to at least think about such things.)
+
+     (define-model
+       (name model-name)
+       (comment "description")
+       (attrs attribute-list)
+       (mach machine-name)
+       (state (variable-name-1 variable-mode-1) ...)
+       (unit name "comment" (attributes)
+     	issue done state inputs outputs profile)
+     )
+
+mach
+----
+
+   The name of the machine the model is an implementation of.
+
+state
+-----
+
+   A list of variable-name/mode pairs for recording global function unit
+state.  For example on the M32R the value is `(state (h-gr UINT))' and
+is a bitmask of which register(s) are the targets of loads and thus
+subject to load stalls.
+
+unit
+----
+
+   Specifies a function unit.  Any number of function units may be
+specified.  The `u-exec' unit must be specified as it is the default.
+
+   The syntax is:
+
+       (unit name "comment" (attributes)
+          issue done state inputs outputs profile)
+
+   `issue' is the number of operations that may be in progress.  It
+originates from GCC function unit specification.  In general the value
+should be 1.
+
+   `done' is the latency of the unit.  The value is the number of cycles
+until the result is ready.
+
+   `state' has the same syntax as the global model `state' and is a
+list of variable-name/mode pairs.
+
+   `inputs' is a list of inputs to the function unit.  Each element is
+`(operand-name mode default-value)'.
+
+   `outputs' is a list of outputs of the function unit.  Each element
+is `(operand-name mode default-value)'.
+
+   `profile' is an rtl-code sequence that performs function unit
+modeling.  At present the only possible value is `()' meaning invoke a
+user supplied function named `<cpu>_model_<mach>_<unit>'.
+
+   The current function unit specification is a first pass in order to
+achieve something that moderately works for the intended purpose (cycle
+counting on the simulator).  Something more elaborate is on the todo
+list but there is currently no schedule for it.  The new specification
+must try to be application independent.  Some known applications are:
+cycle counting in the simulator, code scheduling in a compiler, and code
+scheduling in a JIT simulator (where speed of analysis can be more
+important than getting an optimum schedule).
+
+   The inputs/outputs fields are how elements in the semantic code are
+mapped to function units.  Each input and output has a name that
+corresponds with the name of the operand in the semantics.  Where there
+is no correspondence, a mapping can be made in the unit specification
+of the instruction (see the subsection titled "Timing").
+
+   Another way to achieve the correspondence is to create separate
+function units that contain the desired input/output names.  For
+example on the M32R the u-exec unit is defined as:
+
+     (unit u-exec "Execution Unit" ()
+        1 1 ; issue done
+        () ; state
+        ((sr INT -1) (sr2 INT -1)) ; inputs
+        ((dr INT -1)) ; outputs
+        () ; profile action (default)
+     )
+
+   This handles instructions that use sr, sr2 and dr as operands.  A
+second function unit called `u-cmp' is defined as:
+
+     (unit u-cmp "Compare Unit" ()
+        1 1 ; issue done
+        () ; state
+        ((src1 INT -1) (src2 INT -1)) ; inputs
+        () ; outputs
+        () ; profile action (default)
+     )
+
+   This handles instructions that use src1 and src2 as operands.  The
+organization of units is arbitrary.  On the M32R, src1/src2 instructions
+are typically compare instructions so a separate function unit was
+created for them.
+
+
+File: cgen.info,  Node: Hardware elements,  Next: Instruction fields,  Prev: Model variants,  Up: RTL
+
+Hardware Elements
+=================
+
+   The elements of hardware that make up a CPU are defined with
+`define-hardware'.  Examples of hardware elements include registers,
+condition bits, immediate constants and memory.
+
+   Instruction fields that provide numerical values ("immediate
+constants") aren't really elements of the hardware, but it simplifies
+things to think of them this way.  Think of them as *constant
+generators*(1).
+
+   Hardware elements are defined with:
+
+     (define-hardware
+       (name hardware-name)
+       (comment "description")
+       (attrs attribute-list)
+       (semantic-name hardware-semantic-name)
+       (type type-name type-arg1 type-arg2 ...)
+       (indices index-type index-arg1 index-arg2 ...)
+       (values values-type values-arg1 values-arg2 ...)
+       (handlers handler1 handler2 ...)
+       (get (args) (expression))
+       (set (args) (expression))
+     )
+
+   The only required members are `name' and `type'. Convention requires
+`hardware-name' begin with `h-'.
+
+attrs
+-----
+
+   List of attributes. There are several predefined hardware attributes:
+
+   - MACH
+
+     A bitset attribute used to specify which machines have this
+     hardware element.  Do not specify the MACH attribute if the value
+     is "all machs".
+
+     Usage: `(MACH mach1,mach2,...)'  There must be no spaces in
+     "`mach1,mach2,...'".
+
+   - CACHE-ADDR
+
+     A hint to the simulator semantic code generator to tell it it can
+     record the address of a selected register in an array of
+     registers.  This speeds up simulation by moving the array
+     computation to extraction time.  This attribute is only useful to
+     register arrays and cannot be specified with `VIRTUAL' (???
+     revisit).
+
+   - PROFILE
+
+     Ignore.  This is a work-in-progress to define how to profile
+     references to hardware elements.
+
+   - VIRTUAL
+
+     The hardware element doesn't require any storage.  This is used
+     when you want a value that is derived from some other value.  If
+     `VIRTUAL' is specified, `get' and `set' specs must be provided.
+
+type
+----
+
+   This is the type of hardware.  Current values are: `register',
+`memory', and `immediate'.
+
+   For registers the syntax is one of:
+
+     `(register mode [(number)])'
+     `(register (mode bits) [(number)])'
+
+   where `(number)' is the number of registers and is optional. If
+omitted, the default is `(1)'.  The second form is useful for
+describing registers with an odd (as in unusual) number of bits.
+`mode' for the second form must be one of `INT' or `UINT'.  Since these
+two modes don't have an implicit size, they cannot be used for the
+first form.
+
+   For memory the syntax is:
+
+     `(memory mode (size))'
+
+   where `(size)' is the size of the memory in `mode' units.  In
+general `mode' should be `QI'.
+
+   For immediates the syntax is one of
+
+     `(immediate mode)'
+     `(immediate (mode bits))'
+
+   The second form is for values for which a mode of that size doesn't
+exist.  `mode' for the second form must be one of `INT' or `UINT'.
+Since these two modes don't have an implicit size, they cannot be used
+for the first form.
+
+   ??? There's no real reason why a mode like SI can't be used for
+odd-sized immediate values.  The `bits' field indicates the size and
+the `mode' field indicates the mode in which the value will be used, as
+well as its signedness.  This would allow removing INT/UINT for this
+purpose.  On the other hand, a non-width specific mode allows
+applications to choose one (a simulator might prefer to store
+immediates in an `int' rather than, say, char if the specified mode was
+`QI').
+
+indices
+-------
+
+   Specify names for individual elements with the `indices' spec.  It
+is only valid for registers with more than one element.
+
+   The syntax is:
+
+     `(indices index-type arg1 arg2 ...)'
+
+   where `index-type' specifies the kind of index and `arg1 arg2 ...'
+are arguments to `index-type'.
+
+   The are two supported values for `index-type': `keyword' and
+`extern-keyword'.  The difference is that indices defined with
+`keyword' are kept internal to the hardware element's definition and
+are not usable elsewhere, whereas `extern-keyword' specifies a set of
+indices defined elsewhere.
+
+keyword
+.......
+
+     `(indices keyword "prefix" ((name1 value1) (name2 value2) ...))'
+
+   `prefix' is the common prefix for each of the index names.  For
+example, SPARC registers usually begin with `"%"'.
+
+   Each `(name value)' pair maps a name with an index number.  An index
+can be specified multiple times, for example, when a register has
+multiple names.
+
+   Example from Thumb:
+
+     (define-hardware
+       (name h-gr-t)
+       (comment "Thumb's general purpose registers")
+       (attrs (ISA thumb) VIRTUAL) ; ??? CACHE-ADDR should be doable
+       (type register WI (8))
+       (indices keyword ""
+     	   ((r0 0) (r1 1) (r2 2) (r3 3) (r4 4) (r5 5) (r6 6) (r7 7)))
+       (get (regno) (reg h-gr regno))
+       (set (regno newval) (set (reg h-gr regno) newval))
+     )
+
+extern-keyword
+..............
+
+     `(indices extern-keyword keyword-name)'
+
+   Example from M32R:
+
+     (define-keyword
+       (name gr-names)
+       (print-name h-gr)
+       (prefix "")
+       (values (fp 13) (lr 14) (sp 15)
+     	  (r0 0) (r1 1) (r2 2) (r3 3) (r4 4) (r5 5) (r6 6) (r7 7)
+     	  (r8 8) (r9 9) (r10 10) (r11 11) (r12 12) (r13 13) (r14 14) (r15 15))
+     )
+     
+     (define-hardware
+       (name h-gr)
+       (comment "general registers")
+       (attrs PROFILE CACHE-ADDR)
+       (type register WI (16))
+       (indices extern-keyword gr-names)
+     )
+
+values
+------
+
+   Specify a list of valid values with the `values' spec.
+
+   The syntax is identical to the syntax for `indices'.  It is only
+valid for immediates.
+
+   Example from sparc64:
+
+     (define-hardware
+       (name h-p)
+       (comment "prediction bit")
+       (attrs (MACH64))
+       (type immediate (UINT 1))
+       (values keyword "" (("" 0) (",pf" 0) (",pt" 1)))
+     )
+
+handlers
+--------
+
+   The `handlers' spec is an escape hatch for indicating when a
+programmer supplied routine must be called to perform a function.
+
+   The syntax is:
+
+     `(handlers (handler-name1 "function_name1")
+                     (handler-name2 "function_name2")
+                     ...)'
+
+   `handler-name' must be one of `parse' or `print'.  How
+`function_name' is used is application specific, but in general it is
+the name of a function to call.  The only application that uses this at
+present is Opcodes.  See the Opcodes documentation for a description of
+each function's expected prototype.
+
+get
+---
+
+   Specify special processing to be performed when a value is read with
+the `get' spec.
+
+   The syntax for scalar registers is:
+
+     `(get () (expression))'
+
+   The syntax for vector registers is:
+
+     `(get (index) (expression))'
+
+   `expression' is an RTL expression that computes the value to return.
+The mode of the result must be the mode of the register.
+
+   `index' is the name of the index as it appears in `expression'.
+
+   At present, `sequence', `parallel', and `case' expressions are not
+allowed here.
+
+set
+---
+
+   Specify special processing to be performed when a value is written
+with the `set' spec.
+
+   The syntax for scalar registers is:
+
+     `(set (newval) (expression))'
+
+   The syntax for vector registers is:
+
+     `(set (index newval) (expression))'
+
+   `expression' is an RTL expression that stores `newval' in the
+register.  This may involve storing values in other registers as well.
+`expression' must be one of `set', `if', `sequence', or `case'.
+
+   `index' is the name of the index as it appears in `expression'.
+
+Predefined hardware elements
+----------------------------
+
+   Several hardware types are predefined:
+
+`h-uint'
+     unsigned integer
+
+`h-sint'
+     signed integer
+
+`h-memory'
+     main memory, where "main" is loosely defined
+
+`h-addr'
+     data address (data only)
+
+`h-iaddr'
+     instruction address (instructions only)
+
+Program counter
+---------------
+
+   The program counter must be defined and is not a builtin.  If
+get/set specs are not required, define it as:
+
+     (dnh h-pc "program counter" (PC) (pc) () () ())
+
+   If get/set specs are required, define it as:
+
+     (define-hardware
+       (name h-pc)
+       (comment "<ARCH> program counter")
+       (attrs PC)
+       (type pc)
+       (get () <insert get code here>)
+       (set (newval) <insert set code here>)
+     )
+
+   If the architecture has multiple instruction sets, all must be
+specified.  If they're not, the default is the first one which is not
+what you want.  Here's an example from `arm.cpu':
+
+     (define-hardware
+       (name h-pc)
+       (comment "ARM program counter (h-gr reg 15)")
+       (attrs PC (ISA arm,thumb))
+       (type pc)
+       (set (newval)
+            (if (reg h-tbit)
+     	   (set (raw-reg SI h-pc) (and newval -2))
+     	   (set (raw-reg SI h-pc) (and newval -4))))
+     )
+
+Simplification macros
+---------------------
+
+   To simplify `.cpu' files, the `dnh' (`define-normal-hardware') macro
+exists that takes a fixed set of positional arguments for the typical
+hardware element.  The syntax of `dnh' is:
+
+   `(dnh name comment attributes type indices values handlers)'
+
+   Example:
+
+     (dnh h-gr "general registers"
+          () ; attributes
+          (register WI (16))
+          (keyword "" ((fp 13) (sp 15) (lr 14)
+                       (r0 0) (r1 1) (r2 2) (r3 3)
+                       (r4 4) (r5 5) (r6 6) (r7 7)
+                       (r8 8) (r9 9) (r10 10) (r11 11)
+                       (r12 12) (r13 13) (r14 14) (r15 15)))
+          () ()
+     )
+
+   This defines an array of 16 registers of mode `WI' ("word int").
+The names of the registers are `r0...r15', and registers 13, 14 and 15
+also have the names `fp', `lr' and `sp' respectively.
+
+   Scalar registers with no special requirements occur frequently.
+Macro `dsh' (`define-simple-hardware') is identical to `dnh' except
+does not include the `indices', `values', or `handlers' specs.
+
+     (dsh h-ibit "interrupt enable bit" () (register BI))
+
+   ---------- Footnotes ----------
+
+   (1) A term borrowed from the book on the Bulldog compiler and
+perhaps other sources.
+
+
+File: cgen.info,  Node: Instruction fields,  Next: Enumerated constants,  Prev: Hardware elements,  Up: RTL
+
+Instruction Fields
+==================
+
+   Instruction fields define the raw bitfields of each instruction.
+Minimal semantic meaning is attributed to them.  Support is provided for
+mapping to and from the raw bit pattern and the usable contents, and
+other simple manipulations.
+
+   The syntax for defining instruction fields is:
+
+     (define-ifield
+       (name field-name)
+       (comment "description")
+       (attrs attribute-list)
+       (start starting-bit-number)
+       (length number-of-bits)
+       (follows ifield-name)
+       (mode mode-name)
+       (encode (value pc) (rtx to describe encoding))
+       (decode (value pc) (rtx to describe decoding))
+     )
+
+   (*note: Whether to also provide a way to specify instruction formats
+is not yet clear.  Currently they are computed from the instructions,
+so there's no current *need* to provided them.  However, providing the
+ability as an option may simplify other tools CGEN is used to generate.
+This simplification would come in the form of giving known names to
+the formats which CPU reference manuals often do.  Pre-specified
+instruction formats may also simplify expression of more complicated
+instruction sets.)
+
+   (*note: Positional specification simplifies instruction description
+somewhat in that there is no required order of fields, and a disjunct
+set of fields can be referred to as one.  On the other hand it can
+require knowledge of the length of the instruction which is
+inappropriate in cases like the M32R where the main fields have the
+same name and "position" regardless of the length of the instruction.
+Moving positional specification into instruction formats, whether
+machine generated or programmer specified, may be done.)
+
+   Convention requires `field-name' begin with `f-'.
+
+attrs
+-----
+
+   There are several predefined instruction field attributes:
+
+`PCREL-ADDR'
+     The field contains a PC relative address.  Various CPUs have
+     various offsets from the PC from which the address is calculated.
+     This is specified in the encode and decode sections.
+
+`ABS-ADDR'
+     The field contains an absolute address.
+
+`SIGN-OPT'
+     The field has an optional sign.  It is sign-extended during
+     extraction. Allowable values are -2^(n-1) to (2^n)-1.
+
+`RESERVED'
+     The field is marked as "reserved" by the architecture.  This is an
+     informational attribute.  Tools may use it to validate programs,
+     either statically or dynamically.
+
+`VIRTUAL'
+     The field does not directly contribute to the instruction's value.
+     This is used to simplify semantic or assembler descriptions where
+     a fields value is based on other values.  Multi-ifields are always
+     virtual.
+
+start
+-----
+
+   The bit number of the field's most significant bit in the
+instruction.  Bit numbering is determined by the `insn-lsb0?' field of
+`define-arch'.
+
+length
+------
+
+   The number of bits in the field.  The field must be contiguous.  For
+non-contiguous instruction fields use "multi-ifields".  (*xref:
+Non-contiguous fields).
+
+follows
+-------
+
+   Optional.  Experimental.  This should not be used for the
+specification of RISC-like architectures.  It is an experiment in
+supporting CISC-like architectures.  The argument is the name of the
+ifield or operand that immediately precedes this one.  In general the
+argument is an "anyof" operand.  The `follows' spec allows subsequent
+ifields to "float".
+
+mode
+----
+
+   The mode the value is to be interpreted in.  Usually this is `INT'
+or `UINT'.
+
+   The `length' field specifies the number of bits in the field, and
+the `mode' field indicates the mode in which the value will be used, as
+well as its signedness.  This would allow removing INT/UINT for this
+purpose.  On the other hand, a non-width specific mode allows
+applications to choose one (a simulator might prefer to store
+immediates in an `int' rather than, say, char if the specified mode was
+`QI').
+
+encode
+------
+
+   An expression to apply to convert from usable values to raw field
+values.  The syntax is `(encode (value pc) expression)' or more
+specifically `(encode ((<mode1> value) (IAI pc)) <expression>)', where
+`<mode1>' is the mode of the the "incoming" value, and `<expression>'
+is an rtx to convert `value' to something that can be stored in the
+field.
+
+   Example:
+
+     (encode ((SF value) (IAI pc))
+     	(cond WI
+     	      ((eq value (const SF 1.0)) (const 0))
+     	      ((eq value (const SF 0.5)) (const 1))
+     	      ((eq value (const SF -1.0)) (const 2))
+     	      ((eq value (const SF 2.0)) (const 3))
+     	      (else (error "invalid floating point value for field foo"))))
+
+   In this example four floating point immediate values are represented
+in a field of two bits.  The above might be expanded to a series of
+`if' statements or the generator could determine a `switch' statement
+is more appropriate.
+
+decode
+------
+
+   An expression to apply to convert from raw field values to usable
+values.  The syntax is `(decode (value pc) expression)' or more
+specifically `(decode ((WI value) (IAI pc)) <expression>)', where
+`<expression>' is an rtx to convert `value' to something usable.
+
+   Example:
+
+     (decode ((WI value) (IAI pc))
+     	(cond SF
+     	      ((eq value 0) (const SF 1.0))
+     	      ((eq value 1) (const SF 0.5))
+     	      ((eq value 2) (const SF -1.0))
+     	      ((eq value 3) (const SF 2.0))))
+
+   There's no need to provide an error case as presumably `value' would
+never have an invalid value, though certainly one could provide an
+error case if one wanted to.
+
+Non-contiguous fields
+---------------------
+
+   Non-contiguous fields (e.g. sparc64's 16 bit displacement field) are
+built on top of support for contiguous fields.  The syntax for defining
+such fields is:
+
+     (define-multi-ifield
+       (name field-name)
+       (comment "description")
+       (attrs attribute-list)
+       (mode mode-name)
+       (subfields field1-name field2-name ...)
+       (insert (code to set each subfield))
+       (extract (code to set field from subfields))
+     )
+
+   (*note: insert/extract are analogous to encode/decode so maybe these
+fields are misnamed.  The operations are subtly different though.)
+
+   Example:
+
+     (define-multi-ifield
+       (name f-i20)
+       (comment "20 bit unsigned")
+       (attrs)
+       (mode UINT)
+       (subfields f-i20-4 f-i20-16)
+       (insert (sequence ()
+                         (set (ifield f-i20-4)  (srl (ifield f-i20) (const 16)))
+                         (set (ifield f-i20-16) (and (ifield f-i20) (const #xffff)))
+                         ))
+       (extract (sequence ()
+                          (set (ifield f-i20) (or (sll (ifield f-i20-4) (const 16))
+                                                  (ifield f-i20-16)))
+                          ))
+     )
+
+subfields
+---------
+
+   The names of the already defined fields that make up the
+multi-ifield.
+
+insert
+------
+
+   Code to set the subfields from the multi-ifield. All fields are
+referred to with `(ifield <name>)'.
+
+extract
+-------
+
+   Code to set the multi-ifield from the subfields. All fields are
+referred to with `(ifield <name>)'.
+
+Simplification macros
+---------------------
+
+   To simplify `.cpu' files, the `dnf', `df' and `dnmf' macros have
+been created. Each takes a fixed set of positional arguments for the
+typical instruction field.  `dnf' is short for `define-normal-field',
+`df' is short for `define-field', and `dnmf' is short for
+`define-normal-multi-ifield'.
+
+   The syntax of `dnf' is:
+
+   `(dnf name comment attributes start length)'
+
+   Example:
+
+   `(dnf f-r1 "register r1" () 4 4)'
+
+   This defines a field called `f-r1' that is an unsigned field of 4
+bits beginning at bit 4.  All fields defined with `dnf' are unsigned.
+
+   The syntax of `df' is:
+
+   `(df name comment attributes type start length mode encode decode)'
+
+   Example:
+
+     (df f-disp8
+         "disp8, slot unknown" (PCREL-ADDR)
+         INT 8 8
+         ((value pc) (sra WI (sub WI value (and WI pc (const -4))) (const 2)))
+         ((value pc) (add WI (sll WI value (const 2)) (and WI pc (const -4)))))
+
+   This defines a field called `f-disp8' that is a signed PC-relative
+address beginning at bit 8 of size 8 bits that is left shifted by 2.
+
+   The syntax of `dnmf' is:
+
+   `(dnmf name comment attributes mode subfields insert extract)'
+
+
+File: cgen.info,  Node: Enumerated constants,  Next: Instruction operands,  Prev: Instruction fields,  Up: RTL
+
+Enumerated constants
+====================
+
+   Enumerated constants (*enums*) are important enough in instruction
+set descriptions that they are given special treatment. Enums are
+defined with:
+
+     (define-enum
+       (name enum-name)
+       (comment "description")
+       (attrs attribute-list)
+       (prefix prefix)
+       (values val1 val2 ...)
+     )
+
+   Enums in opcode fields are further enhanced by specifying the opcode
+field they are used in.  This allows the enum's name to be specified in
+an instruction's `format' entry.
+
+     (define-insn-enum
+       (name enum-name)
+       (comment "description")
+       (attrs (attribute list))
+       (prefix prefix)
+       (ifield instruction-field-name)
+       (values val1 val2 ...)
+     )
+
+   (*note: `define-insn-enum' isn't implemented yet: use
+`define-normal-insn-enum')
+
+   Example:
+
+     (define-insn-enum
+       (name insn-op1)
+       (comment "op1 field values")
+       (prefix OP1_)
+       (ifield f-op1)
+       (values "0" "1" "2" "3" "4" "5" "6" "7"
+               "8" "9" "10" "11" "12" "13" "14" "15")
+     )
+
+prefix
+------
+
+   Convention requires each enum value to be prefixed with the same
+text.  Rather than specifying the prefix in each entry, it is specified
+once, here.  Convention requires `prefix' not contain any lowercase
+characters.
+
+ifield
+------
+
+   The name of the instruction field that the enum is intended for.
+
+values
+------
+
+   A list of possible values.  Each element has one of the following
+forms:
+
+   * `name'
+
+   * `(name)'
+
+   * `(name value)'
+
+   * `(name - (attribute-list))'
+
+   * `(name value (attribute-list))'
+
+   The syntax for numbers is Scheme's, so hex numbers are `#xnnnn'.  A
+value of `-' means use the next value (previous value plus 1).
+
+   Example:
+
+     (values "a" ("b") ("c" #x12)
+     	("d" - (sanitize foo)) ("e" #x1234 (sanitize bar)))
+
+Simplification macros
+---------------------
+
+   `(define-normal-enum name comment attrs prefix vals)'
+
+   `(define-normal-insn-enum name comment attrs prefix ifield vals)'
+
+
+File: cgen.info,  Node: Instruction operands,  Next: Derived operands,  Prev: Enumerated constants,  Up: RTL
+
+Instruction Operands
+====================
+
+   Instruction operands provide:
+
+   * a layer between the assembler and the raw hardware description
+
+   * the main means of manipulating instruction fields in the semantic
+     code
+
+   The syntax is:
+
+     (define-operand
+       (name operand-name)
+       (comment "description")
+       (attrs attribute-list)
+       (type hardware-element)
+       (index instruction-field)
+       (asm asm-spec)
+     )
+
+name
+----
+
+   This is the name of the operand as a Scheme symbol.  The name choice
+is fairly important as it is used in instruction syntax entries,
+instruction format entries, and semantic expressions.  It can't collide
+with symbols used in semantic expressions (e.g. `and', `set', etc).
+
+   The convention is that operands have no prefix (whereas ifields begin
+with `f-' and hardware elements begin with `h-').  A prefix like `o-'
+would avoid collisions with other semantic elements, but operands are
+used often enough that any prefix is a hassle.
+
+attrs
+-----
+
+   A list of attributes. In addition to attributes defined for the
+operand, an operand inherits the attributes of its instruction field.
+There are several predefined operand attributes:
+
+`NEGATIVE'
+     The operand contains negative values (not used yet so definition is
+     still nebulous.
+
+`RELAX'
+     This operand contains the changeable field (usually a branch
+     address) of a relaxable instruction.
+
+`SEM-ONLY'
+     Use the SEM-ONLY attribute for cases where the operand will only
+     be used in semantic specification, and not assembly code
+     specification.  A typical example is condition codes.
+
+   To refer to a hardware element in semantic code one must either use
+an operand or one of reg/mem/const.  Operands generally exist to map
+instruction fields to the selected hardware element and are easier to
+use in semantic code than referring to the hardware element directly
+(e.g. `sr' is easier to type and read than `(reg h-gr <index>)').
+Example:
+
+       (dnop condbit "condition bit" (SEM-ONLY) h-cond f-nil)
+
+   `f-nil' is the value to use when there is no instruction field
+
+type
+----
+
+   The hardware element this operand applies to. This must be the name
+of a hardware element.
+
+index
+-----
+
+   The index of the hardware element. This is used to mate the hardware
+element with the instruction field that selects it, and must be the name
+of an ifield entry. (*note: The index may be other things besides
+ifields in the future.)
+
+asm
+---
+
+   Sometimes it's necessary to escape to C to parse assembler, or print
+a value.  This field is an escape hatch to implement this.  The current
+syntax is:
+
+   `(asm asm-spec)'
+
+   where `asm-spec' is one or more of:
+
+   `(parse "function_suffix")' - a call to function
+`parse_<function_suffix>' is generated.
+
+   `(print "function_suffix")' - a call to function
+`print_<function_suffix>' is generated.
+
+   These functions are intended to be provided in a separate `.opc'
+file.  The prototype of a parse function depends on the hardware type.
+See `cgen/*.opc' for examples.
+
+   For integer it is:
+
+     static const char *
+     parse_foo (CGEN_CPU_DESC cd,
+     	   const char **strp,
+     	   int opindex,
+     	   unsigned long *valuep);
+
+   `cd' is the result of `<arch>_cgen_opcode_open'.  `strp' is a
+pointer to a pointer to the assembler and is updated by the function.
+`opindex' is ???.  `valuep' is a pointer to where to record the parsed
+value.  If a relocation is needed, it is queued with a call to ???.
+Queued relocations are processed after the instruction has been parsed.
+
+   The result is an error message or NULL if successful.
+
+   The prototype of a print function depends on the hardware type.  See
+`cgen/*.opc' for examples. For integers it is:
+
+     void print_foo (CGEN_CPU_DESC cd,
+                     PTR dis_info,
+                     long value,
+                     unsigned int attrs,
+                     bfd_vma pc,
+                     int length);
+
+   `cd' is the result of `<arch>_cgen_opcode_open'.  `ptr' is the
+`info' argument to print_insn_<arch>.  `value' is the value to be
+printed.  `attrs' is the set of boolean attributes.  `pc' is the PC
+value of the instruction.  `length' is the length of the instruction.
+
+   Actual printing is done by calling `((disassemble_info *)
+dis_info)->fprintf_func'.
+
+
+File: cgen.info,  Node: Derived operands,  Next: Instructions,  Prev: Instruction operands,  Up: RTL
+
+Derived Operands
+================
+
+   Derived operands are an experiment in supporting the addressing
+modes of CISC-like architectures.  Addressing modes are difficult to
+support as they essentially increase the number of instructions in the
+architecture by an order of magnitude.  Defining all the variants
+requires something in addition to the RISC-like architecture support.
+The theory is that since CISC-like instructions are basically "normal"
+instructions with complex operands the place to add the necessary
+support is in the operands.
+
+   Two kinds of operands exist to support CISC-like cpus, and they work
+together.  "derived-operands" describe one variant of a complex
+argument, and "anyof" operands group them together.
+
+   The syntax for defining derived operands is:
+
+     (define-derived-operand
+       (name operand-name)
+       (comment "description")
+       (attrs attribute-list)
+       (mode mode-name)
+       (args arg1-operand-name arg2-operand-name ...)
+       (syntax "syntax")
+       (base-ifield ifield-name)
+       (encoding (+ arg1-operand-name arg2-operand-name ...))
+       (ifield-assertion expression)
+       (getter expression)
+       (setter expression)
+     )
+
+   The syntax for defining anyof operands is:
+
+     (define-anyof-operand
+       (name operand-name)
+       (comment "description")
+       (attrs attribute-list)
+       (mode mode-name)
+       (base-ifield ifield-name)
+       (choices derived-operand1-name derived-operand2-name ...)
+     )
+
+mode
+----
+
+   The name of the mode of the operand.
+
+args
+----
+
+   List of names of operands the derived operand uses.  The operands
+must already be defined.  The argument operands can be any kind of
+operand: normal, derived, anyof.
+
+syntax
+------
+
+   Assembler syntax of the operand.
+
+   ??? This part needs more work.  Addressing mode specification in
+assembler needn't be localized to the vicinity of the operand.
+
+base-ifield
+-----------
+
+   The name of the instruction field common to all related derived
+operands.  Here related means "used by the same `anyof' operand".
+
+encoding
+--------
+
+   The machine encoding of the operand.
+
+ifield-assertion
+----------------
+
+   An assertion of what values any instruction fields will or will not
+have in the containing instruction.
+
+   ??? A better name for this might be "constraint".
+
+getter
+------
+
+   RTL expression to get the value of the operand.  All operands
+refered to must be specified in `args'.
+
+setter
+------
+
+   RTL expression to set the value of the operand.  All operands
+refered to must be specified in `args'.  Use `newval' to refer to the
+value to be set.
+
+choices
+-------
+
+   For anyof operands, the names of the derived operands.  The operand
+may be "any of" the specified choices.
+

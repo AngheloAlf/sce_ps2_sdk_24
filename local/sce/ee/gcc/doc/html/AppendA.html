@@ -1,0 +1,560 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE> Emotion Engine Tools User's Guide</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="ECOS" WIDTH="100%" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR>
+<TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">
+Emotion Engine Tools User's Guide</P>
+</TH></TR>
+<TR><TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEcontents.html">
+contents</A>
+</P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="Debugger.html">
+previous&nbsp;page</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="AppendB.html">
+next&nbsp;page</A></P>
+</TD>
+</TR></TABLE>
+<HR ALIGN="center">
+</DIV>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+</TD>
+</TR>
+</TABLE>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-998891"></A><A NAME="16489"></A>Sample Code<DIV>
+<IMG SRC="botclear.gif">
+</DIV>
+</H1>
+<P CLASS="BodyAfterHead">
+<A NAME="pgfId-998939"></A>Use the following sample code to verify that the SKY environment is installed correctly. For detailed instructions, refer to <A HREF="EEprocedures.html#30101" CLASS="XRef">Procedures</A>.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1007505"></A>Sample 1:  <A NAME="sample code"></A>sky_main.c</H2>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1006787"></A>&nbsp;</PRE>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1024914"></A>/* sky_main.c                              */
+
+extern int printf(const char *, ...);
+
+extern char My_dma_start[];
+extern char gpu_refresh;
+
+/* ------------- VU defines ---------------*/
+#define VPU_STAT_VBS1_MASK 0x00000100
+/* ----------end of VU defines ------------*/
+
+
+/* ------------- VIF defines --------------*/
+#define VIF1_STAT   (volatile int *) 0xb0003C00
+#define VIF1_STAT_FQC_MASK 0x1F000000
+#define VIF1_STAT_PPS_MASK 0x00000003
+/* ----------end of VIF defines -----------*/
+
+/* -------------- DMA defines -------------*/
+#define DMA_D0_CHCR  (volatile int*)0xb0008000
+#define DMA_D0_MADR  (volatile int*)0xb0008010
+#define DMA_D0_QWC   (volatile int*)0xb0008020
+#define DMA_D0_TADR  (volatile int*)0xb0008030
+#define DMA_D0_ASR0  (volatile int*)0xb0008040
+#define DMA_D0_ASR1  (volatile int*)0xb0008050
+
+#define DMA_D1_CHCR  (volatile int*)0xb0009000
+#define DMA_D1_MADR  (volatile int*)0xb0009010
+#define DMA_D1_QWC   (volatile int*)0xb0009020
+#define DMA_D1_TADR  (volatile int*)0xb0009030
+#define DMA_D1_ASR0  (volatile int*)0xb0009040
+#define DMA_D1_ASR1  (volatile int*)0xb0009050
+
+#define DMA_D2_CHCR  (volatile int*)0xb000a000
+#define DMA_D2_MADR  (volatile int*)0xb000a010
+#define DMA_D2_QWC   (volatile int*)0xb000a020
+#define DMA_D2_TADR  (volatile int*)0xb000a030
+#define DMA_D2_ASR0  (volatile int*)0xb000a040
+#define DMA_D2_ASR1  (volatile int*)0xb000a050
+
+#define DMA_D_CTRL   (volatile int*)0xb000e000
+#define DMA_D_STAT   (volatile int*)0xb000e010
+
+/* Dn_CHCR definition values               */
+#define MODE_NORM       0
+#define MODE_CHAIN      (1 &lt;&lt; 2)
+#define MODE_INTR       (2 &lt;&lt; 2)
+#define DMA_START       (1 &lt;&lt; 8)
+#define DMA_Dn_CHCR__TTE  0x00000040
+#define DMA_Dn_CHCR__DIR  0x00000001
+/* ----------end of DMA defines -----------*/
+
+void DMA_enable (void)
+{
+  *DMA_D_CTRL = 0x01;   /* DMA enable.     */
+}
+
+/* If DMA mode is source chain.            */ 
+void start_DMA_ch1_source_chain (void* data)
+{
+  *DMA_D_CTRL  = 0x01;  /* DMA enable.     */
+  *DMA_D1_QWC  = 0x00;
+  *DMA_D1_TADR = (int)data; 
+  *DMA_D1_CHCR = MODE_CHAIN | DMA_START | DMA_Dn_CHCR__TTE | 1;
+
+}
+
+/* If DMA mode is normal.                  */
+void start_DMA_ch1_normal (void* data, int qwc)
+{
+  *DMA_D_CTRL  = 0x01;  /* DMA enable.     */
+  *DMA_D1_QWC  = qwc;   /* 8 is sample.    */
+  *DMA_D1_MADR = (int)data; 
+  *DMA_D1_CHCR = MODE_NORM | DMA_START | DMA_Dn_CHCR__TTE | 1;
+}
+
+void enable_cop2() 
+{
+  asm (&quot;mfc0 $3,$12; dli $2,0x40000000; or $3,$2,$2; mtc0 $3,$12&quot;);
+}
+
+int check_VPU_STAT() 
+{
+  asm (&quot;cfc2 $2, $29&quot;);
+}
+
+void wait_until_idle()
+{
+  int vif1_stat, vpu_stat;
+  
+  do 
+  {
+    vif1_stat = *VIF1_STAT;
+    vpu_stat = check_VPU_STAT();
+  } while (!( (vif1_stat &amp; VIF1_STAT_PPS_MASK) == 0
+           &amp;&amp; (vif1_stat &amp; VIF1_STAT_FQC_MASK) == 0
+           &amp;&amp; (vpu_stat  &amp; VPU_STAT_VBS1_MASK) == 0));
+}
+
+void wait_a_while ()
+{
+  int i;
+  for (i=0; i&lt;200000; i++) {}
+}
+
+int main() 
+{
+  enable_cop2();
+  start_DMA_ch1_source_chain(&amp;My_dma_start);
+  wait_until_idle();
+  start_DMA_ch1_source_chain(&amp;gpu_refresh);
+  wait_a_while();
+
+  return 0;
+}
+</PRE>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1006953"></A>Sample 2:  <A NAME="sample code"></A>sky_test.dvpasm</H2>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1006956"></A>&nbsp;</PRE>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1007695"></A>.org 0x20000
+
+.macro iwzyx  i1, i2, i3, i4
+.int &#92;i4, &#92;i3, &#92;i2, &#92;i1
+.endm
+
+.global My_dma_start
+.text
+My_dma_start:
+.DmaPackVif 0
+
+
+DMAref *, data0
+
+.section &quot;.dmadata&quot;, &quot;aw&quot;
+.DmaData data0
+STCYCL 4, 4
+STMASK 0x00000000
+STMOD direct
+.EndDmaData
+
+.text
+DMAcnt *
+MPG *, *
+.include &quot;sky_test.vuasm&quot; 
+.endmpg
+.EndDmaData
+
+DMAcnt *
+DIRECT *
+GIFpacked REGS={A_D}, NLOOP=13, EOP
+iwzyx 0x00000000, 0x0000004c, 0x00000000, 0x000a0000
+iwzyx 0x00000000, 0x00000040, 0x01df0000, 0x027f0000
+iwzyx 0x00000000, 0x0000001a, 0x00000000, 0x00000001
+iwzyx 0x00000000, 0x0000004e, 0x00000000, 0x01000096
+iwzyx 0x00000000, 0x00000046, 0x00000000, 0x00000001
+iwzyx 0x00000000, 0x00000047, 0x00000000, 0x00000000
+iwzyx 0x00000000, 0x00000018, 0x00000000, 0x00000000
+iwzyx 0x00000000, 0x00000000, 0x00000000, 0x00000006
+iwzyx 0x00000000, 0x00000001, 0x00000000, 0x00000000
+iwzyx 0x00000000, 0x00000004, 0x00000000, 0x00000000
+iwzyx 0x00000000, 0x00000004, 0x00000000, 0x1e002800
+iwzyx 0x00000000, 0x00000047, 0x00000000, 0x00070000
+iwzyx 0x00000000, 0x00000018, 0x00007100, 0x00006c00
+.endgif
+.EndDirect
+.EndDmaData
+
+DMAcnt *
+unpack V4_32, 0, *
+iwzyx 0x00000000, 0xbf333333, 0x00000000, 0x3f333333
+iwzyx 0x00000000, 0xbf333333, 0x00000000, 0xbf333333
+iwzyx 0x3f800000, 0x44800000, 0x00000000, 0x00000000
+.EndUnpack
+.EndDmaData
+
+
+DMAcnt *
+unpack V4_32, 22, *
+iwzyx 0x00000000, 0x00000000, 0x00000000, 0x3f800000
+iwzyx 0x00000000, 0x00000000, 0x3f800000, 0x00000000
+iwzyx 0x00000000, 0x3f800000, 0x00000000, 0x00000000
+iwzyx 0x3f800000, 0x44000000, 0x00000000, 0x00000000
+.EndUnpack
+unpack V4_32, 26, *
+iwzyx 0x00000000, 0x00000000, 0x00000000, 0x44000000
+iwzyx 0x00000000, 0x00000000, 0x44000000, 0x00000000
+iwzyx 0x3f800000, 0x46746000, 0x45000000, 0x45000000
+iwzyx 0x00000000, 0x4e746119, 0x00000000, 0x00000000
+.EndUnpack
+unpack V4_32, 30, *
+iwzyx 0x00000000, 0x00000000, 0x00000000, 0x00000000
+iwzyx 0x00000000, 0x00000000, 0x00000000, 0x00000000
+iwzyx 0x00000000, 0x00000000, 0x00000000, 0x00000000
+iwzyx 0x00000000, 0x00000000, 0x00000000, 0x00000000
+.EndUnpack
+MSCAL 0
+BASE 40
+OFFSET 30
+.EndDmaData
+
+DMAcnt *
+unpack[r] V4_32, 0, *
+iwzyx 0x00000000, 0x00000041, 0x20064000, 0x00008008
+.EndUnpack
+unpack[r] V4_32, 1, *
+iwzyx 0x00000000, 0x42800000, 0x437f0000, 0x437f0000
+iwzyx 0x00000000, 0x437f0000, 0x42800000, 0x437f0000
+iwzyx 0x00000000, 0x437f0000, 0x437f0000, 0x42800000
+iwzyx 0x00000000, 0x42800000, 0x42800000, 0x437f0000
+iwzyx 0x00000000, 0x42800000, 0x437f0000, 0x42800000
+iwzyx 0x00000000, 0x437f0000, 0x42800000, 0x42800000
+iwzyx 0x00000000, 0x437f0000, 0x437f0000, 0x437f0000
+iwzyx 0x00000000, 0x42800000, 0x42800000, 0x42800000
+.EndUnpack
+unpack[r] V4_32, 9, *
+iwzyx 0x3f800000, 0xc2c80000, 0x42c80000, 0x42c80000
+iwzyx 0x3f800000, 0xc2c80000, 0x42c80000, 0xc2c80000
+iwzyx 0x3f800000, 0xc2c80000, 0xc2c80000, 0x42c80000
+iwzyx 0x3f800000, 0xc2c80000, 0xc2c80000, 0xc2c80000
+iwzyx 0x3f800000, 0x42c80000, 0xc2c80000, 0x42c80000
+iwzyx 0x3f800000, 0x42c80000, 0xc2c80000, 0xc2c80000
+iwzyx 0x3f800000, 0x42c80000, 0x42c80000, 0x42c80000
+iwzyx 0x3f800000, 0x42c80000, 0x42c80000, 0xc2c80000
+.EndUnpack
+unpack[r] V4_32, 17, *
+iwzyx 0x3f800000, 0xbf13d07d, 0x3f13d07d, 0x3f13d07d
+iwzyx 0x3f800000, 0xbf13d07d, 0x3f13d07d, 0xbf13d07d
+iwzyx 0x3f800000, 0xbf13d07d, 0xbf13d07d, 0x3f13d07d
+iwzyx 0x3f800000, 0xbf13d07d, 0xbf13d07d, 0xbf13d07d
+iwzyx 0x3f800000, 0x3f13d07d, 0xbf13d07d, 0x3f13d07d
+iwzyx 0x3f800000, 0x3f13d07d, 0xbf13d07d, 0xbf13d07d
+iwzyx 0x3f800000, 0x3f13d07d, 0x3f13d07d, 0x3f13d07d
+iwzyx 0x3f800000, 0x3f13d07d, 0x3f13d07d, 0xbf13d07d
+.EndUnpack
+MSCNT
+unpack[r] V4_32, 0, *
+iwzyx 0x00000000, 0x00000041, 0x20064000, 0x00008008
+.EndUnpack
+unpack[r] V4_32, 1, *
+iwzyx 0x00000000, 0x42800000, 0x437f0000, 0x437f0000
+iwzyx 0x00000000, 0x437f0000, 0x42800000, 0x437f0000
+iwzyx 0x00000000, 0x437f0000, 0x437f0000, 0x42800000
+iwzyx 0x00000000, 0x42800000, 0x42800000, 0x437f0000
+iwzyx 0x00000000, 0x42800000, 0x437f0000, 0x42800000
+iwzyx 0x00000000, 0x437f0000, 0x42800000, 0x42800000
+iwzyx 0x00000000, 0x437f0000, 0x437f0000, 0x437f0000
+iwzyx 0x00000000, 0x42800000, 0x42800000, 0x42800000
+.EndUnpack
+unpack[r] V4_32, 9, *
+iwzyx 0x3f800000, 0xc2c80000, 0xc2c80000, 0x42c80000
+iwzyx 0x3f800000, 0x42c80000, 0xc2c80000, 0x42c80000
+iwzyx 0x3f800000, 0xc2c80000, 0x42c80000, 0x42c80000
+iwzyx 0x3f800000, 0x42c80000, 0x42c80000, 0x42c80000
+iwzyx 0x3f800000, 0xc2c80000, 0x42c80000, 0xc2c80000
+iwzyx 0x3f800000, 0x42c80000, 0x42c80000, 0xc2c80000
+iwzyx 0x3f800000, 0xc2c80000, 0xc2c80000, 0xc2c80000
+iwzyx 0x3f800000, 0x42c80000, 0xc2c80000, 0xc2c80000
+.EndUnpack
+unpack[r] V4_32, 17, *
+iwzyx 0x3f800000, 0xbf13d07d, 0x3f13d07d, 0x3f13d07d
+iwzyx 0x3f800000, 0xbf13d07d, 0x3f13d07d, 0xbf13d07d
+iwzyx 0x3f800000, 0xbf13d07d, 0xbf13d07d, 0x3f13d07d
+iwzyx 0x3f800000, 0xbf13d07d, 0xbf13d07d, 0xbf13d07d
+iwzyx 0x3f800000, 0x3f13d07d, 0xbf13d07d, 0x3f13d07d
+iwzyx 0x3f800000, 0x3f13d07d, 0xbf13d07d, 0xbf13d07d
+iwzyx 0x3f800000, 0x3f13d07d, 0x3f13d07d, 0x3f13d07d
+iwzyx 0x3f800000, 0x3f13d07d, 0x3f13d07d, 0xbf13d07d
+.EndUnpack
+MSCNT
+.EndDmaData
+
+DMAend
+</PRE>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1009172"></A>Sample 3:  <A NAME="sample code"></A>sky_test.vuasm</H2>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1018517"></A><KBD CLASS="Code"></KBD>
+&nbsp;</PRE>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1024918"></A><KBD CLASS="Code">vu_main: SUB.xyzw VF16, VF00, VF00      IADDIU VI01, VI00, 0
+         NOP                            IADDIU VI02, VI00, 22
+         NOP                            NOP
+         NOP                            BAL VI15, RotMatrix
+         NOP                            NOP
+         NOP                            IADDIU VI01, VI00, 26
+         NOP                            IADDIU VI02, VI00, 22
+         NOP                            IADDIU VI03, VI00, 30
+         NOP                            NOP
+         NOP                            BAL VI15, MulMatrix
+         NOP                            NOP
+         NOP                            IADDIU VI04, VI00, 30
+         NOP                            NOP
+         NOP                            NOP
+         NOP                            NOP
+         NOP                            LQI.xyzw VF04, (VI04++)
+         NOP                            LQI.xyzw VF05, (VI04++)
+         NOP                            LQI.xyzw VF06, (VI04++)
+         NOP                            LQI.xyzw VF07, (VI04++)
+         NOP                            IADDIU VI01, VI00, 0x7fff
+         NOP                            IADDIU VI03, VI00, 1
+         NOP                            IADDIU VI09, VI00, 0
+         NOP                            NOP
+         NOP[e]                         NOP
+         NOP                            NOP
+LOOPE:   NOP                            IBNE VI09, VI00, CONT
+         NOP                            XTOP VI05
+         NOP                            IADDIU VI12, VI00, 95
+CONT:    NOP                            NOP
+         NOP                            NOP
+         NOP                            ILW.x VI11, 0(VI05)
+         NOP                            IADDIU VI08, VI05, 1
+         NOP                            NOP
+         NOP                            NOP
+         NOP                            IAND VI11, VI11, VI01
+         NOP                            NOP
+         NOP                            NOP
+         NOP                            NOP
+         NOP                            IADD VI06, VI08, VI11
+         NOP                            IADD VI02, VI11, VI00
+         NOP                            NOP
+         NOP                            NOP
+         NOP                            LQI.xyzw VF30, (VI06++)
+         NOP                            IADDIU VI07, VI12, 4
+         NOP                            IADDIU VI13, VI12, 5
+LOOP0:   NOP                            LQI.xyzw VF21, (VI08++)
+         NOP                            IADDI VI11, VI11, -1
+         NOP                            NOP
+         NOP                            NOP
+         FTOI0.xyzw VF22, VF21          NOP
+         NOP                            NOP
+         NOP                            NOP
+         NOP                            NOP
+         NOP                            SQ.xyzw VF22, 0(VI13)
+         NOP                            IBNE VI11, VI00, LOOP0
+         NOP                            IADDIU VI13, VI13, 2
+         NOP                            IADD VI11, VI02, VI00
+         NOP                            NOP
+LOOP1:   MULw.xyzw VF29, VF31, VF00w    DIV Q, VF00w, VF31w
+         MULAx.xyzw ACC, VF04, VF30x    SQ.xyzw VF27, 0(VI12)
+         MADDAy.xyzw ACC, VF05, VF30y   IADDI VI11, VI11, -1
+         MADDAz.xyzw ACC, VF06, VF30z   IADDI VI12, VI12, 2
+         MADDw.xyzw VF31, VF07, VF30w   NOP
+         FTOI4.xyzw VF27, VF28          LQI.xyzw VF30, (VI06++)
+         NOP                            IBNE VI11, VI00, LOOP1
+         MULq.xyzw VF28, VF29, Q        NOP
+         NOP                            DIV Q, VF00w, VF31w
+         NOP                            SQ.xyzw VF27, 0(VI12)
+         NOP                            IADDI VI12, VI12, 2
+         NOP                            LQ.xyzw VF20, 0(VI05)
+         NOP                            NOP
+         FTOI4.xyzw VF27, VF28          NOP
+         NOP                            NOP
+         MULq.xyzw VF28, VF31, Q        SQ.xyzw VF20, 0(VI07)
+         NOP                            NOP
+         NOP                            SQ.xyzw VF27, 0(VI12)
+         NOP                            IADDI VI12, VI12, 2
+         FTOI4.xyzw VF27, VF28          NOP
+         NOP                            NOP
+         NOP                            NOP
+         NOP                            NOP
+         NOP                            SQ.xyzw VF27, 0(VI12)
+         NOP                            IADDI VI12, VI12, 2
+         NOP                            NOP
+         NOP                            NOP
+         NOP                            XGKICK VI07
+         NOP                            ISUB VI09, VI03, VI09
+         NOP                            NOP
+         NOP[e]                         NOP
+         NOP                            NOP
+         NOP                            B LOOPE
+         NOP                            NOP
+MulMatrix: NOP                          LQI.xyzw VF08, (VI02++) 
+         NOP                            LQI.xyzw VF04, (VI01++)
+         NOP                            LQI.xyzw VF05, (VI01++)
+         NOP                            LQI.xyzw VF06, (VI01++)
+         NOP                            LQI.xyzw VF07, (VI01++)
+         MULAx.xyzw ACC, VF04, VF08x    LQI.xyzw VF09, (VI02++)
+         MADDAy.xyzw ACC, VF05, VF08y   NOP
+         MADDAz.xyzw ACC, VF06, VF08z   NOP
+         MADDw.xyzw VF12, VF07, VF08w   NOP
+         MULAx.xyzw ACC, VF04, VF09x    LQI.xyzw VF10, (VI02++)
+         MADDAy.xyzw ACC, VF05, VF09y   NOP
+         MADDAz.xyzw ACC, VF06, VF09z   NOP
+         MADDw.xyzw VF13, VF07, VF09w   SQI.xyzw VF12, (VI03++)
+         MULAx.xyzw ACC, VF04, VF10x    LQI.xyzw VF11, (VI02++)
+         MADDAy.xyzw ACC, VF05, VF10y   NOP
+         MADDAz.xyzw ACC, VF06, VF10z   NOP
+         MADDw.xyzw VF14, VF07, VF10w   SQI.xyzw VF13, (VI03++)
+         MULAx.xyzw ACC, VF04, VF11x    NOP
+         MADDAy.xyzw ACC, VF05, VF11y   NOP
+         MADDAz.xyzw ACC, VF06, VF11z   NOP
+         MADDw.xyzw VF15, VF07, VF11w   SQI.xyzw VF14, (VI03++)
+         NOP                            NOP
+         NOP                            NOP
+         NOP                            NOP
+         NOP                            SQI.xyzw VF15, (VI03++)
+         NOP                            NOP
+         NOP                            JR VI15
+         NOP                            NOP
+RotMatrix: MULx.xyzw VF04, VF00, VF00x  LQI.xyzw VF01, (VI01++)
+         MULx.xyzw VF05, VF00, VF00x    LQI.xyzw VF02, (VI01++)
+         MULx.xyzw VF06, VF00, VF00x    LQI.xyzw VF03, (VI01++)
+         NOP                            LOI 1.5707963
+         ADDw.x VF04, VF04, VF00w       ESIN P, VF01x
+         NOP                            NOP
+         NOP                            NOP
+         ADDi.xyzw VF02, VF02, I        NOP
+         NOP                            WAITP
+         NOP                            MFP.z VF05z, P
+         NOP                            MFP.y VF06y, P
+         NOP                            ESIN P, VF02x
+         NOP                            NOP
+         NOP                            NOP
+         SUB.xyzw VF06, VF16, VF06      NOP
+         NOP                            WAITP
+         NOP                            MFP.y VF05y, P
+         NOP                            MFP.z VF06z, P
+         MULx.xyzw VF07, VF00, VF00x    ESIN P, VF01y
+         MULx.xyzw VF08, VF00, VF00x    NOP
+         MULx.xyzw VF09, VF00, VF00x    NOP
+         NOP                            NOP
+         NOP                            NOP
+         ADDw.y VF08, VF08, VF00w       NOP
+         NOP                            WAITP
+         NOP                            MFP.z VF07z, P
+         NOP                            MFP.x VF09x, P
+         NOP                            ESIN P, VF02y
+         NOP                            NOP
+         SUB.xyzw VF07, VF16, VF07      NOP
+         NOP                            WAITP
+         NOP                            MFP.x VF07x, P
+         NOP                            MFP.z VF09z, P
+         MULx.xyzw VF10, VF00, VF00x    ESIN P, VF01z
+         MULx.xyzw VF11, VF00, VF00x    NOP
+         MULx.xyzw VF12, VF00, VF00x    NOP
+         MULAx.xyz ACC, VF04, VF07x     NOP
+         MADDAy.xyz ACC, VF05, VF07y    NOP
+         MADDz.xyz VF07, VF06, VF07z    NOP
+         ADDw.z VF12, VF12, VF00w       NOP
+         MULAx.xyz ACC, VF04, VF08x     NOP
+         MADDAy.xyz ACC, VF05, VF08y    NOP
+         MADDz.xyz VF08, VF06, VF08z    NOP
+         MULAx.xyz ACC, VF04, VF09x     NOP
+         MADDAy.xyz ACC, VF05, VF09y    NOP
+         MADDz.xyz VF09, VF06, VF09z    NOP
+         NOP                            WAITP
+         NOP                            MFP.y VF10y, P
+         NOP                            MFP.x VF11x, P
+         NOP                            ESIN P, VF02z
+         NOP                            NOP
+         NOP                            NOP
+         SUB.xyzw VF11, VF16, VF11      NOP
+         NOP                            WAITP
+         NOP                            MFP.x VF10x, P
+         NOP                            MFP.y VF11y, P
+         NOP                            NOP
+         NOP                            NOP
+         MULAx.xyz ACC, VF07, VF10x     NOP
+         MADDAy.xyz ACC, VF08, VF10y    NOP
+         MADDz.xyz VF10, VF09, VF10z    NOP
+         MULAx.xyz ACC, VF07, VF11x     NOP
+         MADDAy.xyz ACC, VF08, VF11y    NOP
+         MADDz.xyz VF11, VF09, VF11z    NOP
+         MULAx.xyz ACC, VF07, VF12x     NOP
+         MADDAy.xyz ACC, VF08, VF12y    NOP
+         MADDz.xyz VF12, VF09, VF12z    NOP
+         NOP                            NOP
+         NOP                            SQI.xyz VF10, (VI02++)
+         NOP                            SQI.xyz VF11, (VI02++)
+         NOP                            SQI.xyz VF12, (VI02++)
+         NOP                            SQI.xyz VF03, (VI02++)
+         NOP                            NOP
+         NOP                            JR VI15
+         NOP                            NOP 
+</KBD>
+</PRE>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-1009371"></A>Sample 4:  <A NAME="sample code"></A>sky_refresh.s</H1>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1007413"></A>&nbsp;</PRE>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1007427"></A>.macro iwzyx i1, i2, i3, i4
+.int &#92;i4, &#92;i3, &#92;i2, &#92;i1
+.endm
+
+.global gpu_refresh
+DMAcnt *
+direct *
+GIFpacked REGS={A_D}, NLOOP=1, EOP
+iwzyx 0x00000000, 0x0000007f, 0x00000000, 0x00000000
+.endgif					
+.EndDirect
+.EndDmaData
+DMAend
+</PRE>
+<HR ALIGN="center">
+<TABLE CLASS="ECOS" WIDTH="100%" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">Emotion Engine Tools User's Guide</P>
+</TH></TR>
+<TR><TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="EEcontents.html">
+contents</A></P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="Debugger.html">
+previous&nbsp;page</A></P></TD>
+<TD  ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="appendB.html">
+next&nbsp;page</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

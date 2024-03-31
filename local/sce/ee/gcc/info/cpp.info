@@ -1,0 +1,84 @@
+This is Info file cpp.info, produced by Makeinfo version 1.68 from the
+input file ../../src/gcc/cpp.texi.
+
+INFO-DIR-SECTION Programming
+START-INFO-DIR-ENTRY
+* Cpp: (cpp).		       The GNU C preprocessor.
+END-INFO-DIR-ENTRY
+
+   This file documents the GNU C Preprocessor.
+
+   Copyright 1987, 1989, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998,
+1999, 2000 Free Software Foundation, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the entire resulting derived work is distributed under the terms
+of a permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions.
+
+
+Indirect:
+cpp.info-1: 958
+cpp.info-2: 48171
+cpp.info-3: 98020
+
+Tag Table:
+(Indirect)
+Node: Top958
+Node: Global Actions4068
+Node: Directives7769
+Node: Header Files9267
+Node: Header Uses9991
+Node: Include Syntax11478
+Node: Include Operation14508
+Node: Once-Only16372
+Node: Inheritance18547
+Node: System Headers21218
+Node: Macros22723
+Node: Object-like Macros23810
+Node: Function-like Macros26492
+Node: Macro Varargs32710
+Node: Predefined35965
+Node: Standard Predefined36393
+Node: Nonstandard Predefined44595
+Node: Stringification48171
+Node: Concatenation51092
+Node: Undefining54041
+Node: Redefining55080
+Node: Poisoning56738
+Node: Macro Pitfalls57464
+Node: Misnesting58560
+Node: Macro Parentheses59567
+Node: Swallow Semicolon61431
+Node: Side Effects63344
+Node: Self-Reference65042
+Node: Argument Prescan67263
+Node: Cascaded Macros72200
+Node: Newlines in Args73349
+Node: Conditionals74390
+Node: Conditional Uses75681
+Node: Conditional Syntax77104
+Node: #if Directive77690
+Node: #else Directive80052
+Node: #elif Directive80717
+Node: Deleted Code82095
+Node: Conditionals-Macros83154
+Node: #error Directive86846
+Node: Assertions88463
+Node: Line Control92735
+Node: Other Directives95640
+Node: Output98020
+Node: Unreliable Features99727
+Node: Invocation105788
+Node: Concept Index122001
+Node: Index125492
+
+End Tag Table

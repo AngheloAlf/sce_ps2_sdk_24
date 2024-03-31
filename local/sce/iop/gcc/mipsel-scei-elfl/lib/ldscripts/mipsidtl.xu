@@ -1,0 +1,41 @@
+OUTPUT_FORMAT("ecoff-littlemips", "ecoff-bigmips",
+	      "ecoff-littlemips")
+ SEARCH_DIR(/usr/local/sce/iop/gcc//mipsel-scei-ecoffl/lib);
+ENTRY(start)
+SECTIONS
+{
+  .text : {
+    ;
+    *(.init)
+    ;
+    *(.text)
+    *(.rel.sdata)
+    *(.fini)
+    ;
+    ;
+  }
+  .rdata : {
+    *(.rdata)
+  }
+  .data : {
+    *(.data)
+    CONSTRUCTORS
+  }
+  .lit8 : {
+    *(.lit8)
+  }
+  .lit4 : {
+    *(.lit4)
+  }
+  .sdata : {
+    *(.sdata)
+  }
+  .sbss : {
+    *(.sbss)
+    *(.scommon)
+  }
+  .bss : {
+    *(.bss)
+    *(COMMON)
+  }
+}

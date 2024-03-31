@@ -1,0 +1,372 @@
+[SCE CONFIDENTIAL DOCUMENT]
+"PlayStation 2" Programmer Tool Tool Chain EE 2.96-ee-001003-1
+                Copyright (C) 2002 Sony Computer Entertainment Inc.
+                                                   All Rights Reserved
+
+			    Caution, Changes and Known Bugs in ee-gcc
+----------------------------------------------------------------------
+Bug Information
+----------------------------------------------------------------------
+- When ee-gasp interpretes the numbers after the decimal point of the 
+  floating-point leteral as integers, and if the numbers exceed the 
+  INT_MAX of the C compiler that had built the ee-gasp, then the 
+  literal is not output correctly.
+  
+  Prevention: Enclose the floating-point literal with '\(' and  '\)'.
+
+- In optimizing the compiler, a few bugs have been detected.
+  
+  Prevention: This is currently being investigated. The actual cause is 
+  still unknown, and so is a definite prevention measure. If the program 
+  does not operate correctly, and the compiler may cause the problem, 
+  then try to prevent this problem by adjusting the respective 
+  optimization options.
+
+- If the number of sections contained in the object file of the target 
+  program is more than 40, then ee-gdb will core dump while it is being 
+  started up. 
+
+  Prevention: To keep the number of the sections of execution files 
+  under 40, adjust the linker script to allocate collectable input 
+  sections in the same output sections as much as possible.
+
+- If a symbol of absolute attribute is included in the object file, and 
+  the option of the linker, --gc-sections are specified, then the linker 
+  will core dump. For example, the symbol, baz is the absolute attribute 
+  in the following assembly language source code.
+
+            .globl  foo
+            .globl  bar
+            .globl  baz
+    foo:    .word   0
+    bar:
+            baz = bar - foo
+
+  Prevention: This can be avoided by not specifying the --gc-sections. 
+  It is considered that the absolute attribute symbol is not created 
+  unless it is generated intentionally as shown above, and therefore, 
+  this type of failure would hardly be a problem.
+
+- With ee-gdb, source code of inline function cannot be displayed and 
+  also, a break point cannot be set. (Currently, the failure is detected 
+  only with C++)
+
+  Prevention: Only when debugging, specify the option, 
+  -fno-default-inline and then compile.
+
+- Specify the option of compiler, -fshort-double, and then compile it, 
+  then the double argument is not provided correctly for the function 
+  of variable argument .
+
+  Prevention: None.
+
+- If nested functions in the gcc extension are used, then linking will 
+  fail.
+
+  Prevention: None.
+
+- If __complex__ in the gcc extension is used, then an internal error will 
+  occur in the compiler.  
+
+  Prevention: None.
+
+- If shifted JIS code is contained in comments in C++, an error occurs 
+  as the codes on the next line will also be recognized as a part of 
+  the comment.
+
+  Prevention: Set C-SJIS to LANG environment variable.
+
+
+------------------------------------------------------------------------
+Major Changes from the Previous ee-gcc Release 
+(Tool Chain ee-001003-update-01)
+------------------------------------------------------------------------
+- ee-dvp-as displayed a wrong warning message of dependence between 
+  instructions. This problem has been fixed.
+
+- The linker generated an invalid error when OVERLAY command was used 
+  in linker script. This problem has been fixed.	
+	
+- With variable argument macro in the gcc extension, when ',' and '##' 
+  are followed by variable portions, a warning message that implies 
+  the join of the pretreatment tokens has failed appeared. 
+  This problem has been fixed.
+
+- ee-ld generated an internal error. This problem has been fixed.
+
+- ee-g++ generated an internal error. This problem has been fixed.
+
+- Definitions of macros; M_TRIM_THRESHOLD and M_TOP_PAD have been 
+  added in malloc.h.
+
+- The number of NOP instructions, which are added to the loop to avoid 
+  a short loop bug in the Emotion Engine, often exceeded the necessary 
+  volume. This problem has been fixed.
+
+- When a type name is assigned in multidimensional array by using 
+  typedef in C++ source code, and even if an aligned attribute is 
+  specified, the array with the element of that type would not be 
+  located in the specified memory boundary. This problem has been fixed.
+
+- Even if the environment variable, LANG is set to C-SJIS, the shifted 
+  JIS codes in the source file were not recognized correctly. This 
+  problem has been fixed.
+
+- gdb core dumped before a command prompt appears. This problem has 
+  been fixed.
+  
+- A declaration which implies, 'A declaration without a member name' 
+  exists in member declarations in the structure, and error did not 
+  occur when it was not struct/union. This problem has been fixed.
+
+- With f conversion for printf function, the value within the 
+  precision range was converted to "0," not to 0.0, and 0.0 was 
+  converted to "0.00...0." This problem has been fixed.
+
+- When multiple numbers of object files including sections with names 
+  that start with .DVP.overlay  are linked, occasionally ee-ld did 
+  not output correct object files. This problem has been fixed. 
+  (Please also refer to the notes and restrictions section)
+
+- When a debug option, -g is specified, g++ generated an internal error.
+  This problem has been fixed.
+
+- In forwarding between the registers from core to core processor, 
+  when the core processor's register at the forwarding destination is 
+  referred by an instruction issued immediately after the forwarding, 
+  as fills nop in between. (In this case, the pipeline interlocks in 
+  the EE, so nop is not needed) This problem has been fixed.
+
+- With compiling C/C++ source files, ee-as often detected errors. 
+  This problem has been fixed.
+
+- Floating point handling has been modified as follows.
+  	(1) Round mode has been set to round the number towards zero.
+   	
+	(2) The maximum and minimum positive numbers of the double 
+	    which can be represented with float have been defined as 
+	    macro. (DBL_MAX_FLT_COMPAT and DBL_MIN_FLT_COMPAT, 
+	    respectively)
+	    They can be used by including float.h.
+	
+	(3) In conversion from the double to float, if the value prior 
+	    to conversion cannot be represented with the float, it will 
+	    be handled as follows:
+   	
+		 (i) If the value is smaller than the minimum value that 
+		     can be represented with the float, it will be 
+		     converted to 0.0f.
+ 		(ii) If the value is larger than the maximum value 
+		     represented with the float, then it is equivalent 
+		     to the infinite bit pattern defined in IEEE 754.        
+         
+	(4) The value of the double which used to be treated as a denormal 
+	    value in the previous version is now treated as 0.0.  
+	    Bit patterns and the interpretations are shown in the table 
+	    below.
+
+
+  For double (Same when the code bit is 1)
+  --------------------------+-------------------------------
+      Bit patters           | Value
+  Code|  Index   | Mantissa | Meanings
+  ----+----------+----------+-------------------------------
+    0 | 11 .. 11 | 11 .. 11 |
+   ...|   ...    |   ...    | Non value
+    0 | 11 .. 11 | 00 .. 01 |
+  ----+----------+----------+-------------------------------
+    0 | 11 .. 11 | 00 .. 00 | Infinite (Depends on the code bit)
+  ----+----------+----------+-------------------------------
+    0 | 11 .. 10 | 11 .. 11 |
+   ...|   ...    |   ...    | Normal
+    0 | 00 .. 01 | 00 .. 00 | values
+  ----+----------+----------+-------------------------------
+    0 | 00 .. 00 | 00 .. 00 |
+   ...|   ...    |          | 0.0
+    0 | 00 .. 00 | 11 .. 11 |
+
+
+ For float (Same when the code bit is 1)
+  --------------------------+---------
+     Bit patterns           | Value 
+  Code|  Index   | Mantissa | Meanings
+  ----+----------+----------+---------
+    0 | 11 .. 11 | 11 .. 11 |
+   ...|   ...    |   ...    | Normal
+    0 | 00 .. 01 | 00 .. 00 | value
+  ----+----------+----------+---------
+    0 | 00 .. 00 | 00 .. 00 |
+   ...|   ...    |   ...    | 0.0
+    0 | 00 .. 00 | 11 .. 11 |
+
+
+------------------------------------------------------------------------
+Caution and Restrictions
+------------------------------------------------------------------------
+1. Error on Linking
+------------------------------------------------------------------------
+
+    relocation truncated to fit: R_MIPS_GPREL16 _impure_ptr
+
+This error might occur on linking if a value except 0 is set to the 
+option -G (8 is its default) when compiling a program meeting the 
+following conditions.
+
+	A program which uses stdin, stdout, or stderr directly
+	A program which uses a macro such as putchar where stdin, stdout,
+	or stderr appear in the source as a result of macro expansion
+
+If this error is found, please follow any of measures described below.
+
+- Compiling all the source files with the -G0 option.
+  If there is no global variables with external access in a source file 
+  where stdin, stdout, or stderr is directly described, specify the -G0 
+  option only when compiling such a file.     
+
+- Re-generating the standard library without 
+  /usr/local/sce/ee/gcc/sce-patch.
+
+- Using stdin, stdout, or stderr indirectly via files such as my-stdio.h 
+  and my-stdio.c shown below.
+
+  e.g.
+
+        #include "my-stdio.h"
+        #include <stdio.h>
+
+        int main()
+        {
+            fprintf(MY_STDOUT, "Hello\n");
+            /* Using MY_STDOUT not stdout */
+            return 0;
+        }
+
+
+  my-stdio.h:
+       /* Including this prior to stdio.h */
+        #define MY_STDIN my_stdin()
+        #define MY_STDOUT my_stdout()
+        #define MY_STDERR my_stderr()
+
+        FILE *my_stdin();
+        FILE *my_stdout();
+        FILE *my_stderr();
+
+  my-stdio.c:
+         /* Compiling with the option -G0 */
+        #include <stdio.h>
+
+        FILE *my_stdin()
+        {
+            return stdin;
+        }
+
+        FILE *my_stdout()
+        {
+            return stdout;
+        }
+
+        FILE *my_stderr()
+        {
+            return stdout;
+        }
+
+
+------------------------------------------------------------------------
+2. Expression Exceeding Accuracy of Float Type
+------------------------------------------------------------------------
+The compiler detects an expression that can calculate a value when 
+compiling, and replaces the value of such an expression with 
+a constant.  To what extent computable expressions are detected depends 
+on the level of optimization.  Therefore, it is possible that an
+expression to be calculated during compilation when the program was
+optimized might be calculated not during compilation but during execution.
+There is a difference in the degree of conformity with IEEE 754 between
+the fpu specification of the Emotion Engine and that for the calculation
+of compiler when compiling.  So, these values are different under special
+conditions; an excess of a float-type expression value over float-type
+computing precision and division by 0, for example.  In general, when to
+calculate is not a problem.  However, take care when handling these 
+special conditions.  Refer also to "4.8. IEEE 754 Compatibility" in the
+EE Core User's Manual. 
+
+------------------------------------------------------------------------
+3. ee-gdb Compatibility
+------------------------------------------------------------------------
+ee-gdb included in this release cannot be used for debugging the programs 
+compiled by the previously released compilers.  
+
+
+----------------------------------------------------------------------
+4. Correspondence library
+----------------------------------------------------------------------
+  The run-time routines and standard libraries included in this release 
+  use the semaphore feature of the EE kernel.  Therefore, the libraries 
+  released earlier than the "PlayStation 2" Programmer Tool Runtime 
+  Library Release 2.3 do not have the necessary codes.  Please be sure 
+  to use the libraries in the Release 2.3 or later.   
+
+----------------------------------------------------------------------
+5. Compiler option 1.
+----------------------------------------------------------------------
+  Please do not use a compiler option -nostartfiles.  Please either 
+  use -mno-crt0 or replace the following files with crt0.o, which is 
+  generated from crt0.s included in the libraries in the "PlayStation 2" 
+  Programmer Tool Runtime Library Release 2.3 or later.  
+
+    /usr/local/sce/ee/gcc/ee/lib/crt0.o
+    /usr/local/sce/ee/gcc/ee/lib/soft-float/crt0.o
+
+----------------------------------------------------------------------
+6. Compiler option 2.
+----------------------------------------------------------------------
+  A debug option -g in ee-dvp-as has been changed to -gstabs.  Since it 
+  provides source-level debugging only for RISC core, please do not 
+  specify other options.
+
+----------------------------------------------------------------------
+7. ee-gdb mode
+----------------------------------------------------------------------
+  With X Window System, a change has been made so that ee-gdb can start 
+  up in a mode using GUI.  If you do not want to use GUI, please specify 
+  -nw. 
+
+----------------------------------------------------------------------
+8. Register Number Syntax
+----------------------------------------------------------------------
+  In source files in assembly language, '0' cannot be added to the 
+  register number.  (e.g.: vf010)
+
+
+----------------------------------------------------------------------
+9. Specifying Register $0 in C/C++
+----------------------------------------------------------------------
+  From this release, it has been restricted to assign the register $0 to 
+  a variable.  $0 can be used by setting the variable to const and the 
+  initial value to 0 and specifying the instruction template character 
+  string and operand constraint character string in the asm statement as 
+  follows:
+
+  e.g.:
+	typedef int long128 __attribute__ ((mode(TI)));
+
+	void
+	foo ()
+	{
+	  const long128 zero = 0;
+
+          /* Use %z0 and "rJ" instead of %0 and "r" respectively. */
+	  __asm__ volatile ("# %z0" : : "rJ" (zero));
+	}
+
+----------------------------------------------------------------------
+10. .DVP.overlay.* Section
+----------------------------------------------------------------------
+  When multiple object files which contain the names start with 
+  .DVP.overlay are linked, ee-ld occasionally detects the following 
+  error. 
+
+      'section name' is present in multiple input files
+
+  In this case, change the source file name of the object file that 
+  contains the relevant section and then create a new object file.

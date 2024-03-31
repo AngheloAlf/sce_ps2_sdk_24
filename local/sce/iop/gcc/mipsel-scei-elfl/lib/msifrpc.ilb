@@ -1,0 +1,6 @@
+#IOP-ILB# [PsIImsifrpc 2530]
+L msifrpc
+V 0x0101
+F 0x0000
+E 004 sceSifMInitRpc
+E 017 sceSifMEntryLoop

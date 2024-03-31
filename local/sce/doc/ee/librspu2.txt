@@ -1,0 +1,345 @@
+[SCEI CONFIDENTIAL DOCUMENT]
+PlayStation 2 Programmer Tool Runtime Library Release 2.4
+    Copyright (C) 2001 by Sony Computer Entertainment Inc.
+                                       All Rights Reserved
+         
+                                 
+Preliminary Sound Library for EE  (librspu2)
+============================================
+  
+The tentative sound libraries are the PlayStation(1) sound libraries ported to the PlayStation2. There were delays in providing development systems with sound chips, so these libraries were created in order to allow development using the inherited previous assets to begin as soon as possible.
+
+The new optimized sound libraries for PlayStation2 (libsd and CSL) have already been released. From this point on, functionality of the new libraries will be strengthened, but only bug fixes will be issued for the tentative libraries. The new authoring tool (JAM) is only compatible with the new libraries. 
+
+
+Overview
+--------
+librspu2 is the sound library that runs on the Emotion Engine. Since the SPU2 is connected to the IOP by a sub-bus, it is not directly visible from the EE.  However, if this library is used, SPU2 control or interrupt handling can be performed from the EE alone.
+
+Since the library drivers operate on the IOP, even heavy processing such as sequence replay can be performed without blocking, whereby a command is issued, and the EE returns immediately.
+
+librspu2 is not re-entrant.  Avoid executing functions such as sceSpu2Remote() asynchronously from another thread.
+
+
+Functions
+=========
+
+===========================================================
+sceSpu2RemoteInit	Initialize SPU2 remote environment
+===========================================================
+
+[Syntax] 
+	int sceSpu2RemoteInit( void )
+
+[Arguments] 
+	None
+
+[Return value] 
+For normal termination:  0,  If an error occurred:  -1.
+
+[Description] 
+Initializes the SPU remote environment.  This function also performs internal processing equivalent to SpuInit(). This is a blocking function.
+
+
+===========================================================
+sceSpu2Remote		Remotely execute SPU2 command
+===========================================================
+
+[Syntax] 
+	int sceSpu2Remote( 
+		int is_block,
+		int command,
+		int arg,
+		...
+	)
+
+[Arguments] 
+	is_block  	Specifies whether or not EE should 
+			block until 
+        		IOP-side processing is finished.  
+			1:  Block; 0: Do not block.
+	command		Command
+	arg		Arguments for command.  
+			Variable length.
+
+[Return value] 
+The return value depends on the individual command processing. However, the return value is always 0 if 0 is specified for is_Block.
+
+[Description] 
+Remotely executes from the EE a library function on the IOP corresponding to libspu or libsnd, according to command. For command, specify the libsnd or libspu function name with "r" appended to the beginning of the name.  Since the argument is variable length, specify the number of arguments required for that command (function).
+
+Example:  sceSpuRemote( 0, rSsSetMVol, 0x1fff, 0x1fff )
+
+The return value of sceSpuRemote is the return value of the corresponding command.  However, the return value is always 0 when non-blocking is specified.  Since the type of the argument and return value is always int, be sure to cast these appropriately.
+
+If non-blocking is specified, control returns from the function without waiting for processing to end on the IOP. A terminating callback function should be set using sceSpu2RemoteCallBack() to determine whether IOP-side processing has completed. Sending the next command before IOP processing has completed may cause erroneous behavior.
+
+
+============================================================
+sceSpu2RemoteCallBack	Specify terminating callback during 
+			non-blocking execution
+============================================================
+
+[Syntax] 
+	sceSifEndFunc sceSpu2RemoteCallBack( 
+		sceSifEndFunc end_func );
+
+[Arguments] 
+	end_func    Address of terminating callback function
+
+[Return value] 
+Address of terminating callback function previously set
+
+[Description] 
+When sceSpu2Remote is executed as a non-blocking function, the function which is specified here is executed in interrupt mode, when IOP processing terminates.  When the block executes, or when NULL is specified for end_func, the callback function is not executed.  This is a blocking function.
+
+
+============================================================
+sceSpu2CallbackInit    Initialize SPU2 callback environment
+============================================================
+
+[Syntax] 
+	int sceSpu2CallbackInit( int priority )
+
+[Arguments] 
+	priority	Priority of EE thread that is 
+			started for callback.
+			Must be higher than that of main 
+			thread.
+
+[Return value] 
+ID of EE thread that was started for callback.
+A negative value is returned if an error occurred.
+
+[Description] 
+Initializes the callback environment.  Execute this command once to use SPU interrupt callbacks.  One EE thread is started up internally. The callback operates in thread mode (non-interrupt mode).
+
+SPU interrupts mentioned here include interrupts caused by DMA transfers, IRQ interrupts, and streaming functions. Interrupts during sceSpu2Remote() non-blocking execution are handled separately.
+
+Since the thread ID is returned, refer to this ID and perform postprocessing such as DeleteThread, when the thread is no longer needed. This is a blocking function.
+
+
+============================================================
+sceSpu2StreamEnvInit	Initialize streaming environment 
+			attribute structure
+============================================================
+
+[Syntax] 
+	int sceSpu2StreamEnvInit( SpuStEnv *st )
+
+[Arguments] 
+	st	Pointer to SPU streaming environment 
+		attribute structure
+
+[Return value] 
+For normal termination:  0.  If an error occurred:  -1.
+
+[Description] 
+Initializes the streaming environment attribute structure. Internally, also performs processing equivalent to SpuStInit(). This is a blocking function.
+
+
+============================================================
+sceSpu2StreamEnvSet	Transfer streaming environment 
+			attribute structure
+============================================================
+
+[Syntax] 
+	int sceSpu2StreamEnvSet( SpuStEnv *st )
+
+[Arguments] 
+	st	Pointer to SPU streaming environment 
+		attribute structure
+
+[Return value] 
+For normal termination:  0.  If an error occurred:  -1.
+
+[Description] 
+Transfers the contents of the streaming environment attribute structure that was set by the EE to the IOP side. This is a non-blocking function.
+
+If the data to be transferred is in the cache, it will not be properly transferred to the IOP.  Flush (writeback) the cache before executing this function, or place the data in an uncached area.
+
+
+List of commands
+================
+The following commands can be used as sceSpu2Remote commands. For information about the function of each command, refer to the documentation of the current PlayStation.
+
+    rSpuSetCore		
+    rSpuSetCommonAttr	
+    rSpuSetVoiceAttr	
+    rSpuSetKey		
+    rSpuSetReverb	
+    rSpuClearReverbWorkArea	
+    rSpuSetReverbEndAddr	
+    rSpuSetReverbModeParam	
+    rSpuSetReverbModeDepth	
+    rSpuSetReverbVoice	
+    rSpuSetIRQ		
+    rSpuSetIRQAddr	
+    rSpuSetTransferMode		
+    rSpuSetTransferStartAddr	
+    rSpuWrite	
+    rSpuWrite0	
+    rSpuIsTransferCompleted	
+    rSpuQuit			
+    rSpuSetKeyOnWithAttr  	
+    rSpuSetEnv  		
+    rSpuGetReverbEndAddr  	
+    rSpuWritePartly  		
+    rSpuInitHot  		
+    rSpuIsReverbWorkAreaReserved	
+    rSpuMallocWithStartAddr	
+    rSpuRead			
+    rSpuReadDecodedData 	
+    rSpuReserveReverbWorkArea 	
+    rSpuSetMute			
+    rSpuSetNoiseClock		
+    rSpuSetNoiseVoice 		
+    rSpuStSetCore 		
+    rSpuSetPitchLFOVoice 	
+    rSpuStGetStatus		
+    rSpuStGetVoiceStatus 	
+    rSpuInitMalloc		
+    rSpuMalloc			
+    rSpuStInit			
+    rSpuStQuit			
+    rSpuStTransfer		
+    rSpuGetCore			
+    rSpuGetIRQAddr		
+    rSpuGetCommonAttr		
+    rSpuGetReverbModeParam	
+    rSpuGetVoiceAttr		
+    rSpuFlush			
+    rSpuFree			
+    rSpuGetAllKeysStatus	
+    rSpuGetKeyStatus		
+    rSpuGetIRQ			
+    rSpuGetMute			
+    rSpuGetNoiseClock		
+    rSpuGetNoiseVoice		
+    rSpuGetPitchLFOVoice	
+    rSpuGetReverb		
+    rSpuGetReverbVoiceb		
+    rSpuGetTransferMode		
+    rSpuGetTransferStartAddr	
+    rSpuAutoDMAWrite		
+    rSpuAutoDMAStop		
+    rSpuAutoDMAGetStatus	
+    rSpuSetAutoDMAAttr	
+    rSpuSetSerialInAttr	
+    rSpuSetDegitalOut
+    rSsAllocateVoices  		
+    rSsBlockVoiceAllocation    	
+    rSsEnd			
+    rSsChannelMute   		
+    rSsGetActualProgFromProg    
+    rSsGetChannelMute    	
+    rSsGetCurrentPoint    	
+    rSsGetVoiceMask    		
+    rSsInit   			
+    rSsIsEos    		
+    rSsPitchFromNote    	
+    rSsPlayBack    		
+    rSsQueueKeyOn    		
+    rSsQueueReverb    		
+    rSsQuit			
+    rSsSetTableSize		
+    rSsSetTickMode		
+    rSsSepClose    		
+    rSsSepOpen 			
+    rSsSepPause			
+    rSsSepPlay 			
+    rSsSepReplay 		
+    rSsSepSetAccelerando 	
+    rSsSepSetCrescendo  	
+    rSsSepSetDecrescendo 	
+    rSsSepSetRitardando 	
+    rSsSepSetVol		
+    rSsSepStop 			
+    rSsSeqGetVol		
+    rSsSeqOpen			
+    rSsSeqPause 		
+    rSsSeqPlayPtoP 		
+    rSsSeqReplay 		
+    rSsSeqSetAccelerando 	
+    rSsSeqSetCrescendo 		
+    rSsSeqSetDecrescendo	
+    rSsSeqSetRitardando		
+    rSsSeqSetNext		
+    rSsSeqCalledTbyT		
+    rSsSeqClose			
+    rSsSeqPlay			
+    rSsSeqSetVol		
+    rSsSeqSkip 			
+    rSsSeqStop 			
+    rSsSetAutoKeyOffMode    	
+    rSsSetCurrentPoint		
+    rSsSetLoop    		
+    rSsSetMono   		
+    rSsSetMVol  		
+    rSsSetNext  		
+    rSsSetReservedVoice  	
+    rSsSetStereo    		
+    rSsSetTempo    		
+    rSsSetVoiceMask    		
+    rSsStart			
+    rSsStart2    		
+    rSsUnBlockVoiceAllocation   
+    rSsUtFlush    		
+    rSsUtGetVagAddr    		
+    rSsUtGetVagAddrFromTone    	
+    rSsUtGetVBaddrInSB    	
+    rSsVabClose			
+    rSsVabOpenHead		
+    rSsVabOpenHeadSticky		
+    rSsVabTransBodyPartly	
+    rSsVabTransCompleted	
+    rSsVabTransBody		
+    rSsVoiceCheck   		
+    rSsVoKeyOff    		
+    rSsVoKeyOn 
+
+
+Special commands
+================
+
+The following commands have been added to provide greater efficiency. These commands are for only the EE and there is no corresponding API for the IOP.
+
+===========================================================
+rSpuSetMultiVoiceAttr    Set multiple voice attribute 
+			 structures
+===========================================================
+
+[Arguments]
+     s_attr[]  Starting address of voice attribute 
+	       structure array
+     num       Number of voice attribute structure arrays
+
+[Description]
+Voice attribute structures are organized as arrays and are set all at once. This reduces communication with the IOP, and also improves performance. The number specified here is the number of voice attribute structure arrays to be sent from the EE. The number to be received by the IOP must be set separately using rSpuSetMultiVoiceNum.
+
+
+===========================================================
+rSpuSetMultiVoiceNum     Set number of voice attribute 
+			 structure arrays
+===========================================================
+
+[Arguments]
+     num       Number of voice attribute structure arrays
+
+[Description]
+The number set here is the number of voice attribute structure arrays to be received by the IOP. This must be set before executing rSpuSetMultiVoiceAttr. Once set, this number is valid until another value is subsequently set.
+
+Notes regarding SIF DMA transfers
+---------------------------------
+
+This library uses SIF DMA transfers for communicating between the EE and the IOP. In certain cases it may be necessary to be aware of some general issues regarding DMA transfers.
+
+Specifically, these cases involve transfer of commands that pass pointers to structures as arguments, commands that return pointers to structures as a result, and transfers of streaming environment attribute structures.
+
+First, proper alignment must be used for DMA transfers. For the EE, 16 byte alignment is required and for the IOP, 4 byte alignment. This can be specified using the compiler's attribute function.
+
+The next issue involves maintaining consistency between main memory and the cache. On the IOP side, consistency with the cache is maintained during DMA transfer, but this is not true on the EE side. For example, if while performing DMA from the IOP to the EE, another variable is accessed in the same cache line on the EE, the DMA transfer area would be destroyed. To prevent this from happening, memory should be arranged properly. The size of the EE cache line is 64 bytes.
+
+* The sample code takes these issues into account, but in the rvoice sample, the retrieval of s_attr was not coded well. This is because when the rSpuGetVoiceAttr command is executed, this address becomes the transfer destination from the IOP. Make sure that alignment is set up for global rather than as an auto variable. Please refer to the operations performed in the area where rSpuGetCommonAttr is executed.
+
+

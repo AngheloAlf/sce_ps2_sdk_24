@@ -1,0 +1,73 @@
+This is Info file binutils.info, produced by Makeinfo version 1.68 from
+the input file ../../src/binutils/binutils.texi.
+
+START-INFO-DIR-ENTRY
+* Binutils: (binutils).         The GNU binary utilities.
+* ar: (binutils)ar.               Create, modify, and extract from archives
+* nm: (binutils)nm.               List symbols from object files
+* objcopy: (binutils)objcopy.	  Copy and translate object files
+* objdump: (binutils)objdump.     Display information from object files
+* ranlib: (binutils)ranlib.       Generate index to archive contents
+* readelf: (binutils)readelf.	  Display the contents of ELF format files.
+* size: (binutils)size.           List section sizes and total size
+* strings: (binutils)strings.     List printable strings from files
+* strip: (binutils)strip.         Discard symbols
+* c++filt: (binutils)c++filt.	  Filter to demangle encoded C++ symbols
+* cxxfilt: (binutils)c++filt.     MS-DOS name for c++filt
+* addr2line: (binutils)addr2line. Convert addresses to file and line
+* nlmconv: (binutils)nlmconv.     Converts object code into an NLM
+* windres: (binutils)windres.	  Manipulate Windows resources
+* dlltool: (binutils)dlltool.	  Create files needed to build and use DLLs
+END-INFO-DIR-ENTRY
+
+   Copyright (C) 1991, 92, 93, 94, 95, 96, 97, 98, 99, 2000 Free
+Software Foundation, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the entire resulting derived work is distributed under the terms
+of a permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions.
+
+
+Indirect:
+binutils.info-1: 1890
+binutils.info-2: 50926
+binutils.info-3: 98388
+
+Tag Table:
+(Indirect)
+Node: Top1890
+Node: ar3151
+Node: ar cmdline5325
+Node: ar scripts13453
+Node: nm19132
+Node: objcopy26550
+Node: objdump39559
+Node: ranlib50177
+Node: size50926
+Node: strings53657
+Node: strip55482
+Node: c++filt58447
+Node: addr2line61490
+Node: nlmconv64085
+Node: windres66689
+Node: dlltool71741
+Node: readelf81082
+Node: Selecting The Target System84232
+Node: Target Selection85249
+Node: Architecture Selection87952
+Node: Linker Emulation Selection89184
+Node: Reporting Bugs90062
+Node: Bug Criteria90813
+Node: Bug Reporting91359
+Node: Index98388
+
+End Tag Table

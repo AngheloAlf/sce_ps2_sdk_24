@@ -1,0 +1,236 @@
+<html>
+
+<head>
+<title>mux command</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+</head>
+
+<body>
+
+<h1>mux command</h1>    
+<hr>    
+<h2>Purpose</h2>    
+<p> Multiplex data files and create a pss file.</p>    
+<p> </p>    
+<h2>Format</h2>    
+<h3>command section</h3>     
+<p> mux (Abbreviated form: m)</p>    
+<p> </p>
+<h3>options section</h3>     
+<table border="1">     
+  <tr>     
+    <td>Options</td>     
+    <td>Meaning</td>     
+  </tr>     
+  <tr>     
+    <td>-o</td>     
+    <td>Overwrite if output file already exists</td>     
+  </tr>     
+  <tr>     
+    <td>-d [directory]</td>   
+    <td>Specify output directory.</td>   
+  </tr>   
+  <tr>   
+    <td>-v</td>   
+    <td>Provide detailed progress report.</td>   
+  </tr>   
+</table>   
+<p> </p>   
+<h3>target file section</h3>     
+<table border="1">     
+  <tr>     
+    <td>Parameter 1</td>     
+    <td>Multiplex instruction file</td>    
+  </tr>    
+  <tr>    
+    <td>Parameter 2 (optional)</td>    
+    <td>The pss file to be created (if this option is omitted, the file that is
+created will be the multiplex instruction file with the pss extension.)</td>    
+  </tr>    
+</table>    
+<p> </p>
+<h2>Multiplex instruction file</h2>
+<p> Contains information about file multiplexing.</p>
+<p> </p>
+<h3>Basic format</h3>
+<pre># comment
+pss
+	min_pack_size [minimum pack size]
+	max_pack_size [maximum pack size]
+	rate [transfer rate]
+
+	stream [stream type]:[stream number]
+		input [input file]
+
+		min_packet_size [minimum packet size]
+		max_packet_size [maximum packet size]
+		rate [transfer rate]
+
+	end
+
+	# stream repeated...
+
+end
+</pre>
+<p> '#' (pound sign)     
+Subsequent characters up to the end of the line will be ignored and treated as a comment.</p>    
+<p> Keywords are case sensitive.</p>    
+<p> Keywords are processed line by line. A single line cannot contain multiple keywords and a keyword cannot span multiple lines.</p>    
+<p> The order of lines within a block is arbitrary. (The input 
+keywords should be placed at the start of the block.)</p>   
+<p> </p>   
+<h3>Description of keywords</h3>   
+<table border="1">   
+  <tr>   
+    <td>Keywords</td>   
+    <td>Description</td>   
+    <td>Parameter</td>   
+    <td>Default value</td>  
+  </tr>  
+  <tr>  
+    <td>pss</td>  
+    <td>Start of a program stream block</td>  
+    <td>None</td>  
+    <td>N/A</td>  
+  </tr>  
+  <tr>  
+    <td>end</td>  
+    <td>End of block</td>  
+    <td>None</td>  
+    <td>N/A</td>  
+  </tr>  
+  <tr>  
+    <td>min_pack_size</td>  
+    <td>Minimum pack size (optional)</td>    
+    <td>Minimum pack size (bytes)</td>    
+    <td>16384 (16KB)</td>   
+  </tr>   
+  <tr>   
+    <td>max_pack_size</td>   
+    <td>Maximum pack size (optional)</td>    
+    <td>Maximum pack size (bytes)</td>    
+    <td>16384 (16KB)</td>   
+  </tr>   
+  <tr>   
+    <td>rate</td>   
+    <td>Transfer rate (transfer rates for program streams, MPEG video
+      elementary streams, and audio elementary streams are optional)</td>   
+    <td>Transfer rate (bytes/sec)</td>    
+    <td>(Calculated automatically)</td>   
+  </tr>   
+  <tr>   
+    <td>stream</td>   
+    <td>Start of elementary stream block</td>   
+    <td><a href="#stream_id">Stream type: stream</a><a href="#stream_id">Number</a></td>   
+    <td>Stream type-&gt;required<br> 
+      Stream ID -&gt; 0</td>   
+  </tr>   
+  <tr>   
+    <td>input</td>   
+    <td>Elementary stream input file</td>   
+    <td> Input file</td>   
+    <td>Required</td>   
+  </tr>   
+  <tr>   
+    <td>min_packet_size</td>   
+    <td>Minimum packet size (optional)</td>    
+    <td>Minimum packet size (bytes)</td>    
+    <td>2048 (2KB)</td>   
+  </tr>   
+  <tr>   
+    <td>max_packet_size</td>   
+    <td>Maximum packet size (optional)</td>    
+    <td>Maximum packet size (bytes)</td>    
+    <td>4096 (4KB)</td>
+  </tr>   
+  <tr>   
+    <td>stream_start_delay </td>   
+    <td>Stream start delay time (optional)</td>    
+    <td>Delay time (ms) </td>    
+    <td>0 ms</td>    
+  </tr>   
+</table>   
+<p> </p>
+<h3><a name="stream_id"></a>Stream type</h3>
+<table border="1">
+  <tr>
+    <td>Keywords</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>video</td>
+    <td>MPEG video elementary stream (*.m2v)</td>   
+  </tr>   
+  <tr>   
+    <td>ipu</td>   
+    <td>ipu video elementary stream (*.ipu)</td>   
+  </tr>   
+  <tr>   
+    <td>adpcm</td>   
+    <td>adpcm audio elementary stream (SPU   
+      stream file *.ads)</td>   
+  </tr>   
+  <tr>   
+    <td>pcm</td>   
+    <td>pcm audio elementary stream (SPU   
+      stream file *.ads)</td>   
+  </tr>   
+  <tr>   
+    <td>data</td>   
+    <td>data elementary stream (*.dat)</td>  
+  </tr>  
+</table>  
+<p> For MPEG video, stream numbers must be in the range of 0 - 15.
+Other streams can have stream numbers
+of integers in the range of 0 - 65536.</p>    
+<p> </p>    
+<h3>Example:</h3>    
+<h4>Multiplex ipu video and adpcm audio</h4>    
+<pre>pss
+	stream ipu
+		input video.ipu
+		rate 256000 # 2000 kbit/s
+	end
+
+	stream adpcm
+		input audio.ads
+	end
+
+end
+</pre>    
+<p> </p>
+<h4>Multiplex MPEG video and PCM audio x 2</h4>    
+<pre>pss
+	stream video:0
+		input video.m2v
+	end
+
+	stream pcm:0
+		input audio1.ads
+	end
+
+	stream pcm:1
+		input audio2.ads
+	end
+
+end
+</pre>    
+<p></p>   
+<p> </p> 
+<p><strong>[EOF]</strong></p> 
+<p>Last update:<!--webbot bot="Timestamp" startspan S-Type="EDITED" 
+S-Format="%Y/%m/%d" -->2000/01/31<!--webbot bot="Timestamp" i-CheckSum="12959" 
+endspan --> 
+</p> 
+<HR>
+<DIV ALIGN="right">
+<ADDRESS>
+    SCEI CONFIDENTIAL
+    <BR>Copyright (c) 1999 Sony Computer Entertainment Inc.  All Rights Reserved.</BR>
+</ADDRESS>
+</DIV> 
+</body> 
+ 
+</html> 
