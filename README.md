@@ -1,4 +1,4 @@
-# SN Systems ProDG_for_PS2_2.0
+# sce_ps2_sdk_24
 
 This repository contains the SN toolchain for PS2, specifically the "GCC 2.95.2 (SN BUILD v2.74)" and "GCC 2.95.3 (SN BUILD 1.14)" versions.
 
